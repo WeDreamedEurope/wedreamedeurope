@@ -18,6 +18,23 @@ export default function ImagePicker() {
     setLocalPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
   };
 
+
+
+  const extractEXIF = async (file: File) => {
+      if(file.type !== "image/") return null;
+
+      return new Promise((resolve, reject) => {
+
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+
+            const view  = new DataView(event.target?.result as ArrayBuffer);
+        }
+
+      })
+       
+  }
+
   const handleFileSelect = (event: ChangeEvent) => {
     const filez = (event.target as HTMLInputElement).files;
     if (!filez) return;
