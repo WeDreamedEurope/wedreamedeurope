@@ -19,13 +19,11 @@ const notoGeorgian = Noto_Sans_Georgian({
 
 export default function Home() {
   return (
-    <div className="w-[1080px] border mx-auto">
-      <section
-        className={`bg-gray-900 text-xl font-semibold ${notoGeorgian.className} p-20`}
-      >
-        ამბობენ: შააძლებინა სნეულსო ფეხზე დადგომა; ეღირსებაო ლუხუმსა ლაშარის
-        გორზე შადგომა!
-      </section>
+    <div className="w-[1080px]  mx-auto">
+    
+    <header className="bg-blue-900 h-20 flex px-4 items-center justify-between">
+            Our Struggle
+    </header>
       <section className="">
                 <ImagePicker />
       </section>

@@ -1,39 +1,64 @@
 import { ChangeEvent, useRef, useState, DragEvent } from "react";
 import { Upload } from "lucide-react";
 import { ImagePreviewCard } from "./PreviewCard.comp";
+import exifr from "exifr";
+
+type ImageMeta = {
+  url: string;
+  name: string;
+  DateTaken: Date | null;
+  location: [number, number] | null;
+};
 export default function ImagePicker() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [localPreviewUrls, setLocalPreviewUrls] = useState<
-    { url: string; name: string }[]
-  >([]);
+  const [localPreviewUrls, setLocalPreviewUrls] = useState<ImageMeta[]>([]);
   const [dragging, setDragging] = useState(false);
 
-  const processFiles = (files: FileList) => {
+  const processFiles = async (files: FileList) => {
     const newFiles = Array.from(files);
     setSelectedFiles((prev) => [...prev, ...newFiles]);
-    const newPreviewUrls = newFiles.map<{ url: string; name: string }>(
-      (file) => ({ url: URL.createObjectURL(file), name: file.name })
-    );
+
+    const newPreviewUrls = new Array<ImageMeta>();
+
+    newFiles.map((file) => ({
+      url: URL.createObjectURL(file),
+      name: file.name,
+    }));
+
+    for (const file of files) {
+      try {
+        const exitData = await exifr.parse(file, [
+          "DateTimeOriginal",
+          "GPSLatitude",
+          "GPSLongitude",
+        ]);
+
+        if (exitData) {
+          const { DateTimeOriginal, GPSLatitude, GPSLongitude } = exitData;
+
+          newPreviewUrls.push({
+            url: URL.createObjectURL(file),
+            name: file.name,
+            DateTaken: DateTimeOriginal || null,
+            location:
+              GPSLatitude && GPSLongitude ? [GPSLatitude, GPSLongitude] : null,
+          });
+        } else {
+          newPreviewUrls.push({
+            url: URL.createObjectURL(file),
+            name: file.name,
+            DateTaken: null,
+            location: null,
+          });
+        }
+      } catch (error) {
+        console.error("Error parsing EXIF:", error);
+      }
+    }
+
     setLocalPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
   };
-
-
-
-  const extractEXIF = async (file: File) => {
-      if(file.type !== "image/") return null;
-
-      return new Promise((resolve, reject) => {
-
-        const reader = new FileReader();
-        reader.onload = async (event) => {
-
-            const view  = new DataView(event.target?.result as ArrayBuffer);
-        }
-
-      })
-       
-  }
 
   const handleFileSelect = (event: ChangeEvent) => {
     const filez = (event.target as HTMLInputElement).files;
@@ -70,6 +95,12 @@ export default function ImagePicker() {
     // console.log(evt.dataTransfer.files);
   };
 
+  const handleRemoveFile = (index: number) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+    URL.revokeObjectURL(localPreviewUrls[index].url);
+    setLocalPreviewUrls((prev) => prev.filter((_, i) => i !== index));
+  };
+
   return (
     <div className="w-full max-w-2xl mx-auto border border-blue-300 p-4">
       <input
@@ -97,14 +128,17 @@ export default function ImagePicker() {
       <section>
         <h3 className="text-2xl font-semibold capitalize">Selected Photos</h3>
 
-        <div className="grid grid-cols-3 gap-4 mt-4">
-          {localPreviewUrls.map(({ name, url }, index) => (
-            <ImagePreviewCard
-              key={index}
-              name={name}
-              url={url}
-              onDelete={() => {}}
-            />
+        <div className="grid grid-cols-2 gap-4 mt-4 items-start justify-start ">
+          {localPreviewUrls.map(({ name, url, DateTaken, location }, index) => (
+            <div key={index} className="border w-full aspect-video">
+              <ImagePreviewCard
+                name={name}
+                url={url}
+                DateTaken={DateTaken}
+                location={location}
+                onDelete={() => handleRemoveFile(index)}
+              />
+            </div>
           ))}
         </div>
       </section>
