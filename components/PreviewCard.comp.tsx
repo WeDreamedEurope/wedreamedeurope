@@ -1,13 +1,13 @@
-import Image from "next/image";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Button } from "./ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { useState } from "react";
-import { CalendarIcon, MapPin, Clock } from "lucide-react";
 import { format, setHours, setMinutes } from "date-fns";
 import { ka } from "date-fns/locale";
+import { CalendarIcon, MapPin } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 import Modal from "./Moda.com";
 import MapComponent from "./map";
+import { Button } from "./ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 type Props = {
   url: string;
   name: string;
@@ -55,8 +55,8 @@ export function ImagePreviewCard({
   const [photoLocation, setPhotoLocation] = useState(location);
   return (
     <>
-      <div className="flex flex-col w-full aspect-video">
-        <div className="relative w-full aspect-video">
+      <div className="flex flex-col w-full aspect-video    ">
+        <div className="relative w-full aspect-video rounded-t-lg overflow-hidden">
           <Image
             src={url}
             fill
@@ -70,7 +70,7 @@ export function ImagePreviewCard({
           />
         
         </div>
-        <footer className="mt-2 flex justify-between items-center p-2">
+        <footer className=" flex justify-between items-center p-2 bg-gray-900 ">
           <Popover onOpenChange={(e) => console.log(e)}>
             <PopoverTrigger asChild>
               <Button

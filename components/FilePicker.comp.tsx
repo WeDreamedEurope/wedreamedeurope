@@ -130,7 +130,7 @@ export default function ImagePicker() {
 
         <div className="grid grid-cols-2 gap-4 mt-4 items-start justify-start ">
           {localPreviewUrls.map(({ name, url, DateTaken, location }, index) => (
-            <div key={index} className="border w-full aspect-video">
+            <div key={index} className=" w-full aspect-video ">
               <ImagePreviewCard
                 name={name}
                 url={url}
