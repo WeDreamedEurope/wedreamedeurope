@@ -1,24 +1,37 @@
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+const TOKEN =
+  "pk.eyJ1IjoicmVkaG9vZCIsImEiOiJjbTZ3ZHlqeGkwbHRkMmlzODVlcGl5N2RxIn0.ogMd_1w-fwWi24Jz2JktIQ";
+type coord = [number, number];
+type MapProps = {
+  onNewCoordinates: (coords: [number, number]) => void;
+  defaultCenter: [number, number] | null;
+  presetLocation: [number, number] | null;
+};
 
-export default function Map() {
+const AT_PARLIAMENT: coord = [44.79855398381976, 41.69672049439785];
+
+export default function MapComponent({
+  defaultCenter,
+  onNewCoordinates,
+  presetLocation,
+}: MapProps) {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapMarker = useRef<mapboxgl.Marker | null>(null);
-  const [defaultCenter, setDefaultCenter] = useState<[number, number]>([
-    -74.0007, 40.7336,
-  ]);
+
   useEffect(() => {
     if (!mapContainerRef.current) return;
-    console.log(`Ready To Load Map!`);
-    mapboxgl.accessToken =
-      "pk.eyJ1IjoicmVkaG9vZCIsImEiOiJjbTZ3ZHlqeGkwbHRkMmlzODVlcGl5N2RxIn0.ogMd_1w-fwWi24Jz2JktIQ";
+
+    mapboxgl.accessToken = TOKEN;
+    const initialLocation = getInitialCoordinates();
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/streets-v12",
-      center: defaultCenter,
+      center: initialLocation,
       zoom: 15,
+      interactive: presetLocation ? false : true,
     });
 
     mapRef.current.on("load", (e) => {
@@ -26,7 +39,6 @@ export default function Map() {
         type: "geojson",
         data: {
           type: "FeatureCollection",
-          
           features: [
             {
               type: "Feature",
@@ -136,20 +148,35 @@ export default function Map() {
     mapMarker.current = new mapboxgl.Marker({
       draggable: true,
     })
-      .setLngLat(defaultCenter)
+      .setLngLat(initialLocation)
       .addTo(mapRef.current);
 
     mapRef.current.on("click", "places", (e) => {
       alert("Some Clicking And Shit");
+    });
 
-      //   mapMarker.current?.setLngLat([e.lngLat.lng, e.lngLat.lat]);
+    mapRef.current.on("click", (e) => {
+      mapMarker.current!.setLngLat([e.lngLat.lng, e.lngLat.lat]);
+      onNewCoordinates([e.lngLat.lng, e.lngLat.lat]);
     });
 
     return () => mapRef.current!.remove();
   }, []);
 
+  const getInitialCoordinates = (): [number, number] => {
+    if (presetLocation) {
+      console.log(`We Have Preset Location!`);
+      console.log(presetLocation);
+      return presetLocation;
+    } else if (defaultCenter) {
+      return defaultCenter;
+    } else {
+      return AT_PARLIAMENT;
+    }
+  };
+
   return (
-    <div className="w-full h-full bg-yellow-600 flex items-center justify-center ">
+    <div className="w-full aspect-video  flex items-center justify-center ">
       <div
         ref={mapContainerRef}
         className="w-[800px] aspect-video border"

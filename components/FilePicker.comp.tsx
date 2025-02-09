@@ -102,7 +102,7 @@ export default function ImagePicker() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto border border-blue-300 p-4">
+    <div className="w-full max-w-2xl mx-auto  p-4">
       <input
         className="hidden"
         type="file"
