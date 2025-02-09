@@ -8,6 +8,7 @@ type ImageMeta = {
   name: string;
   DateTaken: Date | null;
   location: [number, number] | null;
+  
 };
 export default function ImagePicker() {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -18,7 +19,7 @@ export default function ImagePicker() {
   const processFiles = async (files: FileList) => {
     const newFiles = Array.from(files);
     setSelectedFiles((prev) => [...prev, ...newFiles]);
-
+    console.log("processing file")
     const newPreviewUrls = new Array<ImageMeta>();
 
     newFiles.map((file) => ({
@@ -28,21 +29,23 @@ export default function ImagePicker() {
 
     for (const file of files) {
       try {
-        const exitData = await exifr.parse(file, [
+        const EXIFData = await exifr.parse(file, [
           "DateTimeOriginal",
           "GPSLatitude",
           "GPSLongitude",
+          
         ]);
 
-        if (exitData) {
-          const { DateTimeOriginal, GPSLatitude, GPSLongitude } = exitData;
-
+        if (EXIFData) {
+          const { DateTimeOriginal, GPSLatitude, GPSLongitude,latitude, longitude } = EXIFData;
+          console.log(`Extracted EXIF Data`)
+          console.log(latitude, longitude)
           newPreviewUrls.push({
             url: URL.createObjectURL(file),
             name: file.name,
             DateTaken: DateTimeOriginal || null,
             location:
-              GPSLatitude && GPSLongitude ? [GPSLatitude, GPSLongitude] : null,
+              GPSLatitude && GPSLongitude ? [longitude, latitude] : null,
           });
         } else {
           newPreviewUrls.push({

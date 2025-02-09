@@ -68,7 +68,6 @@ export function ImagePreviewCard({
               }
             }}
           />
-        
         </div>
         <footer className=" flex justify-between items-center p-2 bg-gray-900 ">
           <Popover onOpenChange={(e) => console.log(e)}>
@@ -146,7 +145,7 @@ export function ImagePreviewCard({
           <LocationButton
             onClick={() => {
               setModalIsOpen(true);
-            }}
+              }}
             hasContent={photoLocation ? true : false}
             disabled={photoLocation ? true : false}
           />
