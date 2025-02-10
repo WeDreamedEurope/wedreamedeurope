@@ -28,17 +28,17 @@ const LocationButton = ({
   hasContent,
 }: LocationBtnProps) => {
   const renderLabel = () => {
-    return hasContent ? <span>რუკაზე ნახვა</span> : <span>Set Location</span>;
+    return hasContent ? <span>რუკაზე ნახვა</span> : <span>მონიშნე ლოკაცია</span>;
   };
   return (
     <Button
       variant={"ghost"}
       className={`   ${
-        hasContent ? "text-green-300" : "text-yellow-900"
+        hasContent ? "text-green-300" : "text-yellow-500"
       } font-semibold `}
       onClick={onClick}
     >
-      <MapPin className={` text-green-300   `} /> {renderLabel()}
+     {renderLabel()}
     </Button>
   );
 };
@@ -46,7 +46,6 @@ const LocationButton = ({
 export function ImagePreviewCard({
   url,
   onDelete,
-  name,
   DateTaken,
   location,
 }: Props) {
@@ -74,10 +73,10 @@ export function ImagePreviewCard({
             <PopoverTrigger asChild>
               <Button
                 variant={"ghost"}
-                className={`  w-auto justify-start text-left font-normal text-s 
-            ${date ? "text-blue-500" : "text-gray-300"}`}
+                className={`  w-auto justify-start text-left font-normal 
+            ${date ? "text-green-300" : "text-gray-300"}`}
               >
-                <CalendarIcon className="mr-1 h-4 w-4" />
+                <CalendarIcon className=" " />
                 {date ? (
                   format(date, "dPP", { locale: ka })
                 ) : (
@@ -145,7 +144,7 @@ export function ImagePreviewCard({
           <LocationButton
             onClick={() => {
               setModalIsOpen(true);
-              }}
+            }}
             hasContent={photoLocation ? true : false}
             disabled={photoLocation ? true : false}
           />
@@ -158,13 +157,11 @@ export function ImagePreviewCard({
       >
         <div className="w-full aspect-video ">
           <MapComponent
-            presetLocation={photoLocation}
-            defaultCenter={location ? location : null}
-            onNewCoordinates={(coordinates) => {
-              console.log(`Seeting Location!`);
-              console.log(coordinates);
-              setPhotoLocation([...coordinates]);
-            }}
+            isInteractive={location ? false : true}
+            defaultLocation={location ? location : null}
+            onNewCoordinates={(coordinates) =>
+              setPhotoLocation([...coordinates])
+            }
           />
           <footer className="w-full mt-4 flex justify-center">
             <Button onClick={() => setModalIsOpen(false)}>Save</Button>

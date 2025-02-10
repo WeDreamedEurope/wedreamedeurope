@@ -105,7 +105,7 @@ export default function ImagePicker() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto  p-4">
+    <div className="w-full  mx-auto  p-4">
       <input
         className="hidden"
         type="file"
@@ -131,7 +131,7 @@ export default function ImagePicker() {
       <section>
         <h3 className="text-2xl font-semibold capitalize">Selected Photos</h3>
 
-        <div className="grid grid-cols-2 gap-4 mt-4 items-start justify-start ">
+        <div className="grid grid-cols-3 gap-4 mt-4 items-start justify-start ">
           {localPreviewUrls.map(({ name, url, DateTaken, location }, index) => (
             <div key={index} className=" w-full aspect-video ">
               <ImagePreviewCard

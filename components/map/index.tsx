@@ -6,16 +6,16 @@ const TOKEN =
 type coord = [number, number];
 type MapProps = {
   onNewCoordinates: (coords: [number, number]) => void;
-  defaultCenter: [number, number] | null;
-  presetLocation: [number, number] | null;
+  defaultLocation: [number, number] | null;
+  isInteractive: boolean;
 };
 
 const AT_PARLIAMENT: coord = [44.79855398381976, 41.69672049439785];
 
 export default function MapComponent({
-  defaultCenter,
+  defaultLocation,
   onNewCoordinates,
-  presetLocation,
+  isInteractive,
 }: MapProps) {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -31,7 +31,7 @@ export default function MapComponent({
       style: "mapbox://styles/mapbox/streets-v12",
       center: initialLocation,
       zoom: 15,
-      interactive: presetLocation ? false : true,
+      interactive: isInteractive,
     });
 
     mapRef.current.on("load", (e) => {
@@ -164,15 +164,7 @@ export default function MapComponent({
   }, []);
 
   const getInitialCoordinates = (): [number, number] => {
-    if (presetLocation) {
-      console.log(`We Have Preset Location!`);
-      console.log(presetLocation);
-      return presetLocation;
-    } else if (defaultCenter) {
-      return defaultCenter;
-    } else {
-      return AT_PARLIAMENT;
-    }
+    return defaultLocation ? defaultLocation : AT_PARLIAMENT;
   };
 
   return (
@@ -183,11 +175,5 @@ export default function MapComponent({
       ></div>
     </div>
   );
-  //   return <div
-
-  //   style={{
-  //     width:"800ox",
-  //     height:"500px"
-  //   }}
-  //   ref={mapContainerRef} id="map"></div>;
+ 
 }
