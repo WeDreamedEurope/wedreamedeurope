@@ -2,13 +2,13 @@ import { ChangeEvent, useRef, useState, DragEvent } from "react";
 import { Upload } from "lucide-react";
 import { ImagePreviewCard } from "./PreviewCard.comp";
 import exifr from "exifr";
+import { Button } from "./ui/button";
 
 type ImageMeta = {
   url: string;
   name: string;
   DateTaken: Date | null;
   location: [number, number] | null;
-  
 };
 export default function ImagePicker() {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -19,7 +19,7 @@ export default function ImagePicker() {
   const processFiles = async (files: FileList) => {
     const newFiles = Array.from(files);
     setSelectedFiles((prev) => [...prev, ...newFiles]);
-    console.log("processing file")
+    console.log("processing file");
     const newPreviewUrls = new Array<ImageMeta>();
 
     newFiles.map((file) => ({
@@ -33,13 +33,18 @@ export default function ImagePicker() {
           "DateTimeOriginal",
           "GPSLatitude",
           "GPSLongitude",
-          
         ]);
 
         if (EXIFData) {
-          const { DateTimeOriginal, GPSLatitude, GPSLongitude,latitude, longitude } = EXIFData;
-          console.log(`Extracted EXIF Data`)
-          console.log(latitude, longitude)
+          const {
+            DateTimeOriginal,
+            GPSLatitude,
+            GPSLongitude,
+            latitude,
+            longitude,
+          } = EXIFData;
+          console.log(`Extracted EXIF Data`);
+          console.log(latitude, longitude);
           newPreviewUrls.push({
             url: URL.createObjectURL(file),
             name: file.name,
@@ -104,6 +109,27 @@ export default function ImagePicker() {
     setLocalPreviewUrls((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const uploadImages = async () => {
+    console.log(`Images Were Uploaded`);
+    const formData = new FormData();
+    selectedFiles.forEach((file) => {
+      formData.append("images", file);
+    });
+
+    try {
+      console.log(`UPLOAD INITED!`)
+      const data = await fetch("/api/image-upload", {
+        method: "POST",
+        body: formData,
+      });
+      console.log(`Gods Be Godd!`)
+      const result = await data.json();
+      console.log(result);
+    } catch (error) {
+      console.error(`SHIT!`)
+    }
+  };
+
   return (
     <div className="w-full  mx-auto  p-4">
       <input
@@ -130,6 +156,16 @@ export default function ImagePicker() {
 
       <section>
         <h3 className="text-2xl font-semibold capitalize">Selected Photos</h3>
+        <Button
+          onClick={() => uploadImages()}
+          disabled={selectedFiles.length === 0}
+          size={"lg"}
+          variant={"default"}
+          className="items-center flex"
+        >
+          <Upload size={24} className="translate-y-[2px]" />
+          <span> ატვირთვა</span>
+        </Button>
 
         <div className="grid grid-cols-3 gap-4 mt-4 items-start justify-start ">
           {localPreviewUrls.map(({ name, url, DateTaken, location }, index) => (

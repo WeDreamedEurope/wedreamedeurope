@@ -28,17 +28,22 @@ const LocationButton = ({
   hasContent,
 }: LocationBtnProps) => {
   const renderLabel = () => {
-    return hasContent ? <span>რუკაზე ნახვა</span> : <span>მონიშნე ლოკაცია</span>;
+    return hasContent ? (
+      <span>რუკაზე ნახვა</span>
+    ) : (
+      <span>მონიშნე ლოკაცია</span>
+    );
   };
   return (
     <Button
+      disabled={disabled}
       variant={"ghost"}
       className={`   ${
         hasContent ? "text-green-300" : "text-yellow-500"
-      } font-semibold `}
+      } font-semibold  disabled:opacity-40`}
       onClick={onClick}
     >
-     {renderLabel()}
+      {renderLabel()}
     </Button>
   );
 };
@@ -72,9 +77,10 @@ export function ImagePreviewCard({
           <Popover onOpenChange={(e) => console.log(e)}>
             <PopoverTrigger asChild>
               <Button
+                title="EXIF Data Exists"
+                disabled={DateTaken ? true : false}
                 variant={"ghost"}
-                className={`  w-auto justify-start text-left font-normal 
-            ${date ? "text-green-300" : "text-gray-300"}`}
+                className={`  w-auto justify-start text-left font-normal  disabled:opacity-40`}
               >
                 <CalendarIcon className=" " />
                 {date ? (
@@ -146,7 +152,7 @@ export function ImagePreviewCard({
               setModalIsOpen(true);
             }}
             hasContent={photoLocation ? true : false}
-            disabled={photoLocation ? true : false}
+            disabled={location ? true : false}
           />
         </footer>
       </div>
