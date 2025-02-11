@@ -7,7 +7,7 @@ export const config = {
     bodyParser: false, // Disable the default body parser
   },
 };
-
+const UPLOAD_LOCATION = path.join(process.cwd(), "uploads");
 interface ChunkMetadata {
   fileId: string;
   chunkNumber: string;
@@ -200,14 +200,13 @@ export default async function handler(
             // const body = data.toString();
             const { fileData, metadata } = await sexierParser(data, boundary);
 
-            const uploadDir = path.join(process.cwd(), "uploads");
-            if (!fs.existsSync(uploadDir)) {
-              fs.mkdirSync(uploadDir);
+            if (!fs.existsSync(UPLOAD_LOCATION)) {
+              fs.mkdirSync(UPLOAD_LOCATION);
             }
 
             // Save the chunk as a readable file
             const chunkFilePath = path.join(
-              uploadDir,
+              UPLOAD_LOCATION,
               `${metadata.fileId}-${metadata.chunkNumber}.part`
             );
             fs.writeFileSync(chunkFilePath, fileData);
@@ -217,12 +216,15 @@ export default async function handler(
               parseInt(metadata.totalChunks) - 1
             ) {
               // All chunks have been uploaded, now combine them
-              const finalFilePath = path.join(uploadDir, metadata.fileName);
+              const finalFilePath = path.join(
+                UPLOAD_LOCATION,
+                metadata.fileName
+              );
               const writeStream = fs.createWriteStream(finalFilePath);
 
               for (let i = 0; i < parseInt(metadata.totalChunks); i++) {
                 const chunkFilePath = path.join(
-                  uploadDir,
+                  UPLOAD_LOCATION,
                   `${metadata.fileId}-${i}.part`
                 );
                 const chunkData = fs.readFileSync(chunkFilePath);
@@ -244,9 +246,6 @@ export default async function handler(
 
               // fs.unlinkSync(finalFilePath);
 
-              console.log(
-                `WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE`
-              );
               res
                 .status(200)
                 .json({ message: "File uploaded and processed successfully" });
