@@ -3,17 +3,19 @@ import { format, setHours, setMinutes } from "date-fns";
 import { ka } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "./Moda.com";
 import MapComponent from "./map";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 type Props = {
   url: string;
   name: string;
   DateTaken: Date | null;
   onDelete: () => void;
   location: [number, number] | null;
+  status: "idle" | "uploading" | "success";
 };
 
 type LocationBtnProps = {
@@ -48,18 +50,56 @@ const LocationButton = ({
   );
 };
 
+const ProgressScreen = ({ percent }: { percent: number }) => {
+  const clampedProgress = Math.min(Math.max(percent, 0), 100);
+  const progressMotionValue = useMotionValue(clampedProgress);
+  const springProgress = useSpring(progressMotionValue, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+  useEffect(() => {
+    progressMotionValue.set(clampedProgress);
+  }, [clampedProgress, progressMotionValue]);
+
+  const width = useTransform(springProgress, (val) => `${val}%`);
+  const displayProgress = useTransform(
+    springProgress,
+    (value) => `${Math.round(value)}%`
+  );
+  return (
+    <div className="w-full max-w-md mx-auto absolute border h-full flex items-center z-30 ">
+      <div className="relative h-6 bg-gray-200 rounded-lg overflow-hidden z-50">
+        <motion.div
+          className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
+          style={{ width }}
+        />
+      </div>
+      <motion.div
+        className="text-center mt-2 font-semibold"
+        style={{
+          opacity: useTransform(springProgress, [0, 5, 100], [0, 1, 1]),
+        }}
+      >
+        {displayProgress}
+      </motion.div>
+    </div>
+  );
+};
+
 export function ImagePreviewCard({
   url,
   onDelete,
   DateTaken,
   location,
+  status = "idle",
 }: Props) {
   const [date, setDate] = useState<Date | null>(DateTaken);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [photoLocation, setPhotoLocation] = useState(location);
   return (
     <>
-      <div className="flex flex-col w-full aspect-video    ">
+      <div className="flex flex-col w-full aspect-video   relative  ">
         <div className="relative w-full aspect-video rounded-t-lg overflow-hidden">
           <Image
             src={url}
@@ -73,87 +113,90 @@ export function ImagePreviewCard({
             }}
           />
         </div>
-        <footer className=" flex justify-between items-center p-2 bg-gray-900 ">
-          <Popover onOpenChange={(e) => console.log(e)}>
-            <PopoverTrigger asChild>
-              <Button
-                title="EXIF Data Exists"
-                disabled={DateTaken ? true : false}
-                variant={"ghost"}
-                className={`  w-auto justify-start text-left font-normal  disabled:opacity-40`}
-              >
-                <CalendarIcon className=" " />
-                {date ? (
-                  format(date, "dPP", { locale: ka })
-                ) : (
-                  <span>აირჩიე თარიღი</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                disabled={DateTaken ? true : false}
-                mode="single"
-                selected={date!}
-                onSelect={(e) => {
-                  console.log(e);
+        <footer className="   bg-gray-900 relative w-full ">
+          <ProgressScreen percent={50} />
+          <div className="flex justify-between items-center p-2">
+            <Popover onOpenChange={(e) => console.log(e)}>
+              <PopoverTrigger asChild>
+                <Button
+                  title="EXIF Data Exists"
+                  disabled={DateTaken ? true : false}
+                  variant={"ghost"}
+                  className={`  w-auto justify-start text-left font-normal  disabled:opacity-40`}
+                >
+                  <CalendarIcon className=" " />
+                  {date ? (
+                    format(date, "dPP", { locale: ka })
+                  ) : (
+                    <span>აირჩიე თარიღი</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  disabled={DateTaken ? true : false}
+                  mode="single"
+                  selected={date!}
+                  onSelect={(e) => {
+                    console.log(e);
 
-                  setDate(e!);
-                }} // onSelect
-                initialFocus
-              />
-              <div className="h-12 flex items-center px-4 ">
-                <div className="flex items-center">
-                  {/* <Clock size={16} className="mr-2" /> */}
-                  <div className="space-x-2">
-                    <input
-                      placeholder="HH"
-                      className="border w-auto border-black p-1"
-                      type="number"
-                      min={0}
-                      max={23}
-                      onChange={(e) => {
-                        if (e.target.value === "") {
-                          console.log(
-                            `%cWe Have Prevented Something!`,
-                            "color:yellow"
-                          );
-                          return;
-                        }
-                        console.log(`Hour`, e.target.value);
-                        setDate((prev) => {
-                          if (!prev) return prev;
-                          return setHours(prev, parseInt(e.target.value));
-                        });
-                      }}
-                    />
-                    <input
-                      placeholder="MM"
-                      className="border w-auto border-black p-1"
-                      type="number"
-                      min={0}
-                      max={59}
-                      onChange={(e) => {
-                        console.log(`This Is Minutes Thing`);
-                        console.log(e.target.value);
-                        setDate((prev) => {
-                          if (!prev) return prev;
-                          return setMinutes(prev, parseInt(e.target.value));
-                        });
-                      }}
-                    />
+                    setDate(e!);
+                  }} // onSelect
+                  initialFocus
+                />
+                <div className="h-12 flex items-center px-4 ">
+                  <div className="flex items-center">
+                    {/* <Clock size={16} className="mr-2" /> */}
+                    <div className="space-x-2">
+                      <input
+                        placeholder="HH"
+                        className="border w-auto border-black p-1"
+                        type="number"
+                        min={0}
+                        max={23}
+                        onChange={(e) => {
+                          if (e.target.value === "") {
+                            console.log(
+                              `%cWe Have Prevented Something!`,
+                              "color:yellow"
+                            );
+                            return;
+                          }
+                          console.log(`Hour`, e.target.value);
+                          setDate((prev) => {
+                            if (!prev) return prev;
+                            return setHours(prev, parseInt(e.target.value));
+                          });
+                        }}
+                      />
+                      <input
+                        placeholder="MM"
+                        className="border w-auto border-black p-1"
+                        type="number"
+                        min={0}
+                        max={59}
+                        onChange={(e) => {
+                          console.log(`This Is Minutes Thing`);
+                          console.log(e.target.value);
+                          setDate((prev) => {
+                            if (!prev) return prev;
+                            return setMinutes(prev, parseInt(e.target.value));
+                          });
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-          <LocationButton
-            onClick={() => {
-              setModalIsOpen(true);
-            }}
-            hasContent={photoLocation ? true : false}
-            disabled={location ? true : false}
-          />
+              </PopoverContent>
+              <LocationButton
+                onClick={() => {
+                  setModalIsOpen(true);
+                }}
+                hasContent={photoLocation ? true : false}
+                disabled={location ? true : false}
+              />
+            </Popover>
+          </div>
         </footer>
       </div>
       <Modal

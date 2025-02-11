@@ -194,6 +194,7 @@ export default function ImagePicker() {
           {localPreviewUrls.map(({ name, url, DateTaken, location }, index) => (
             <div key={index} className=" w-full aspect-video ">
               <ImagePreviewCard
+                status="idle"
                 name={name}
                 url={url}
                 DateTaken={DateTaken}
