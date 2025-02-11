@@ -224,7 +224,6 @@ const handleUploadRequest = async (
       chunks.push(chunk);
     });
 
-    console.log(`Bla Bla`)
     req.on("end", async () => {
       console.log(`Read On Data And Shit`);
       try {

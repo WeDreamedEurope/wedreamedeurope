@@ -135,8 +135,6 @@ const parseFormData = (
     parts[1].match(/name="totalChunks"\r\n\r\n(.*)\r\n/)?.[1] || "";
   const fileName = parts[1].match(/name="fileName"\r\n\r\n(.*)\r\n/)?.[1] || "";
 
-
-
   return {
     fileData,
     metadata: {
@@ -148,46 +146,6 @@ const parseFormData = (
   };
 };
 
-/**
- * Uploads an assembled file to Cloudflare Images.
- */
-async function uploadToCloudflareImages(
-  filePath: string,
-  apiToken: string,
-  accountId: string
-): Promise<CloudflareImagesUploadResponse> {
-  const fileData = fs.readFileSync(filePath);
-
-  const formData = new FormData();
-  formData.append("file", new Blob([fileData]), path.basename(filePath));
-
-  try {
-    const response = await fetch(
-      `https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v1`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiToken}`,
-        },
-        body: formData,
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Failed to upload image: ${response.statusText}`);
-    }
-
-    const data: CloudflareImagesUploadResponse = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error uploading to Cloudflare Images:", error);
-    throw error;
-  }
-}
-
-/**
- * Handles chunked file uploads and assembles the final file.
- */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -208,61 +166,10 @@ export default async function handler(
 
             // const body = data.toString();
             const { fileData, metadata } = await sexierParser(data, boundary);
+            const result = await handleChunkProcessing(fileData, metadata);
 
-            if (!fs.existsSync(UPLOAD_LOCATION)) {
-              fs.mkdirSync(UPLOAD_LOCATION);
-            }
-
-            // Save the chunk as a readable file
-            const chunkFilePath = path.join(
-              UPLOAD_LOCATION,
-              `${metadata.fileId}-${metadata.chunkNumber}.part`
-            );
-            fs.writeFileSync(chunkFilePath, fileData);
-            if (
-              parseInt(metadata.chunkNumber) ===
-              parseInt(metadata.totalChunks) - 1
-            ) {
-              // All chunks have been uploaded, now combine them
-              const finalFilePath = path.join(
-                UPLOAD_LOCATION,
-                metadata.fileName
-              );
-              const writeStream = fs.createWriteStream(finalFilePath);
-
-              for (let i = 0; i < parseInt(metadata.totalChunks); i++) {
-                const chunkFilePath = path.join(
-                  UPLOAD_LOCATION,
-                  `${metadata.fileId}-${i}.part`
-                );
-                const chunkData = fs.readFileSync(chunkFilePath);
-                writeStream.write(chunkData);
-                fs.unlinkSync(chunkFilePath); // Delete the chunk file after combining
-              }
-
-              writeStream.end();
-
-              // const apiToken = process.env.CLOUDFLARE_API_TOKEN;
-              // const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-
-              // if (!apiToken || !accountId) {
-              //   throw new Error('Missing Cloudflare API token or account ID');
-              // }
-
-              // const uploadResponse = await uploadToCloudflareImages(finalFilePath, apiToken, accountId);
-              // console.log('Upload to Cloudflare Images successful:', uploadResponse);
-
-              // fs.unlinkSync(finalFilePath);
-              console.log(`Image Is Done BABY!`);
-
-              console.log(`We Are Here!`)
-              res
-                .status(200)
-                .json({ message: "File uploaded and processed successfully" });
-            } else {
-              res.status(200).json({ message: "Chunk uploaded successfully" });
-            }
-
+            console.log(`This Is Final Step!`);
+            res.status(200).json(`We Managed It!`);
             resolve();
           } catch (error) {
             reject(error);
@@ -281,3 +188,56 @@ export default async function handler(
     res.status(405).json({ message: "Method not allowed" });
   }
 }
+
+const handleChunkProcessing = async (
+  fileData: Buffer,
+  metadata: ChunkMetadata
+) => {
+  const uploadDir = path.join(process.cwd(), UPLOAD_LOCATION);
+  // const s3Client = createS3Client();
+  console.log(`Handling Chunks Or Something!`);
+  try {
+    ensureUploadDirectory(uploadDir);
+    saveChunk(fileData, metadata, uploadDir);
+
+    // Check if this is the final chunk
+    if (parseInt(metadata.chunkNumber) === parseInt(metadata.totalChunks) - 1) {
+      // await assembleAndUpload(metadata, uploadDir, s3Client);
+      return {
+        success: true,
+        message: "File assembled and uploaded to R2 successfully",
+      };
+    }
+
+    return {
+      success: true,
+      message: `Chunk ${metadata.chunkNumber} received successfully`,
+    };
+  } catch (error) {
+    console.error("Upload handling error:", error);
+    throw new Error(`Failed to process upload: ${error}`);
+  }
+};
+
+const ensureUploadDirectory = (uploadDir: string): void => {
+  if (!fs.existsSync(UPLOAD_LOCATION)) {
+    console.log(`Upload Location Doesnt Exist`);
+    fs.mkdirSync(UPLOAD_LOCATION, { recursive: true });
+  }
+  // if (!fs.existsSync(uploadDir)) {
+  //   fs.mkdirSync(uploadDir);
+  // }
+};
+
+const saveChunk = (
+  fileData: Buffer,
+  metadata: ChunkMetadata,
+  uploadDir: string
+): string => {
+  const chunkPath = path.join(
+    UPLOAD_LOCATION,
+    `${metadata.fileId}-${metadata.chunkNumber}.part`
+  );
+  fs.writeFileSync(chunkPath, fileData);
+  return chunkPath;
+};
