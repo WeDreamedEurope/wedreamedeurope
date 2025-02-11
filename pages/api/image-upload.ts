@@ -1,12 +1,26 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import path from "path";
-
+import {
+  S3Client,
+  PutObjectCommand,
+  ListObjectsCommand,
+} from "@aws-sdk/client-s3";
 export const config = {
   api: {
     bodyParser: false, // Disable the default body parser
   },
 };
+
+const s3Client = new S3Client({
+  region: "auto",
+  endpoint: process.env.S3_ENDPOINT!,
+  credentials: {
+    accessKeyId: process.env.CLOUDFLARE_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.CLOUDFLARE_SECRET_ACCESS_KEY!,
+  },
+});
+
 const UPLOAD_LOCATION = path.join(process.cwd(), "uploads");
 interface ChunkMetadata {
   fileId: string;
@@ -245,7 +259,17 @@ export default async function handler(
               // console.log('Upload to Cloudflare Images successful:', uploadResponse);
 
               // fs.unlinkSync(finalFilePath);
+              console.log(`Image Is Done BABY!`);
+              const fileData = fs.readFileSync(finalFilePath);
 
+              const response = await s3Client.send(
+                new PutObjectCommand({
+                  Bucket: "eurogeorgia",
+                  Key: finalFilePath,
+                  Body: fileData,
+                })
+              );
+              console.log(response);
               res
                 .status(200)
                 .json({ message: "File uploaded and processed successfully" });
