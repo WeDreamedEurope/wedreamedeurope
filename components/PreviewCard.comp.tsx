@@ -1,7 +1,7 @@
 import { Calendar } from "@/components/ui/calendar";
 import { format, setHours, setMinutes } from "date-fns";
 import { ka } from "date-fns/locale";
-import { CalendarIcon, MapPin } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import Modal from "./Moda.com";

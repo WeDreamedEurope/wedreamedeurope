@@ -3,7 +3,8 @@ import { Upload } from "lucide-react";
 import { ImagePreviewCard } from "./PreviewCard.comp";
 import exifr from "exifr";
 import { Button } from "./ui/button";
-
+// const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
+const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {
   url: string;
   name: string;
@@ -109,25 +110,47 @@ export default function ImagePicker() {
     setLocalPreviewUrls((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const uploadImages = async () => {
-    console.log(`Images Were Uploaded`);
-    const formData = new FormData();
-    selectedFiles.forEach((file) => {
-      formData.append("images", file);
-    });
+  const uploadImage = async (file: File, index: number) => {
+    const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+    const uploadId = Date.now().toString(); // Simple upload ID
 
-    try {
-      console.log(`UPLOAD INITED!`)
-      const data = await fetch("/api/image-upload", {
-        method: "POST",
-        body: formData,
-      });
-      console.log(`Gods Be Godd!`)
-      const result = await data.json();
-      console.log(result);
-    } catch (error) {
-      console.error(`SHIT!`)
+    for (let chunk = 0; chunk < totalChunks; chunk++) {
+      const start = chunk * CHUNK_SIZE;
+      const end = Math.min(start + CHUNK_SIZE, file.size);
+      const fileChunk = file.slice(start, end);
+
+      const formData = new FormData();
+      formData.append('file', fileChunk);
+      formData.append('fileId', uploadId);
+      formData.append('chunkNumber', chunk.toString());
+      formData.append('totalChunks', totalChunks.toString());
+      formData.append('fileName', file.name);
+
+      try {
+        console.log(`Sending Chunk ${chunk + 1} of ${totalChunks} to server`);
+        const response = await fetch("/api/image-upload", {
+          method: "POST",
+          body: formData,
+        });
+        console.log(chunk);
+        if (!response.ok) throw new Error("Chunk upload failed");
+
+        if (chunk === totalChunks - 1) {
+          const data = await response.json();
+          return data;
+        }
+      } catch (error) {
+        throw error;
+      }
     }
+  };
+
+  const uploadImages = async () => {
+    const uploades = selectedFiles.map((file, index) =>
+      uploadImage(file, index)
+    );
+    const results = await Promise.all(uploades);
+    console.log(results);
   };
 
   return (

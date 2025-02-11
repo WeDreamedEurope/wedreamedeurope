@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { useEffect, useRef } from "react";
 const TOKEN =
   "pk.eyJ1IjoicmVkaG9vZCIsImEiOiJjbTZ3ZHlqeGkwbHRkMmlzODVlcGl5N2RxIn0.ogMd_1w-fwWi24Jz2JktIQ";
 type coord = [number, number];
@@ -34,7 +34,7 @@ export default function MapComponent({
       interactive: isInteractive,
     });
 
-    mapRef.current.on("load", (e) => {
+    mapRef.current.on("load", () => {
       mapRef.current!.addSource("places", {
         type: "geojson",
         data: {
@@ -151,7 +151,7 @@ export default function MapComponent({
       .setLngLat(initialLocation)
       .addTo(mapRef.current);
 
-    mapRef.current.on("click", "places", (e) => {
+    mapRef.current.on("click", "places", () => {
       alert("Some Clicking And Shit");
     });
 

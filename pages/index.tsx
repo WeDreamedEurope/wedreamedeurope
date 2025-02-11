@@ -1,18 +1,17 @@
-import Image from "next/image";
-import { Geist, Geist_Mono, Noto_Sans_Georgian } from "next/font/google";
 import ImagePicker from "@/components/FilePicker.comp";
 import { Button } from "@/components/ui/button";
-import { Plus, PlusIcon, Upload } from "lucide-react";
+import { PlusIcon, Upload } from "lucide-react";
+import { Noto_Sans_Georgian } from "next/font/google";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
 
 const notoGeorgian = Noto_Sans_Georgian({
   variable: "--font-noto-georgian",

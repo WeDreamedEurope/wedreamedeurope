@@ -6,6 +6,7 @@ export default function Map() {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapMarker = useRef<mapboxgl.Marker | null>(null);
+  // @ts-nocheck
   const [defaultCenter, setDefaultCenter] = useState<[number, number]>([
     -74.0007, 40.7336,
   ]);
@@ -21,7 +22,10 @@ export default function Map() {
       zoom: 15,
     });
 
-    mapRef.current.on("load", (e) => {
+    setDefaultCenter([
+      -74.0007, 40.7336,
+    ])
+    mapRef.current.on("load", () => {
       mapRef.current!.addSource("places", {
         type: "geojson",
         data: {
@@ -139,7 +143,7 @@ export default function Map() {
       .setLngLat(defaultCenter)
       .addTo(mapRef.current);
 
-    mapRef.current.on("click", "places", (e) => {
+    mapRef.current.on("click", "places", () => {
       alert("Some Clicking And Shit");
 
       //   mapMarker.current?.setLngLat([e.lngLat.lng, e.lngLat.lat]);
