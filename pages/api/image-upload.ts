@@ -135,12 +135,7 @@ const parseFormData = (
     parts[1].match(/name="totalChunks"\r\n\r\n(.*)\r\n/)?.[1] || "";
   const fileName = parts[1].match(/name="fileName"\r\n\r\n(.*)\r\n/)?.[1] || "";
 
-  const fileIdMatch = parts[1].match(
-    /Content-Disposition:[^\n]*name="fileId"[^\n]*\r\n\r\n([\s\S]*?)(?:\r\n|$)/i
-  );
-  const chunkNumberMatch = parts[1].match(
-    /name="chunkNumber"\r\n\r\n([\s\S]*?)\r\n/
-  );
+
 
   return {
     fileData,
@@ -224,7 +219,6 @@ export default async function handler(
               `${metadata.fileId}-${metadata.chunkNumber}.part`
             );
             fs.writeFileSync(chunkFilePath, fileData);
-            // console.log(metadata);
             if (
               parseInt(metadata.chunkNumber) ===
               parseInt(metadata.totalChunks) - 1
@@ -260,16 +254,8 @@ export default async function handler(
 
               // fs.unlinkSync(finalFilePath);
               console.log(`Image Is Done BABY!`);
-              const fileData = fs.readFileSync(finalFilePath);
 
-              const response = await s3Client.send(
-                new PutObjectCommand({
-                  Bucket: "eurogeorgia",
-                  Key: finalFilePath,
-                  Body: fileData,
-                })
-              );
-              console.log(response);
+              console.log(`We Are Here!`)
               res
                 .status(200)
                 .json({ message: "File uploaded and processed successfully" });
