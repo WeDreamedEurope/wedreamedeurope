@@ -1,25 +1,12 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { createS3Client, uploadToR2 } from "@/server/imageUploader";
 import fs from "fs";
+import { NextApiRequest, NextApiResponse } from "next";
 import path from "path";
-import {
-  S3Client,
-  PutObjectCommand,
-  ListObjectsCommand,
-} from "@aws-sdk/client-s3";
 export const config = {
   api: {
     bodyParser: false, // Disable the default body parser
   },
 };
-
-const s3Client = new S3Client({
-  region: "auto",
-  endpoint: process.env.S3_ENDPOINT!,
-  credentials: {
-    accessKeyId: process.env.CLOUDFLARE_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.CLOUDFLARE_SECRET_ACCESS_KEY!,
-  },
-});
 
 const UPLOAD_LOCATION = path.join(process.cwd(), "uploads");
 interface ChunkMetadata {
@@ -29,22 +16,6 @@ interface ChunkMetadata {
   fileName: string;
 }
 
-interface CloudflareImagesUploadResponse {
-  success: boolean;
-  result: {
-    id: string;
-    filename: string;
-    uploaded: string;
-    requireSignedURLs: boolean;
-    variants: string[];
-  };
-  errors: string[];
-  messages: string[];
-}
-
-/**
- * Parses the multipart form data to extract file data and metadata.
- */
 
 const sexierParser = async (buffer: Buffer, boundary: string) => {
   const boundaryBuffer = Buffer.from(`--${boundary}`);
@@ -113,38 +84,6 @@ const sexierParser = async (buffer: Buffer, boundary: string) => {
   console.log(metadata);
   return { fileData, metadata };
 };
-function extractHeaderValue(headers: string, name: string): string | null {
-  const regex = new RegExp(
-    `name="${name}".*?\\r\\n\\r\\n(.*?)(?:\\r\\n|$)`,
-    "s"
-  );
-  const match = headers.match(regex);
-  return match ? match[1].trim() : null;
-}
-const parseFormData = (
-  body: string,
-  boundary: string
-): { fileData: string; metadata: ChunkMetadata } => {
-  const parts = body.split(`--${boundary}`);
-  // console.log("First part content:", parts[1]);
-  const fileData = parts[1].split("\r\n\r\n")[1];
-  const fileId = parts[1].match(/name="fileId"\r\n\r\n(.*)\r\n/)?.[1] || "";
-  const chunkNumber =
-    parts[1].match(/name="chunkNumber"\r\n\r\n(.*)\r\n/)?.[1] || "";
-  const totalChunks =
-    parts[1].match(/name="totalChunks"\r\n\r\n(.*)\r\n/)?.[1] || "";
-  const fileName = parts[1].match(/name="fileName"\r\n\r\n(.*)\r\n/)?.[1] || "";
-
-  return {
-    fileData,
-    metadata: {
-      fileId,
-      chunkNumber,
-      totalChunks,
-      fileName,
-    },
-  };
-};
 
 export default async function handler(
   req: NextApiRequest,
@@ -193,16 +132,15 @@ const handleChunkProcessing = async (
   fileData: Buffer,
   metadata: ChunkMetadata
 ) => {
-  const uploadDir = path.join(process.cwd(), UPLOAD_LOCATION);
   // const s3Client = createS3Client();
   console.log(`Handling Chunks Or Something!`);
   try {
-    ensureUploadDirectory(uploadDir);
-    saveChunk(fileData, metadata, uploadDir);
+    ensureUploadDirectory(UPLOAD_LOCATION);
+    saveChunk(fileData, metadata, UPLOAD_LOCATION);
 
     // Check if this is the final chunk
     if (parseInt(metadata.chunkNumber) === parseInt(metadata.totalChunks) - 1) {
-      // await assembleAndUpload(metadata, uploadDir, s3Client);
+      await assembleAndUpload(metadata, UPLOAD_LOCATION);
       return {
         success: true,
         message: "File assembled and uploaded to R2 successfully",
@@ -224,9 +162,6 @@ const ensureUploadDirectory = (uploadDir: string): void => {
     console.log(`Upload Location Doesnt Exist`);
     fs.mkdirSync(UPLOAD_LOCATION, { recursive: true });
   }
-  // if (!fs.existsSync(uploadDir)) {
-  //   fs.mkdirSync(uploadDir);
-  // }
 };
 
 const saveChunk = (
@@ -240,4 +175,46 @@ const saveChunk = (
   );
   fs.writeFileSync(chunkPath, fileData);
   return chunkPath;
+};
+
+const assembleAndUpload = async (
+  metadata: ChunkMetadata,
+  uploadDir: string
+): Promise<void> => {
+  const chunks: Buffer[] = [];
+  let totalSize = 0;
+
+  try {
+    // Read all chunks
+    for (let i = 0; i < parseInt(metadata.totalChunks); i++) {
+      const chunkPath = path.join(uploadDir, `${metadata.fileId}-${i}.part`);
+      const chunkData = fs.readFileSync(chunkPath);
+      totalSize += chunkData.length;
+      chunks.push(chunkData);
+    }
+
+    // Combine chunks and upload
+    const completeFile = Buffer.concat(chunks, totalSize);
+    const s3Client = createS3Client();
+    await uploadToR2(s3Client, completeFile, metadata.fileName);
+    console.log(`Assembled And Ready For Upload!`);
+    // Clean up after successful upload
+    console.log(`Should Clean Up`);
+    cleanupChunks(metadata);
+  } catch (error) {
+    console.log(`Should Clean Up`);
+    // cleanupChunks(metadata, uploadDir);
+    throw error;
+  }
+};
+
+
+
+const cleanupChunks = (metadata: ChunkMetadata, ): void => {
+  for (let i = 0; i < parseInt(metadata.totalChunks); i++) {
+    const chunkPath = path.join(UPLOAD_LOCATION, `${metadata.fileId}-${i}.part`);
+    if (fs.existsSync(chunkPath)) {
+      fs.unlinkSync(chunkPath);
+    }
+  }
 };

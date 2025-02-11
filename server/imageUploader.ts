@@ -19,13 +19,13 @@ interface UploadResult {
 }
 
 // S3 Client initialization
-const createS3Client = () => {
+export const createS3Client = () => {
   return new S3Client({
     region: "auto",
-    endpoint: process.env.CLOUDFLARE_R2_ENDPOINT,
+    endpoint: process.env.S3_ENDPOINT,
     credentials: {
-      accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+      accessKeyId: process.env.CLOUDFLARE_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.CLOUDFLARE_SECRET_ACCESS_KEY!,
     },
   });
 };
@@ -119,7 +119,7 @@ const saveChunk = (
   return chunkPath;
 };
 
-const cleanupChunks = (metadata: ChunkMetadata, uploadDir: string): void => {
+export const cleanupChunks = (metadata: ChunkMetadata, uploadDir: string): void => {
   for (let i = 0; i < parseInt(metadata.totalChunks); i++) {
     const chunkPath = path.join(uploadDir, `${metadata.fileId}-${i}.part`);
     if (fs.existsSync(chunkPath)) {
@@ -129,14 +129,14 @@ const cleanupChunks = (metadata: ChunkMetadata, uploadDir: string): void => {
 };
 
 // R2 upload operation
-const uploadToR2 = async (
+export const uploadToR2 = async (
   s3Client: S3Client,
   fileBuffer: Buffer,
   fileName: string
 ): Promise<void> => {
   try {
     const command = new PutObjectCommand({
-      Bucket: process.env.R2_BUCKET_NAME,
+      Bucket: process.env.CLOUDFLARE_PUBLIC_BUCKET,
       Key: fileName,
       Body: fileBuffer,
       ContentType: mime.lookup(fileName) || "application/octet-stream",
