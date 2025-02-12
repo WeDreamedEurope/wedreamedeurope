@@ -16,7 +16,6 @@ interface ChunkMetadata {
   fileName: string;
 }
 
-
 const sexierParser = async (buffer: Buffer, boundary: string) => {
   const boundaryBuffer = Buffer.from(`--${boundary}`);
   const newLine = Buffer.from("\r\n");
@@ -105,9 +104,8 @@ export default async function handler(
 
             // const body = data.toString();
             const { fileData, metadata } = await sexierParser(data, boundary);
-            const result = await handleChunkProcessing(fileData, metadata);
+            await handleChunkProcessing(fileData, metadata);
 
-            console.log(`This Is Final Step!`);
             res.status(200).json(`We Managed It!`);
             resolve();
           } catch (error) {
@@ -140,6 +138,7 @@ const handleChunkProcessing = async (
 
     // Check if this is the final chunk
     if (parseInt(metadata.chunkNumber) === parseInt(metadata.totalChunks) - 1) {
+      console.log(`Assembling File`);
       await assembleAndUpload(metadata, UPLOAD_LOCATION);
       return {
         success: true,
@@ -196,11 +195,12 @@ const assembleAndUpload = async (
     // Combine chunks and upload
     const completeFile = Buffer.concat(chunks, totalSize);
     const s3Client = createS3Client();
-    await uploadToR2(s3Client, completeFile, metadata.fileName);
     console.log(`Assembled And Ready For Upload!`);
+    await uploadToR2(s3Client, completeFile, metadata.fileName);
     // Clean up after successful upload
-    console.log(`Should Clean Up`);
+    console.log(`File Upload`);
     cleanupChunks(metadata);
+    console.log(`Should Clean Up`);
   } catch (error) {
     console.log(`Should Clean Up`);
     // cleanupChunks(metadata, uploadDir);
@@ -208,11 +208,12 @@ const assembleAndUpload = async (
   }
 };
 
-
-
-const cleanupChunks = (metadata: ChunkMetadata, ): void => {
+const cleanupChunks = (metadata: ChunkMetadata): void => {
   for (let i = 0; i < parseInt(metadata.totalChunks); i++) {
-    const chunkPath = path.join(UPLOAD_LOCATION, `${metadata.fileId}-${i}.part`);
+    const chunkPath = path.join(
+      UPLOAD_LOCATION,
+      `${metadata.fileId}-${i}.part`
+    );
     if (fs.existsSync(chunkPath)) {
       fs.unlinkSync(chunkPath);
     }

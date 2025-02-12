@@ -1,6 +1,6 @@
 import { ChangeEvent, useRef, useState, DragEvent } from "react";
 import { Upload } from "lucide-react";
-import { ImagePreviewCard } from "./PreviewCard.comp";
+import { ImagePreviewCard } from "./ImagePreviewCard/PreviewCard.comp";
 import exifr from "exifr";
 import { Button } from "./ui/button";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
@@ -10,6 +10,8 @@ type ImageMeta = {
   name: string;
   DateTaken: Date | null;
   location: [number, number] | null;
+  progress: number;
+  status: "idle" | "uploading" | "success" | "error";
 };
 export default function ImagePicker() {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -52,6 +54,8 @@ export default function ImagePicker() {
             DateTaken: DateTimeOriginal || null,
             location:
               GPSLatitude && GPSLongitude ? [longitude, latitude] : null,
+            progress: 0,
+            status: "idle",
           });
         } else {
           newPreviewUrls.push({
@@ -59,6 +63,8 @@ export default function ImagePicker() {
             name: file.name,
             DateTaken: null,
             location: null,
+            progress: 0,
+            status: "idle",
           });
         }
       } catch (error) {
@@ -113,18 +119,20 @@ export default function ImagePicker() {
   const uploadImage = async (file: File, index: number) => {
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     const uploadId = Date.now().toString(); // Simple upload ID
-
+    let chunksUploaded = 0;
+    
+    updateStatus(index, "uploading");
     for (let chunk = 0; chunk < totalChunks; chunk++) {
       const start = chunk * CHUNK_SIZE;
       const end = Math.min(start + CHUNK_SIZE, file.size);
       const fileChunk = file.slice(start, end);
 
       const formData = new FormData();
-      formData.append('file', fileChunk);
-      formData.append('fileId', uploadId);
-      formData.append('chunkNumber', chunk.toString());
-      formData.append('totalChunks', totalChunks.toString());
-      formData.append('fileName', file.name);
+      formData.append("file", fileChunk);
+      formData.append("fileId", uploadId);
+      formData.append("chunkNumber", chunk.toString());
+      formData.append("totalChunks", totalChunks.toString());
+      formData.append("fileName", file.name);
 
       try {
         console.log(`Sending Chunk ${chunk + 1} of ${totalChunks} to server`);
@@ -132,11 +140,12 @@ export default function ImagePicker() {
           method: "POST",
           body: formData,
         });
-        console.log(chunk);
         if (!response.ok) throw new Error("Chunk upload failed");
-
+        chunksUploaded++;
+        updateProgress(index, Math.round((chunksUploaded / totalChunks) * 100));
         if (chunk === totalChunks - 1) {
           const data = await response.json();
+          updateStatus(index, "success");
           return data;
         }
       } catch (error) {
@@ -144,6 +153,24 @@ export default function ImagePicker() {
       }
     }
   };
+
+  const updateProgress = (index: number, newProgress: number) => {
+    setLocalPreviewUrls((prev) =>
+      prev.map((file, i) =>
+        i === index ? { ...file, progress: newProgress } : file
+      )
+    );
+  };
+
+
+  const updateStatus = (index: number, newStatus: "success" | "error" | "idle" | "uploading") => {
+    setLocalPreviewUrls((prev) =>
+      prev.map((file, i) =>
+        i === index ? { ...file, status: newStatus } : file
+      )
+    );
+  }
+
 
   const uploadImages = async () => {
     const uploades = selectedFiles.map((file, index) =>
@@ -191,18 +218,21 @@ export default function ImagePicker() {
         </Button>
 
         <div className="grid grid-cols-3 gap-4 mt-4 items-start justify-start ">
-          {localPreviewUrls.map(({ name, url, DateTaken, location }, index) => (
-            <div key={index} className=" w-full aspect-video ">
-              <ImagePreviewCard
-                status="idle"
-                name={name}
-                url={url}
-                DateTaken={DateTaken}
-                location={location}
-                onDelete={() => handleRemoveFile(index)}
-              />
-            </div>
-          ))}
+          {localPreviewUrls.map(
+            ({ name, url, DateTaken, location, progress, status }, index) => (
+              <div key={index} className=" w-full aspect-video ">
+                <ImagePreviewCard
+                  status={status}
+                  name={name}
+                  url={url}
+                  DateTaken={DateTaken}
+                  location={location}
+                  onDelete={() => handleRemoveFile(index)}
+                  progress={progress}
+                />
+              </div>
+            )
+          )}
         </div>
       </section>
     </div>

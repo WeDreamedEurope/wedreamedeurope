@@ -3,19 +3,20 @@ import { format, setHours, setMinutes } from "date-fns";
 import { ka } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import Modal from "./Moda.com";
-import MapComponent from "./map";
-import { Button } from "./ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useState } from "react";
+import Modal from "../Moda.com";
+import MapComponent from "../map";
+import { Button } from "../ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import ProgressScreen from "./ProgresScreen.comp";
 type Props = {
   url: string;
   name: string;
   DateTaken: Date | null;
   onDelete: () => void;
   location: [number, number] | null;
-  status: "idle" | "uploading" | "success";
+  status: "idle" | "uploading" | "success" | "error";
+  progress: number;
 };
 
 type LocationBtnProps = {
@@ -50,49 +51,13 @@ const LocationButton = ({
   );
 };
 
-const ProgressScreen = ({ percent }: { percent: number }) => {
-  const clampedProgress = Math.min(Math.max(percent, 0), 100);
-  const progressMotionValue = useMotionValue(clampedProgress);
-  const springProgress = useSpring(progressMotionValue, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
-  useEffect(() => {
-    progressMotionValue.set(clampedProgress);
-  }, [clampedProgress, progressMotionValue]);
-
-  const width = useTransform(springProgress, (val) => `${val}%`);
-  const displayProgress = useTransform(
-    springProgress,
-    (value) => `${Math.round(value)}%`
-  );
-  return (
-    <div className="w-full max-w-md mx-auto absolute border h-full flex items-center z-30 ">
-      <div className="relative h-6 bg-gray-200 rounded-lg overflow-hidden z-50">
-        <motion.div
-          className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
-          style={{ width }}
-        />
-      </div>
-      <motion.div
-        className="text-center mt-2 font-semibold"
-        style={{
-          opacity: useTransform(springProgress, [0, 5, 100], [0, 1, 1]),
-        }}
-      >
-        {displayProgress}
-      </motion.div>
-    </div>
-  );
-};
-
 export function ImagePreviewCard({
   url,
   onDelete,
   DateTaken,
   location,
-  status = "idle",
+  status,
+  progress,
 }: Props) {
   const [date, setDate] = useState<Date | null>(DateTaken);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -100,6 +65,7 @@ export function ImagePreviewCard({
   return (
     <>
       <div className="flex flex-col w-full aspect-video   relative  ">
+      
         <div className="relative w-full aspect-video rounded-t-lg overflow-hidden">
           <Image
             src={url}
@@ -114,7 +80,7 @@ export function ImagePreviewCard({
           />
         </div>
         <footer className="   bg-gray-900 relative w-full ">
-          <ProgressScreen percent={50} />
+          {status !== "idle" && <ProgressScreen percent={progress} />}
           <div className="flex justify-between items-center p-2">
             <Popover onOpenChange={(e) => console.log(e)}>
               <PopoverTrigger asChild>

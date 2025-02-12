@@ -1,170 +1,182 @@
-import { useEffect, useRef, useState } from "react";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
-
-export default function Map() {
-  const mapRef = useRef<mapboxgl.Map | null>(null);
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapMarker = useRef<mapboxgl.Marker | null>(null);
-  // @ts-nocheck
-  const [defaultCenter, setDefaultCenter] = useState<[number, number]>([
-    -74.0007, 40.7336,
-  ]);
-  useEffect(() => {
-    if (!mapContainerRef.current) return;
-    console.log(`Ready To Load Map!`);
-    mapboxgl.accessToken =
-      "pk.eyJ1IjoicmVkaG9vZCIsImEiOiJjbTZ3ZHlqeGkwbHRkMmlzODVlcGl5N2RxIn0.ogMd_1w-fwWi24Jz2JktIQ";
-    mapRef.current = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      style: "mapbox://styles/mapbox/streets-v12",
-      center: defaultCenter,
-      zoom: 15,
-    });
-
-    setDefaultCenter([
-      -74.0007, 40.7336,
-    ])
-    mapRef.current.on("load", () => {
-      mapRef.current!.addSource("places", {
-        type: "geojson",
-        data: {
-          type: "FeatureCollection",
-          
-          features: [
-            {
-              type: "Feature",
-              properties: { icon: "stadium", name: "Greenwich Village" },
-              geometry: {
-                type: "Point",
-                coordinates: [-74.0007, 40.7336],
-              },
-            },
-            {
-              type: "Feature",
-              properties: { icon: "stadium", name: "Washington Square Park" },
-              geometry: {
-                type: "Point",
-                coordinates: [-73.9973, 40.7309],
-              },
-            },
-            {
-              type: "Feature",
-              properties: { icon: "stadium", name: "The Stonewall Inn" },
-              geometry: {
-                type: "Point",
-                coordinates: [-74.0017, 40.7331],
-              },
-            },
-            {
-              type: "Feature",
-              properties: { icon: "theatre", name: "Comedy Cellar" },
-              geometry: {
-                type: "Point",
-                coordinates: [-73.9992, 40.7305],
-              },
-            },
-            {
-              type: "Feature",
-              properties: { name: "Jefferson Market Library" },
-              geometry: {
-                type: "Point",
-                coordinates: [-74.0005, 40.7344],
-              },
-            },
-            {
-              type: "Feature",
-              properties: { name: "Cafe Wha?" },
-              geometry: {
-                type: "Point",
-                coordinates: [-74.0009, 40.7301],
-              },
-            },
-            {
-              type: "Feature",
-              properties: { name: "Blue Note Jazz Club" },
-              geometry: {
-                type: "Point",
-                coordinates: [-74.0, 40.7302],
-              },
-            },
-            {
-              type: "Feature",
-              properties: { name: "The Spotted Pig (former location)" },
-              geometry: {
-                type: "Point",
-                coordinates: [-74.0061, 40.7357],
-              },
-            },
-            {
-              type: "Feature",
-              properties: {
-                name: "New York Studio School of Drawing, Painting and Sculpture",
-              },
-              geometry: {
-                type: "Point",
-                coordinates: [-73.9985, 40.7313],
-              },
-            },
-            {
-              type: "Feature",
-              properties: { name: "Minetta Tavern" },
-              geometry: {
-                type: "Point",
-                coordinates: [-73.9994, 40.7298],
-              },
-            },
-            {
-              type: "Feature",
-              properties: { name: "White Horse Tavern" },
-              geometry: {
-                type: "Point",
-                coordinates: [-74.0062, 40.7351],
-              },
-            },
-          ],
-        },
-      });
-
-      mapRef.current!.addLayer({
-        id: "places",
-        type: "symbol",
-        source: "places",
-        layout: {
-          "icon-image": ["get", "icon"],
-          "icon-allow-overlap": true,
-        },
-      });
-    });
-
-    mapMarker.current = new mapboxgl.Marker({
-      draggable: true,
-    })
-      .setLngLat(defaultCenter)
-      .addTo(mapRef.current);
-
-    mapRef.current.on("click", "places", () => {
-      alert("Some Clicking And Shit");
-
-      //   mapMarker.current?.setLngLat([e.lngLat.lng, e.lngLat.lat]);
-    });
-
-    return () => mapRef.current!.remove();
-  }, []);
-
+import MapComponent from "@/components/map";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { setHours, setMinutes } from "date-fns";
+import { format } from "date-fns/format";
+import {
+  Calendar1Icon,
+  CalendarIcon,
+  Clock,
+  Clock1,
+  MapIcon,
+  RadarIcon,
+} from "lucide-react";
+import { Noto_Sans_Georgian } from "next/font/google";
+import { useState } from "react";
+const notoGeorgian = Noto_Sans_Georgian({
+  variable: "--font-noto-georgian",
+  subsets: ["georgian"],
+});
+const DatePickerCustom = () => {
+  const [date, setDate] = useState<Date | undefined>(new Date());
   return (
-    <div className="w-full h-full bg-yellow-600 flex items-center justify-center ">
-      <div
-        ref={mapContainerRef}
-        className="w-[800px] aspect-video border"
-      ></div>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant={"default"}
+          className={cn(
+            "w-[280px] justify-start text-left font-normal ",
+            !date && "text-muted-foreground"
+          )}
+        >
+          <CalendarIcon />
+          {date ? format(date, "PPP") : <span>Pick a date</span>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto " align="start">
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          initialFocus
+        />
+      </PopoverContent>
+    </Popover>
+  );
+};
+
+const TimePickerCustom = () => {
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  return (
+    <div className="flex items-center ">
+      {/* <Clock size={16} className="mr-2" /> */}
+      <div className=" text-sm rounded-l-lg overflow-hidden">
+        <input
+          placeholder="HH"
+          className="border w-auto  p-1 h-10 border-r-0 "
+          type="number"
+          min={0}
+          max={23}
+          onChange={(e) => {
+            if (e.target.value === "") {
+              console.log(`%cWe Have Prevented Something!`, "color:yellow");
+              return;
+            }
+            console.log(`Hour`, e.target.value);
+            setDate((prev) => {
+              if (!prev) return prev;
+              return setHours(prev, parseInt(e.target.value));
+            });
+          }}
+        />
+        <input
+          placeholder="MM"
+          className="border w-auto  p-1 h-10 border-l-0 bg-yellow-200 text-center "
+          type="number"
+          min={0}
+          max={59}
+          onChange={(e) => {
+            console.log(`This Is Minutes Thing`);
+            console.log(e.target.value);
+            setDate((prev) => {
+              if (!prev) return prev;
+              return setMinutes(prev, parseInt(e.target.value));
+            });
+          }}
+        />
+      </div>
     </div>
   );
-  //   return <div
+};
 
-  //   style={{
-  //     width:"800ox",
-  //     height:"500px"
-  //   }}
-  //   ref={mapContainerRef} id="map"></div>;
+const DistanceSelector = () => {
+  const [range, setRange] = useState(0);
+  return (
+    <input
+      max={300}
+      min={0}
+      id="default-range"
+      type="range"
+      value={range}
+      onChange={(e) => setRange(parseInt(e.target.value))}
+      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+    />
+  );
+};
+
+export default function Map() {
+  return (
+    <div className={`w-full h-full ${notoGeorgian.className} flex flex-col `}>
+      <header className="w-full h-20 bg-blue-900 flex items-center justify-between px-4">
+        Our Struggle
+      </header>
+      <section className="w-full min-h-14 items-center border-b border-b-gray-500 flex px-4 h-auto">
+        <div className="py-2 uppercase font-semibold text-lg space-y-2 text-gray-300">
+          <div>თარიღი</div>
+          <DatePickerCustom />
+        </div>
+        <div className="py-2 uppercase font-semibold text-lg space-y-2 text-gray-300">
+          <div>დროის დიაპაზონი</div>
+          <div className="flex gap-1">
+            <TimePickerCustom />
+            {/* <TimePickerCustom /> */}
+          </div>
+        </div>
+        <div className="py-2 uppercase font-semibold text-lg space-y-2 text-gray-300">
+          <div>რადიუსი</div>
+          <div className="flex h-10   items-center gap-1">
+            <DistanceSelector />
+          </div>
+        </div>
+      </section>
+      <section className="w-full h-full mx-auto border -600 flex ">
+        <section className="w-[calc(100%-750px)] h-full  flex-shrink relative bg-yellow-300">
+          <MapComponent
+            defaultLocation={null}
+            isInteractive={true}
+            onNewCoordinates={() => {}}
+          />
+        </section>
+        <section className="w-[750px] h-full bg-gray-100 text-black border-l-2 border-l-gray-400 flex-shrink-0 flex items-center justify-center">
+          <article className="  min-w-28 mx-12 p-4 flex items-start flex-col">
+            <h3 className="font-semibold text-gray-800 text  ">
+              როგორ მოვძებნოთ სასურველი ფოტოები
+            </h3>
+            <div className="flex flex-col mt-3 gap-4 text-base">
+              <div className=" w-full flex items-center gap-3 ">
+                <span className="text-gray-500 ">
+                  <MapIcon size={18} />
+                </span>
+                <div>რუკაზე დაკლიკებით აირჩიეთ სასურველი ზუსტი ლოკაცია</div>
+              </div>
+              <div className=" w-full text-gray-800 inline-flex items-start gap-2 ">
+                <span className="text-gray-500 translate-y-1 ">
+                  <Calendar1Icon size={18} />
+                </span>
+                <div>
+                  აირჩიეთ თარიღი და დროის დიაპაზონი (რომელი საათიდან რომელ
+                  საათმდე)
+                </div>
+              </div>
+              <div className=" w-full flex gap-3 items-center ">
+                <span className="text-gray-500 ">
+                  <RadarIcon size={18} />
+                </span>
+                <div>
+                  დაარეგულირეთ რადიუსი. რესურსების დაზოგვის მიზნით ფოტოების
+                  მოძებნა შესაძლებელია მაქსიმუმ 300 მეტრიან რადიუსში
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
+      </section>
+    </div>
+  );
 }
