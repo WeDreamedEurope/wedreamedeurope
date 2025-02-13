@@ -7,15 +7,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { setHours, setMinutes } from "date-fns";
 import { format } from "date-fns/format";
 import {
   Calendar1Icon,
   CalendarIcon,
-  Clock,
-  Clock1,
+  FastForward,
   MapIcon,
   RadarIcon,
+  Rewind,
 } from "lucide-react";
 import { Noto_Sans_Georgian } from "next/font/google";
 import { useState } from "react";
@@ -52,46 +51,51 @@ const DatePickerCustom = () => {
 };
 
 const TimePickerCustom = () => {
+  const [hours, setHours] = useState<number>(0);
   const [date, setDate] = useState<Date | undefined>(new Date());
   return (
-    <div className="flex items-center ">
-      {/* <Clock size={16} className="mr-2" /> */}
-      <div className=" text-sm rounded-l-lg overflow-hidden">
-        <input
-          placeholder="HH"
-          className="border w-auto  p-1 h-10 border-r-0 "
-          type="number"
-          min={0}
-          max={23}
-          onChange={(e) => {
-            if (e.target.value === "") {
-              console.log(`%cWe Have Prevented Something!`, "color:yellow");
-              return;
-            }
-            console.log(`Hour`, e.target.value);
-            setDate((prev) => {
-              if (!prev) return prev;
-              return setHours(prev, parseInt(e.target.value));
-            });
-          }}
-        />
-        <input
-          placeholder="MM"
-          className="border w-auto  p-1 h-10 border-l-0 bg-yellow-200 text-center "
-          type="number"
-          min={0}
-          max={59}
-          onChange={(e) => {
-            console.log(`This Is Minutes Thing`);
-            console.log(e.target.value);
-            setDate((prev) => {
-              if (!prev) return prev;
-              return setMinutes(prev, parseInt(e.target.value));
-            });
-          }}
-        />
-      </div>
-    </div>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button>დროის არჩევა</Button>
+      </PopoverTrigger>
+      <PopoverContent
+        className={`w-auto  bg-gray-900 text-white ${notoGeorgian.className} rounded-lg`}
+        align="center"
+      >
+        <div className="w-auto flex-flex-col px-4 max-w-sm flex flex-col gap-3 bg-gray-700 p-3 ">
+          <div className="flex  items-center">
+            <div className="flex gap-2 items-center">
+              <div className="flex flex-col gap-1 text-xs text-center">
+                <div>საათი</div>
+                <input
+                  value={hours}
+                  onChange={(e) => setHours(parseInt(e.target.value))}
+                  placeholder="00"
+                  type="number"
+                  min={1}
+                  max={23}
+                  className="border flex h-10 rounded-md  focus:text-black bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-[48px] text-center font-mono text-base tabular-nums caret-transparent focus:bg-accent focus:text-accent-foreground [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </div>
+              <span className=" h-10 flex items-center translate-y-2 text-2xl">
+                :
+              </span>
+              <div className="flex flex-col gap-1 text-xs text-center">
+                <div>წუთი</div>
+                <input
+                  placeholder="00"
+                  type="tel"
+                  min={0}
+                  max={59}
+                  className="border flex h-10 rounded-md  focus:text-black bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-[48px] text-center font-mono text-base tabular-nums caret-transparent focus:bg-accent focus:text-accent-foreground [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 };
 
