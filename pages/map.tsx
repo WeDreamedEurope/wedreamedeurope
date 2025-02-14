@@ -12,9 +12,11 @@ import {
   Calendar1Icon,
   CalendarIcon,
   FastForward,
+  ForwardIcon,
   MapIcon,
   RadarIcon,
   Rewind,
+  RewindIcon,
 } from "lucide-react";
 import { Noto_Sans_Georgian } from "next/font/google";
 import { useState } from "react";
@@ -54,48 +56,46 @@ const TimePickerCustom = () => {
   const [hours, setHours] = useState<number>(0);
   const [date, setDate] = useState<Date | undefined>(new Date());
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button>დროის არჩევა</Button>
-      </PopoverTrigger>
-      <PopoverContent
-        className={`w-auto  bg-gray-900 text-white ${notoGeorgian.className} rounded-lg`}
-        align="center"
+    <div className="flex items-center gap-2 text-black">
+      <Button
+        title="-10წუთი"
+        className="text-white"
+        variant={"ghost"}
+        size={"icon"}
       >
-        <div className="w-auto flex-flex-col px-4 max-w-sm flex flex-col gap-3 bg-gray-700 p-3 ">
-          <div className="flex  items-center">
-            <div className="flex gap-2 items-center">
-              <div className="flex flex-col gap-1 text-xs text-center">
-                <div>საათი</div>
-                <input
-                  value={hours}
-                  onChange={(e) => setHours(parseInt(e.target.value))}
-                  placeholder="00"
-                  type="number"
-                  min={1}
-                  max={23}
-                  className="border flex h-10 rounded-md  focus:text-black bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-[48px] text-center font-mono text-base tabular-nums caret-transparent focus:bg-accent focus:text-accent-foreground [&::-webkit-inner-spin-button]:appearance-none"
-                />
-              </div>
-              <span className=" h-10 flex items-center translate-y-2 text-2xl">
-                :
-              </span>
-              <div className="flex flex-col gap-1 text-xs text-center">
-                <div>წუთი</div>
-                <input
-                  placeholder="00"
-                  type="tel"
-                  min={0}
-                  max={59}
-                  className="border flex h-10 rounded-md  focus:text-black bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-[48px] text-center font-mono text-base tabular-nums caret-transparent focus:bg-accent focus:text-accent-foreground [&::-webkit-inner-spin-button]:appearance-none"
-                />
-              </div>
-            </div>
-          </div>
-          
-        </div>
-      </PopoverContent>
-    </Popover>
+        <Rewind size={16} />
+      </Button>
+      <div className="flex">
+        <input
+          min={0}
+          max={23}
+          maxLength={2}
+          placeholder="HH"
+          type="number"
+          className={
+            "w-12 h-10 pl-2  [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-sm"
+          }
+        />
+        <span className="h-full flex items-center px-2 text-white ">:</span>
+        <input
+          placeholder="MM"
+          min={0}
+          max={59}
+          type="number"
+          className={
+            " h-10 pl-2 w-12 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-md"
+          }
+        />
+      </div>
+      <Button
+        title="+10 წუთი"
+        className="text-white"
+        variant={"ghost"}
+        size={"icon"}
+      >
+        <FastForward size={16} />
+      </Button>
+    </div>
   );
 };
 
@@ -117,26 +117,18 @@ const DistanceSelector = () => {
 export default function Map() {
   return (
     <div className={`w-full h-full ${notoGeorgian.className} flex flex-col `}>
-      <header className="w-full h-20 bg-blue-900 flex items-center justify-between px-4">
-        Our Struggle
-      </header>
-      <section className="w-full min-h-14 items-center border-b border-b-gray-500 flex px-4 h-auto">
-        <div className="py-2 uppercase font-semibold text-lg space-y-2 text-gray-300">
-          <div>თარიღი</div>
+      <section className="w-full min-h-20 items-center flex border-b border-b-gray-500  px-4   gap-6 h-20">
+        <div className="py-2 uppercase font-semibold text-lg space-y-1 text-gray-300">
           <DatePickerCustom />
         </div>
-        <div className="py-2 uppercase font-semibold text-lg space-y-2 text-gray-300">
-          <div>დროის დიაპაზონი</div>
+        <div className="py-2 uppercase font-semibold text-lg space-y-2 text-gray-300  flex items-center flex-col ">
           <div className="flex gap-1">
             <TimePickerCustom />
             {/* <TimePickerCustom /> */}
           </div>
         </div>
-        <div className="py-2 uppercase font-semibold text-lg space-y-2 text-gray-300">
-          <div>რადიუსი</div>
-          <div className="flex h-10   items-center gap-1">
-            <DistanceSelector />
-          </div>
+        <div>
+          <Button>მოძებნე</Button>
         </div>
       </section>
       <section className="w-full h-full mx-auto border -600 flex ">
