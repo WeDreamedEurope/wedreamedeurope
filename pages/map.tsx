@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { addMinutes, getHours, getTime } from "date-fns";
 import { format } from "date-fns/format";
 import {
   Calendar1Icon,
@@ -22,6 +23,8 @@ const notoGeorgian = Noto_Sans_Georgian({
   variable: "--font-noto-georgian",
   subsets: ["georgian"],
 });
+
+
 const DatePickerCustom = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   return (
@@ -58,6 +61,15 @@ const TimePickerCustom = () => {
   useEffect(() => {
     setIsValidTime(checkTimeValidity(`${hours}:${minutes}`));
   }, [hours, minutes]);
+
+  const changetime = (increase: boolean) => {
+    const currentTime = Date.now();
+    const newTime = addMinutes(currentTime, 10);
+    const hour = newTime.getHours();
+    const minute = newTime.getMinutes();
+    setHours(hour.toString());
+    setMinutes(minute.toString());
+  };
 
   function checkTimeValidity(timeStr: string) {
     const timeRegex = /^([01]?\d|2[0-3]):([0-5]?\d)$/;
@@ -125,6 +137,7 @@ const TimePickerCustom = () => {
         className="text-white"
         variant={"ghost"}
         size={"icon"}
+        onClick={()=>changetime(true)}
       >
         <FastForward size={16} />
       </Button>
