@@ -12,14 +12,12 @@ import {
   Calendar1Icon,
   CalendarIcon,
   FastForward,
-  ForwardIcon,
   MapIcon,
   RadarIcon,
   Rewind,
-  RewindIcon,
 } from "lucide-react";
 import { Noto_Sans_Georgian } from "next/font/google";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 const notoGeorgian = Noto_Sans_Georgian({
   variable: "--font-noto-georgian",
   subsets: ["georgian"],
@@ -53,11 +51,31 @@ const DatePickerCustom = () => {
 };
 
 const TimePickerCustom = () => {
-  const [hours, setHours] = useState<number>(0);
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [hours, setHours] = useState<string>("");
+  const [minutes, setMinutes] = useState<string>("");
+  const [isValidTime, setIsValidTime] = useState(false);
+
+  useEffect(() => {
+    setIsValidTime(checkTimeValidity(`${hours}:${minutes}`));
+  }, [hours, minutes]);
+
+  function checkTimeValidity(timeStr: string) {
+    const timeRegex = /^([01]?\d|2[0-3]):([0-5]?\d)$/;
+    return timeRegex.test(`${hours}:${minutes}`);
+  }
   return (
-    <div className="flex items-center gap-2 text-black">
+    <div
+      className={cn(
+        "flex items-center gap-2 text-black  p-2 rounded-lg focus:outline-yellow-800 transition-colors bg-yellow-950",
+        {
+          "bg-green-950": isValidTime,
+          // "bg-yellow-950": hours === "",
+          // "bg-green-950": hours !== "",
+        }
+      )}
+    >
       <Button
+        disabled={!isValidTime}
         title="-10წუთი"
         className="text-white"
         variant={"ghost"}
@@ -67,27 +85,42 @@ const TimePickerCustom = () => {
       </Button>
       <div className="flex">
         <input
+          value={hours}
+          onChange={(e) => {
+            if (e.target.value.length <= 2) {
+              setHours(e.target.value);
+            }
+          }}
           min={0}
           max={23}
           maxLength={2}
           placeholder="HH"
           type="number"
-          className={
-            "w-12 h-10 pl-2  [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-sm"
-          }
+          className={cn(
+            "w-12 h-10 bg-yellow-700  text-center  [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-sm",
+            hours !== "" && "bg-green-800 text-green-300"
+          )}
         />
         <span className="h-full flex items-center px-2 text-white ">:</span>
         <input
+          value={minutes}
+          onChange={(e) => {
+            if (e.target.value.length <= 2) {
+              setMinutes(e.target.value);
+            }
+          }}
           placeholder="MM"
           min={0}
           max={59}
           type="number"
-          className={
-            " h-10 pl-2 w-12 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-md"
-          }
+          className={cn(
+            "w-12 h-10 bg-yellow-700  text-center  [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-sm",
+            minutes !== "" && "bg-green-800 text-green-300"
+          )}
         />
       </div>
       <Button
+        disabled={!isValidTime}
         title="+10 წუთი"
         className="text-white"
         variant={"ghost"}
