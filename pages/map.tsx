@@ -1,224 +1,78 @@
+import { DatePickerCustom } from "@/components/DatePickerCustom";
 import MapComponent from "@/components/map";
+import { TimePickerCustom } from "@/components/TimePickerCustom";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { addMinutes, getHours, getTime } from "date-fns";
-import { format } from "date-fns/format";
-import {
-  Calendar1Icon,
-  CalendarIcon,
-  FastForward,
-  MapIcon,
-  RadarIcon,
-  Rewind,
-} from "lucide-react";
+import { DateTimeProvider } from "@/context/DateTimeContext";
+import { Calendar1Icon, MapIcon, RadarIcon } from "lucide-react";
 import { Noto_Sans_Georgian } from "next/font/google";
-import { useEffect, useState } from "react";
+
 const notoGeorgian = Noto_Sans_Georgian({
   variable: "--font-noto-georgian",
   subsets: ["georgian"],
 });
 
-
-const DatePickerCustom = () => {
-  const [date, setDate] = useState<Date | undefined>(new Date());
+const Map = () => {
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant={"default"}
-          className={cn(
-            "w-[280px] justify-start text-left font-normal ",
-            !date && "text-muted-foreground"
-          )}
-        >
-          <CalendarIcon />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto " align="start">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          initialFocus
-        />
-      </PopoverContent>
-    </Popover>
-  );
-};
-
-const TimePickerCustom = () => {
-  const [hours, setHours] = useState<string>("");
-  const [minutes, setMinutes] = useState<string>("");
-  const [isValidTime, setIsValidTime] = useState(false);
-
-  useEffect(() => {
-    setIsValidTime(checkTimeValidity(`${hours}:${minutes}`));
-  }, [hours, minutes]);
-
-  const changetime = (increase: boolean) => {
-    const currentTime = Date.now();
-    const newTime = addMinutes(currentTime, 10);
-    const hour = newTime.getHours();
-    const minute = newTime.getMinutes();
-    setHours(hour.toString());
-    setMinutes(minute.toString());
-  };
-
-  function checkTimeValidity(timeStr: string) {
-    const timeRegex = /^([01]?\d|2[0-3]):([0-5]?\d)$/;
-    return timeRegex.test(`${hours}:${minutes}`);
-  }
-  return (
-    <div
-      className={cn(
-        "flex items-center gap-2 text-black  p-2 rounded-lg focus:outline-yellow-800 transition-colors bg-yellow-950",
-        {
-          "bg-green-950": isValidTime,
-          // "bg-yellow-950": hours === "",
-          // "bg-green-950": hours !== "",
-        }
-      )}
-    >
-      <Button
-        disabled={!isValidTime}
-        title="-10წუთი"
-        className="text-white"
-        variant={"ghost"}
-        size={"icon"}
-      >
-        <Rewind size={16} />
-      </Button>
-      <div className="flex">
-        <input
-          value={hours}
-          onChange={(e) => {
-            if (e.target.value.length <= 2) {
-              setHours(e.target.value);
-            }
-          }}
-          min={0}
-          max={23}
-          maxLength={2}
-          placeholder="HH"
-          type="number"
-          className={cn(
-            "w-12 h-10 bg-yellow-700  text-center  [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-sm",
-            hours !== "" && "bg-green-800 text-green-300"
-          )}
-        />
-        <span className="h-full flex items-center px-2 text-white ">:</span>
-        <input
-          value={minutes}
-          onChange={(e) => {
-            if (e.target.value.length <= 2) {
-              setMinutes(e.target.value);
-            }
-          }}
-          placeholder="MM"
-          min={0}
-          max={59}
-          type="number"
-          className={cn(
-            "w-12 h-10 bg-yellow-700  text-center  [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-sm",
-            minutes !== "" && "bg-green-800 text-green-300"
-          )}
-        />
-      </div>
-      <Button
-        disabled={!isValidTime}
-        title="+10 წუთი"
-        className="text-white"
-        variant={"ghost"}
-        size={"icon"}
-        onClick={()=>changetime(true)}
-      >
-        <FastForward size={16} />
-      </Button>
-    </div>
-  );
-};
-
-const DistanceSelector = () => {
-  const [range, setRange] = useState(0);
-  return (
-    <input
-      max={300}
-      min={0}
-      id="default-range"
-      type="range"
-      value={range}
-      onChange={(e) => setRange(parseInt(e.target.value))}
-      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
-    />
-  );
-};
-
-export default function Map() {
-  return (
-    <div className={`w-full h-full ${notoGeorgian.className} flex flex-col `}>
-      <section className="w-full min-h-20 items-center flex border-b border-b-gray-500  px-4   gap-6 h-20">
-        <div className="py-2 uppercase font-semibold text-lg space-y-1 text-gray-300">
-          <DatePickerCustom />
-        </div>
-        <div className="py-2 uppercase font-semibold text-lg space-y-2 text-gray-300  flex items-center flex-col ">
-          <div className="flex gap-1">
-            <TimePickerCustom />
-            {/* <TimePickerCustom /> */}
+    <DateTimeProvider>
+      <div className={`w-full h-full ${notoGeorgian.className} flex flex-col `}>
+        <section className="w-full min-h-20 items-center flex border-b border-b-gray-500  px-4   gap-6 h-20">
+          <div className="py-2 uppercase font-semibold text-lg space-y-1 text-gray-300">
+            <DatePickerCustom />
           </div>
-        </div>
-        <div>
-          <Button>მოძებნე</Button>
-        </div>
-      </section>
-      <section className="w-full h-full mx-auto border -600 flex ">
-        <section className="w-[calc(100%-750px)] h-full  flex-shrink relative bg-yellow-300">
-          <MapComponent
-            defaultLocation={null}
-            isInteractive={true}
-            onNewCoordinates={() => {}}
-          />
-        </section>
-        <section className="w-[750px] h-full bg-gray-100 text-black border-l-2 border-l-gray-400 flex-shrink-0 flex items-center justify-center">
-          <article className="  min-w-28 mx-12 p-4 flex items-start flex-col">
-            <h3 className="font-semibold text-gray-800 text  ">
-              როგორ მოვძებნოთ სასურველი ფოტოები
-            </h3>
-            <div className="flex flex-col mt-3 gap-4 text-base">
-              <div className=" w-full flex items-center gap-3 ">
-                <span className="text-gray-500 ">
-                  <MapIcon size={18} />
-                </span>
-                <div>რუკაზე დაკლიკებით აირჩიეთ სასურველი ზუსტი ლოკაცია</div>
-              </div>
-              <div className=" w-full text-gray-800 inline-flex items-start gap-2 ">
-                <span className="text-gray-500 translate-y-1 ">
-                  <Calendar1Icon size={18} />
-                </span>
-                <div>
-                  აირჩიეთ თარიღი და დროის დიაპაზონი (რომელი საათიდან რომელ
-                  საათმდე)
-                </div>
-              </div>
-              <div className=" w-full flex gap-3 items-center ">
-                <span className="text-gray-500 ">
-                  <RadarIcon size={18} />
-                </span>
-                <div>
-                  დაარეგულირეთ რადიუსი. რესურსების დაზოგვის მიზნით ფოტოების
-                  მოძებნა შესაძლებელია მაქსიმუმ 300 მეტრიან რადიუსში
-                </div>
-              </div>
+          <div className="py-2 uppercase font-semibold text-lg space-y-2 text-gray-300  flex items-center flex-col ">
+            <div className="flex gap-1">
+              <TimePickerCustom />
             </div>
-          </article>
+          </div>
+          <div>
+            <Button>მოძებნე</Button>
+          </div>
         </section>
-      </section>
-    </div>
+        <section className="w-full h-full mx-auto border -600 flex ">
+          <section className="w-[calc(100%-750px)] h-full  flex-shrink relative bg-yellow-300">
+            <MapComponent
+              defaultLocation={null}
+              isInteractive={true}
+              onNewCoordinates={() => {}}
+            />
+          </section>
+          <section className="w-[750px] h-full bg-gray-100 text-black border-l-2 border-l-gray-400 flex-shrink-0 flex items-center justify-center">
+            <article className="  min-w-28 mx-12 p-4 flex items-start flex-col">
+              <h3 className="font-semibold text-gray-800 text  ">
+                როგორ მოვძებნოთ სასურველი ფოტოები
+              </h3>
+              <div className="flex flex-col mt-3 gap-4 text-base">
+                <div className=" w-full flex items-center gap-3 ">
+                  <span className="text-gray-500 ">
+                    <MapIcon size={18} />
+                  </span>
+                  <div>რუკაზე დაკლიკებით აირჩიეთ სასურველი ზუსტი ლოკაცია</div>
+                </div>
+                <div className=" w-full text-gray-800 inline-flex items-start gap-2 ">
+                  <span className="text-gray-500 translate-y-1 ">
+                    <Calendar1Icon size={18} />
+                  </span>
+                  <div>
+                    აირჩიეთ თარიღი და დროის დიაპაზონი (რომელი საათიდან რომელ
+                    საათმდე)
+                  </div>
+                </div>
+                <div className=" w-full flex gap-3 items-center ">
+                  <span className="text-gray-500 ">
+                    <RadarIcon size={18} />
+                  </span>
+                  <div>
+                    დაარეგულირეთ რადიუსი. რესურსების დაზოგვის მიზნით ფოტოების
+                    მოძებნა შესაძლებელია მაქსიმუმ 300 მეტრიან რადიუსში
+                  </div>
+                </div>
+              </div>
+            </article>
+          </section>
+        </section>
+      </div>
+    </DateTimeProvider>
   );
-}
+};
+
+export default Map;
