@@ -21,7 +21,7 @@ export const DatePickerCustom = () => {
         <Button
           variant={"default"}
           className={cn(
-            "w-[280px] justify-start text-left font-normal",
+            "sm:w-[280px] justify-start text-left font-normal",
             !selectedDate && "text-muted-foreground"
           )}
         >
@@ -29,7 +29,7 @@ export const DatePickerCustom = () => {
           {selectedDate ? (
             format(selectedDate, "PPP")
           ) : (
-            <span>Pick a date</span>
+            <span>თარიღი</span>
           )}
         </Button>
       </PopoverTrigger>
