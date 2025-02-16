@@ -14,7 +14,7 @@ import { useState } from "react";
 export const DatePickerCustom = () => {
   const { selectedDate, setCurrentDate } = useDateTimeContext();
   const [open, setOpen] = useState(false);
-
+  
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -35,13 +35,17 @@ export const DatePickerCustom = () => {
       </PopoverTrigger>
       <PopoverContent className="w-auto" align="start">
         <Calendar
+          
+          classNames={{
+          
+          }}
           mode="single"
           selected={selectedDate}
           onSelect={(selected) => {
             setCurrentDate(selected);
-            setTimeout(() => {
-              setOpen(false);
-            }, 500);
+            // setTimeout(() => {
+            //   setOpen(false);
+            // }, 500);
           }}
           initialFocus
         />

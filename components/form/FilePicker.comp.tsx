@@ -1,8 +1,8 @@
 import { ChangeEvent, useRef, useState, DragEvent } from "react";
 import { Upload } from "lucide-react";
-import { ImagePreviewCard } from "./ImagePreviewCard/PreviewCard.comp";
+import { ImagePreviewCard } from "@/components/media/ImagePreviewCard/PreviewCard.comp";
 import exifr from "exifr";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
 const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {
