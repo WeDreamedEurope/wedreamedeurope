@@ -1,21 +1,20 @@
 import MapComponent from "@/components/map";
 
+import FormHeader from "@/components/form/FormHeader";
 import { Button } from "@/components/ui/button";
 import { DateTimeProvider } from "@/context/DateTimeContext";
-import { Calendar1Icon, MapIcon, RadarIcon, X } from "lucide-react";
-import { Noto_Sans_Georgian } from "next/font/google";
 import styles from "@/styles/map.module.css";
-import { useState } from "react";
-import { DatePickerCustom } from "@/components/form/DatePickerCustom";
-import { TimePickerCustom } from "@/components/form/TimePickerCustom";
-import FormHeader from "@/components/form/FormHeader.comp";
+import { Calendar1Icon, MapIcon, RadarIcon } from "lucide-react";
+import { Noto_Sans_Georgian } from "next/font/google";
+import { CSSProperties, useState } from "react";
 const notoGeorgian = Noto_Sans_Georgian({
   variable: "--font-noto-georgian",
   subsets: ["georgian"],
 });
-
+type AnimationState = "running" | "paused";
 const Map = () => {
   const [showSidebar, setShowSidebar] = useState(true);
+  const [animationState, setAnimationState] = useState<AnimationState>("paused");
   return (
     <DateTimeProvider>
       <div className={`w-full h-full ${notoGeorgian.className} flex flex-col `}>
@@ -31,19 +30,34 @@ const Map = () => {
           {/* Map Sidebar */}
           {showSidebar && (
             <aside className={`${styles.mapSidebar}`}>
-              <article className=" flex-grow bg-blue-600   min-w-28 mx-12 p-4 flex items-start justify-center flex-col">
-                <h3 className="font-semibold text-gray-800 text  ">
+              <section className="h-[200px] w-full  p-4 py-6  flex items-center justify-center ">
+                <div
+                  onClick={() => setAnimationState("paused")}
+                  style={
+                    {
+                      "--animation-play-state": animationState,
+                    } as CSSProperties & {"--animation-play-state": AnimationState}
+                  }
+                  className={`h-full w-full bg-black p-4 ${styles["map-footer"]}`}
+                >
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos
+                  ad omnis esse id sunt sint necessitatibus eveniet impedit
+                  natus tenetur.
+                </div>
+              </section>
+              <article className=" flex-grow    min-w-28  p-6 flex items-start justify-center flex-col">
+                <h3 className="font-semibold text-gray-300 text  ">
                   როგორ მოვძებნოთ სასურველი ფოტოები
                 </h3>
                 <div className="flex flex-col mt-3 gap-4 text-base">
                   <div className=" w-full flex items-center gap-3 ">
-                    <span className="text-gray-500 ">
+                    <span className="text-blue-500 ">
                       <MapIcon size={18} />
                     </span>
                     <div>რუკაზე დაკლიკებით აირჩიეთ სასურველი ზუსტი ლოკაცია</div>
                   </div>
-                  <div className=" w-full text-gray-800 inline-flex items-start gap-2 ">
-                    <span className="text-gray-500 translate-y-1 ">
+                  <div className=" w-full text-gray-300 inline-flex items-start gap-2 ">
+                    <span className="text-blue-500 translate-y-1 ">
                       <Calendar1Icon size={18} />
                     </span>
                     <div>
@@ -52,7 +66,7 @@ const Map = () => {
                     </div>
                   </div>
                   <div className=" w-full flex gap-3 items-center ">
-                    <span className="text-gray-500 ">
+                    <span className="text-blue-500 ">
                       <RadarIcon size={18} />
                     </span>
                     <div>
@@ -62,7 +76,9 @@ const Map = () => {
                   </div>
                 </div>
               </article>
-              <div className="   bg-purple-500 w-full min-h-20 flex items-center justify-center">
+              <div
+                className={`bg-gray-900 w-full min-h-20 flex items-center justify-center `}
+              >
                 <Button
                   onClick={() => setShowSidebar(false)}
                   className=""
