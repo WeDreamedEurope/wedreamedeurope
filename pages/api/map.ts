@@ -27,7 +27,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       }
 
       const photosInRadius = await pointsInRadius(centerCoords, Number(radius));
-      return res.status(200).json({ data: photosInRadius });
+      return res.status(200).json(photosInRadius);
     } catch (error) {
       console.error(error);
       return res.status(400).json({ message: 'Invalid JSON in center parameter' });
