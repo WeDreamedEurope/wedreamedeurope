@@ -4,9 +4,7 @@ import FormHeader from "@/components/form/FormHeader";
 import { Button } from "@/components/ui/button";
 import { DateTimeProvider } from "@/context/DateTimeContext";
 import { generateRandomData } from "@/lib/dummygisdata";
-import {
-  Photo_Location_Select
-} from "@/server/gis_query";
+import { Photo_Location_Select } from "@/server/gis_query";
 import { Noto_Sans_Georgian } from "next/font/google";
 import { useState } from "react";
 const notoGeorgian = Noto_Sans_Georgian({
