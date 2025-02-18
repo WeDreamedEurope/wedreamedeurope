@@ -119,7 +119,10 @@ const saveChunk = (
   return chunkPath;
 };
 
-export const cleanupChunks = (metadata: ChunkMetadata, uploadDir: string): void => {
+export const cleanupChunks = (
+  metadata: ChunkMetadata,
+  uploadDir: string
+): void => {
   for (let i = 0; i < parseInt(metadata.totalChunks); i++) {
     const chunkPath = path.join(uploadDir, `${metadata.fileId}-${i}.part`);
     if (fs.existsSync(chunkPath)) {
