@@ -68,8 +68,8 @@ export function ImagePreviewCard({
   const [photoLocation, setPhotoLocation] = useState(location);
   return (
     <>
-      <div className="flex flex-col w-full aspect-video   relative  ">
-        <div className="relative w-full aspect-video rounded-t-lg overflow-hidden">
+      <div className="flex flex-col w-full    relative border-2 border-blue-500  ">
+        <div className="relative w-full aspect-video rounded-t-lg ">
           <Image
             src={url}
             fill
@@ -82,7 +82,7 @@ export function ImagePreviewCard({
             }}
           />
         </div>
-        <footer className="   bg-gray-900 relative w-full ">
+        <footer className="   bg-yellow-900 relative w-full ">
           {status !== "idle" && <ProgressScreen percent={progress} />}
           <div className="flex justify-between items-center p-2">
             <Popover onOpenChange={(e) => console.log(e)}>

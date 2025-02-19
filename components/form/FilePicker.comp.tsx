@@ -3,6 +3,7 @@ import { Upload } from "lucide-react";
 import { ImagePreviewCard } from "@/components/media/ImagePreviewCard/PreviewCard.comp";
 import exifr from "exifr";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
 const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {
@@ -182,7 +183,7 @@ export default function ImagePicker() {
   };
 
   return (
-    <div className="w-full  mx-auto  p-4  relative ">
+    <div className="w-full  sm:mx-auto  p-4  relative mx-0 max-w-full ">
       <input
         className="hidden"
         type="file"
@@ -190,12 +191,6 @@ export default function ImagePicker() {
         multiple
         onChange={handleFileSelect}
       />
-
-      <section className="fixed bottom-0 left-0 w-full px-4 py-2 flex justify-center  items-center bg-black ">
-        <Button variant={"default"} size={"lg"} className="w-full">
-          Upload
-        </Button>
-      </section>
 
       <div
         onDragEnter={handleDragEnter}
@@ -221,37 +216,35 @@ export default function ImagePicker() {
       <section>
         <section className="flex flex-col  items-center mt-4"></section>
 
-    
-    
+        <div></div>
 
-        <div>
-          
-        </div>
-
-        {/* <div className="grid grid-flow-row sm:grid-cols-3 gap-4 mt-4 items-start justify-start ">
+        <div className="grid grid-flow-row sm:grid-cols-3 gap-4 mt-4 items-start justify-start     ">
           {localPreviewUrls.map(
             ({ name, url, DateTaken, location, progress, status }, index) => (
-              <div key={index} className=" w-full aspect-video ">
-                <ImagePreviewCard
+              <div
+                key={index}
+                className="  relative min-w-full   aspect-video flex flex-col   "
+              >
+                <img
+                  src={url}
+                  alt={name}
+                  className="object-cover w-full aspect-video"
+                />
+
+                {/* <ImagePreviewCard
                   status={status}
                   name={name}
                   url={url}
                   DateTaken={DateTaken}
                   location={location}
                   onDelete={() => handleRemoveFile(index)}
+                  onDelete={() => handleRemoveFile(index)}
                   progress={progress}
-                />
+                /> */}
               </div>
             )
           )}
-        </div> */}
-      </section>
-      <section className="fixed bottom-0 left-0 w-full px-4 py-2 flex justify-center  items-center bg-black ">
-        <Button 
-        disabled={selectedFiles.length === 0}
-        variant={"default"} size={"lg"} className="w-full disabled:cursor-not-allowed disabled:opacity-20">
-          Upload
-        </Button>
+        </div>
       </section>
     </div>
   );
