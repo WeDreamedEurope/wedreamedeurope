@@ -120,7 +120,7 @@ export default function ImagePicker() {
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     const uploadId = Date.now().toString(); // Simple upload ID
     let chunksUploaded = 0;
-    
+
     updateStatus(index, "uploading");
     for (let chunk = 0; chunk < totalChunks; chunk++) {
       const start = chunk * CHUNK_SIZE;
@@ -162,15 +162,16 @@ export default function ImagePicker() {
     );
   };
 
-
-  const updateStatus = (index: number, newStatus: "success" | "error" | "idle" | "uploading") => {
+  const updateStatus = (
+    index: number,
+    newStatus: "success" | "error" | "idle" | "uploading"
+  ) => {
     setLocalPreviewUrls((prev) =>
       prev.map((file, i) =>
         i === index ? { ...file, status: newStatus } : file
       )
     );
-  }
-
+  };
 
   const uploadImages = async () => {
     const uploades = selectedFiles.map((file, index) =>
@@ -181,7 +182,7 @@ export default function ImagePicker() {
   };
 
   return (
-    <div className="w-full  mx-auto  p-4">
+    <div className="w-full  mx-auto  p-4  relative ">
       <input
         className="hidden"
         type="file"
@@ -189,6 +190,12 @@ export default function ImagePicker() {
         multiple
         onChange={handleFileSelect}
       />
+
+      <section className="fixed bottom-0 left-0 w-full px-4 py-2 flex justify-center  items-center bg-black ">
+        <Button variant={"default"} size={"lg"} className="w-full">
+          Upload
+        </Button>
+      </section>
 
       <div
         onDragEnter={handleDragEnter}
@@ -198,26 +205,30 @@ export default function ImagePicker() {
         onClick={() => inputRef.current?.click()}
         className={`
             ${dragging ? "border-blue-500" : "border-gray-300"}
-            w-full h-48 border-2 border-dashed rounded-lg flex flex-col items-center justify-center curpser-pointer transition-colors`}
+            w-full h-48  border-dashed rounded-lg flex flex-col items-center justify-center curpser-pointer transition-colors`}
       >
         <Upload size={48} />
-        <p className="text-gray-500 text-sm">Click to select a file</p>
+        <Button variant={"ghost"} className="text-blue-300 mt-4">
+          მონიშნე ფოტოები
+        </Button>
+        <article className="flex  gap-2 text-xs text-gray-400 mt-2 opacity-70 ">
+          <div> მაქსიმუმ 10MB.</div>
+          <div> ფორმატი jpeg </div>
+        </article>
+        {/* <p className="text-gray-500 text-sm">Click to select a file</p> */}
       </div>
 
       <section>
-        <h3 className="text-2xl font-semibold capitalize">Selected Photos</h3>
-        <Button
-          onClick={() => uploadImages()}
-          disabled={selectedFiles.length === 0}
-          size={"lg"}
-          variant={"default"}
-          className="items-center flex"
-        >
-          <Upload size={24} className="translate-y-[2px]" />
-          <span> ატვირთვა</span>
-        </Button>
+        <section className="flex flex-col  items-center mt-4"></section>
 
-        <div className="grid grid-cols-3 gap-4 mt-4 items-start justify-start ">
+    
+    
+
+        <div>
+          
+        </div>
+
+        {/* <div className="grid grid-flow-row sm:grid-cols-3 gap-4 mt-4 items-start justify-start ">
           {localPreviewUrls.map(
             ({ name, url, DateTaken, location, progress, status }, index) => (
               <div key={index} className=" w-full aspect-video ">
@@ -233,7 +244,14 @@ export default function ImagePicker() {
               </div>
             )
           )}
-        </div>
+        </div> */}
+      </section>
+      <section className="fixed bottom-0 left-0 w-full px-4 py-2 flex justify-center  items-center bg-black ">
+        <Button 
+        disabled={selectedFiles.length === 0}
+        variant={"default"} size={"lg"} className="w-full disabled:cursor-not-allowed disabled:opacity-20">
+          Upload
+        </Button>
       </section>
     </div>
   );

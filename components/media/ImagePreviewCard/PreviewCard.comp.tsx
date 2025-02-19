@@ -4,11 +4,15 @@ import { ka } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import Modal from "../Moda.com";
-import MapComponent from "../map";
-import { Button } from "../ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import ProgressScreen from "./ProgresScreen.comp";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import MapComponent from "@/components/map";
+import Modal from "@/components/layout/Moda.com";
 type Props = {
   url: string;
   name: string;
@@ -65,7 +69,6 @@ export function ImagePreviewCard({
   return (
     <>
       <div className="flex flex-col w-full aspect-video   relative  ">
-      
         <div className="relative w-full aspect-video rounded-t-lg overflow-hidden">
           <Image
             src={url}
