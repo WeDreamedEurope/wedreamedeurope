@@ -118,40 +118,52 @@ export default function ImagePicker() {
   };
 
   const uploadImage = async (file: File, index: number) => {
+    console.log(`Starting upload for ${file.name}`);
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
-    const uploadId = Date.now().toString(); // Simple upload ID
+    const uploadId = Date.now().toString();
     let chunksUploaded = 0;
 
     updateStatus(index, "uploading");
-    for (let chunk = 0; chunk < totalChunks; chunk++) {
-      const start = chunk * CHUNK_SIZE;
-      const end = Math.min(start + CHUNK_SIZE, file.size);
-      const fileChunk = file.slice(start, end);
+    
+    try {
+      for (let chunk = 1; chunk <= totalChunks; chunk++) {  
+        const start = (chunk - 1) * CHUNK_SIZE;  
+        const end = Math.min(start + CHUNK_SIZE, file.size);
+        const fileChunk = file.slice(start, end);
 
-      const formData = new FormData();
-      formData.append("file", fileChunk);
-      formData.append("fileId", uploadId);
-      formData.append("chunkNumber", chunk.toString());
-      formData.append("totalChunks", totalChunks.toString());
-      formData.append("fileName", file.name);
+        const formData = new FormData();
+        formData.append("file", fileChunk);
+        formData.append("fileId", uploadId);
+        formData.append("chunkNumber", chunk.toString());  
+        formData.append("totalChunks", totalChunks.toString());
+        formData.append("fileName", file.name);
 
-      try {
-        console.log(`Sending Chunk ${chunk + 1} of ${totalChunks} to server`);
+        console.log(`Sending chunk ${chunk} of ${totalChunks} for ${file.name}`);
         const response = await fetch("/api/image-upload", {
           method: "POST",
           body: formData,
         });
-        if (!response.ok) throw new Error("Chunk upload failed");
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(`Chunk upload failed: ${errorData.message || response.statusText}`);
+        }
+
         chunksUploaded++;
         updateProgress(index, Math.round((chunksUploaded / totalChunks) * 100));
-        if (chunk === totalChunks - 1) {
+
+        // Check if this was the final chunk
+        if (chunk === totalChunks) {
           const data = await response.json();
+          console.log(`Upload completed for ${file.name}:`, data);
           updateStatus(index, "success");
           return data;
         }
-      } catch (error) {
-        throw error;
       }
+    } catch (error) {
+      console.error(`Upload failed for ${file.name}:`, error);
+      updateStatus(index, "error");
+      throw error;
     }
   };
 
@@ -250,6 +262,10 @@ export default function ImagePicker() {
       </section>
       <section className="fixed bottom-0 left-0 w-full px-4 py-2 flex justify-center  items-center bg-black ">
         <Button
+
+          onClick={()=>{
+            uploadImages()
+          }}
           disabled={selectedFiles.length === 0}
           variant={"default"}
           size={"lg"}
