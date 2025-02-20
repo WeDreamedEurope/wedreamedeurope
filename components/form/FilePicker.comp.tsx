@@ -192,6 +192,8 @@ export default function ImagePicker() {
         onChange={handleFileSelect}
       />
 
+ 
+
       <div
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
@@ -245,6 +247,16 @@ export default function ImagePicker() {
             )
           )}
         </div>
+      </section>
+      <section className="fixed bottom-0 left-0 w-full px-4 py-2 flex justify-center  items-center bg-black ">
+        <Button
+          disabled={selectedFiles.length === 0}
+          variant={"default"}
+          size={"lg"}
+          className="w-full disabled:cursor-not-allowed disabled:opacity-20"
+        >
+          Upload
+        </Button>
       </section>
     </div>
   );

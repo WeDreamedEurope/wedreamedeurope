@@ -5,6 +5,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --header-height: 56px;
+  --content-area-height: calc(100% - var(--header-height));
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,6 +31,8 @@ body {
 #__next{
   max-width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 @layer base {

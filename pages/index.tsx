@@ -20,13 +20,11 @@ const notoGeorgian = Noto_Sans_Georgian({
 
 export default function Home() {
   return (
-    <div
-      className={` w-full sm:w-[1280px]   mx-0   sm:mx-auto ${notoGeorgian.className}  h-full`}
-    >
-      <header className="bg-gray-950 border-b border-b-blue-500 h-12 flex px-4 items-center justify-between  w-f">
+    <div className={`h-full flex flex-col ${notoGeorgian.className}  `}>
+      <header className="bg-gray-950 border-b border-b-blue-500 h-header-height flex-none flex px-4 items-center justify-between">
         <div>Our Struggle</div>
       </header>
-      <section className="  h-full flex pt-20 ">
+      <section className=" flex-1 flex  overflow-auto">
         
         <ImagePicker />
       </section>
