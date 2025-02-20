@@ -1,9 +1,9 @@
-import { ChangeEvent, useRef, useState, DragEvent } from "react";
-import { Upload } from "lucide-react";
-import { ImagePreviewCard } from "@/components/media/ImagePreviewCard/PreviewCard.comp";
-import exifr from "exifr";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import { format } from "date-fns";
+import { ka } from "date-fns/locale";
+import exifr from "exifr";
+import { Calendar1Icon, MapPin, Upload } from "lucide-react";
+import { ChangeEvent, DragEvent, useRef, useState } from "react";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
 const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {
@@ -124,21 +124,23 @@ export default function ImagePicker() {
     let chunksUploaded = 0;
 
     updateStatus(index, "uploading");
-    
+
     try {
-      for (let chunk = 1; chunk <= totalChunks; chunk++) {  
-        const start = (chunk - 1) * CHUNK_SIZE;  
+      for (let chunk = 1; chunk <= totalChunks; chunk++) {
+        const start = (chunk - 1) * CHUNK_SIZE;
         const end = Math.min(start + CHUNK_SIZE, file.size);
         const fileChunk = file.slice(start, end);
 
         const formData = new FormData();
         formData.append("file", fileChunk);
         formData.append("fileId", uploadId);
-        formData.append("chunkNumber", chunk.toString());  
+        formData.append("chunkNumber", chunk.toString());
         formData.append("totalChunks", totalChunks.toString());
         formData.append("fileName", file.name);
 
-        console.log(`Sending chunk ${chunk} of ${totalChunks} for ${file.name}`);
+        console.log(
+          `Sending chunk ${chunk} of ${totalChunks} for ${file.name}`
+        );
         const response = await fetch("/api/image-upload", {
           method: "POST",
           body: formData,
@@ -146,7 +148,9 @@ export default function ImagePicker() {
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(`Chunk upload failed: ${errorData.message || response.statusText}`);
+          throw new Error(
+            `Chunk upload failed: ${errorData.message || response.statusText}`
+          );
         }
 
         chunksUploaded++;
@@ -204,8 +208,6 @@ export default function ImagePicker() {
         onChange={handleFileSelect}
       />
 
- 
-
       <div
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
@@ -232,18 +234,31 @@ export default function ImagePicker() {
 
         <div></div>
 
-        <div className="grid grid-flow-row sm:grid-cols-3 gap-4 mt-4 items-start justify-start     ">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4 items-start justify-start     ">
           {localPreviewUrls.map(
             ({ name, url, DateTaken, location, progress, status }, index) => (
               <div
                 key={index}
-                className="  relative min-w-full   aspect-video flex flex-col   "
+                className="  relative min-w-full     flex flex-col   items-center    rounded-lg overflow-hidden  border border-gray-800 "
               >
                 <img
                   src={url}
                   alt={name}
-                  className="object-cover w-full aspect-video"
+                  className="object-cover  aspect-square w-full flex-grow flex-shrink"
                 />
+
+                {/* <div className="flex-grow bg-gray-900 w-full  px-3 py-1  flex justify-between items-center">
+                  <div className="flex gap-2">
+                    <Calendar1Icon size={14} />
+                    <div className="text-xs">
+                      {format(DateTaken!, "d MMM, HH:mm", { locale: ka })}
+                    </div>
+                  </div>
+                  <Button className="" size={"icon"} variant={"ghost"}>
+                    <MapPin />
+                  </Button>
+                 
+                </div> */}
 
                 {/* <ImagePreviewCard
                   status={status}
@@ -262,9 +277,8 @@ export default function ImagePicker() {
       </section>
       <section className="fixed bottom-0 left-0 w-full px-4 py-2 flex justify-center  items-center bg-black ">
         <Button
-
-          onClick={()=>{
-            uploadImages()
+          onClick={() => {
+            uploadImages();
           }}
           disabled={selectedFiles.length === 0}
           variant={"default"}
