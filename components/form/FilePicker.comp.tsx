@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { ka } from "date-fns/locale";
 import exifr from "exifr";
-import { Calendar1Icon, MapPin, Upload } from "lucide-react";
+import { Calendar1Icon, MapPin, Trash2Icon, Upload } from "lucide-react";
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
 const CHUNK_SIZE = 750 * 1024; // 750KB chunks
@@ -234,24 +234,38 @@ export default function ImagePicker() {
 
         <div></div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4 items-start justify-start     ">
+        <div className="grid grid-flow-row-dense sm:grid-cols-3 gap-4 mt-4 items-start justify-start     ">
           {localPreviewUrls.map(
             ({ name, url, DateTaken, location, progress, status }, index) => (
               <div
                 key={index}
-                className="  relative min-w-full     flex flex-col   items-center    rounded-lg overflow-hidden  border border-gray-800 "
+                className="  relative min-w-full     flex    items-center gap-2     overflow-hidden  border border-gray-800 "
               >
                 <img
                   src={url}
                   alt={name}
-                  className="object-cover  aspect-square w-full flex-grow flex-shrink"
+                  className="object-cover  aspect-square w-[20%]  flex-shrink"
                 />
 
+                <div className="flex-grow text-gray-300  flex items-center  ">
+                  <div className="space-y-2">
+                    <div className="text-xs line-clamp-1">{name}</div>
+                    <div className="flex gap-4 items-center">
+                      <div className="flex text-[10px]">
+                        {format(DateTaken!, "d MMM, HH:mm", { locale: ka })}
+                      </div>
+                      <div className="text-[10px] font-semibold text-blue-400" >რუკაზე ნახვა</div>
+                    </div>
+                  </div>
+                </div>
+                <div className=" mx-2">
+                  <Trash2Icon size={16} />
+                </div>
                 {/* <div className="flex-grow bg-gray-900 w-full  px-3 py-1  flex justify-between items-center">
                   <div className="flex gap-2">
                     <Calendar1Icon size={14} />
                     <div className="text-xs">
-                      {format(DateTaken!, "d MMM, HH:mm", { locale: ka })}
+                      {format(DateTaken!, "d MMM, HH:mm", { locale: ka });
                     </div>
                   </div>
                   <Button className="" size={"icon"} variant={"ghost"}>
