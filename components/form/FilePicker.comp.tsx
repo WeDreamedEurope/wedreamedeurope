@@ -18,19 +18,15 @@ type ImageMeta = {
 export default function ImagePicker() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [dismissedFiles, setDismissedFiles] = useState<File[]>([]);
   const [localPreviewUrls, setLocalPreviewUrls] = useState<ImageMeta[]>([]);
   const [dragging, setDragging] = useState(false);
 
   const processFiles = async (files: FileList) => {
-    const newFiles = Array.from(files);
-    setSelectedFiles((prev) => [...prev, ...newFiles]);
     console.log("processing file");
     const newPreviewUrls = new Array<ImageMeta>();
-
-    newFiles.map((file) => ({
-      url: URL.createObjectURL(file),
-      name: file.name,
-    }));
+    const okayFiles = new Array<File>();
+    const wrongFiles = new Array<File>();
 
     for (const file of files) {
       try {
@@ -40,7 +36,7 @@ export default function ImagePicker() {
           "GPSLongitude",
         ]);
 
-        if (EXIFData) {
+        if (EXIFData && EXIFData.longitude && EXIFData.longitude) {
           const {
             DateTimeOriginal,
             GPSLatitude,
@@ -48,8 +44,8 @@ export default function ImagePicker() {
             latitude,
             longitude,
           } = EXIFData;
-          console.log(`Extracted EXIF Data`);
-          console.log(latitude, longitude);
+
+          okayFiles.push(file);
           newPreviewUrls.push({
             url: URL.createObjectURL(file),
             name: file.name,
@@ -60,14 +56,7 @@ export default function ImagePicker() {
             status: "idle",
           });
         } else {
-          newPreviewUrls.push({
-            url: URL.createObjectURL(file),
-            name: file.name,
-            DateTaken: null,
-            location: null,
-            progress: 0,
-            status: "idle",
-          });
+          wrongFiles.push(file);
         }
       } catch (error) {
         console.error("Error parsing EXIF:", error);
@@ -75,6 +64,8 @@ export default function ImagePicker() {
     }
 
     setLocalPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
+    setSelectedFiles((prev) => [...prev, ...okayFiles]);
+    setDismissedFiles((prev) => [...prev, ...wrongFiles]);
   };
 
   const handleFileSelect = (event: ChangeEvent) => {
@@ -209,6 +200,11 @@ export default function ImagePicker() {
         onChange={handleFileSelect}
       />
 
+      {dismissedFiles.length > 0 && (
+        <article className=" bg-red-300 text-red-800 rounded-xl p-2 text-xs font-semibold">
+          {dismissedFiles.length} ფაილი უარყოფილია  EXIF მონაცემების არ არსებობის გამო
+        </article>
+      )}
       <div
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
@@ -262,15 +258,24 @@ export default function ImagePicker() {
                   </div>
                 </div>
                 <div className=" mx-2">
-                  <CircularProgress
-                    progress={progress}
-                    size={15}
-                    showPercentage={false}
-                    strokeWidth={2}
-                    progressColor="#2196f3"
-                    backgroundColor="#8dc0eb"
-                    animationDuration={1000}
-                  />
+                  {status == "idle" ? (
+                    <span>
+                      <Trash2Icon
+                        size={15}
+                        onClick={() => handleRemoveFile(index)}
+                      />
+                    </span>
+                  ) : (
+                    <CircularProgress
+                      progress={progress}
+                      size={15}
+                      showPercentage={false}
+                      strokeWidth={2}
+                      progressColor="#2196f3"
+                      backgroundColor="#8dc0eb"
+                      animationDuration={1000}
+                    />
+                  )}
                 </div>
               </div>
             )
