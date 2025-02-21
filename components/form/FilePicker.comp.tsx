@@ -4,6 +4,7 @@ import { ka } from "date-fns/locale";
 import exifr from "exifr";
 import { Calendar1Icon, MapPin, Trash2Icon, Upload } from "lucide-react";
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
+import CircularProgress from "../CircularProgress.comp";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
 const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {
@@ -199,7 +200,7 @@ export default function ImagePicker() {
   };
 
   return (
-    <div className="w-full  sm:mx-auto  p-4  relative mx-0 max-w-full ">
+    <div className="w-full  sm:mx-auto  p-4  relative mx-0 max-w-full  overflow-auto pb-20 ">
       <input
         className="hidden"
         type="file"
@@ -234,7 +235,7 @@ export default function ImagePicker() {
 
         <div></div>
 
-        <div className="grid grid-flow-row-dense sm:grid-cols-3 gap-4 mt-4 items-start justify-start     ">
+        <div className="grid grid-flow-row-dense sm:grid-cols-3 gap-4 mt-4 items-start justify-start mb-10    ">
           {localPreviewUrls.map(
             ({ name, url, DateTaken, location, progress, status }, index) => (
               <div
@@ -254,36 +255,23 @@ export default function ImagePicker() {
                       <div className="flex text-[10px]">
                         {format(DateTaken!, "d MMM, HH:mm", { locale: ka })}
                       </div>
-                      <div className="text-[10px] font-semibold text-blue-400" >რუკაზე ნახვა</div>
+                      <div className="text-[10px] font-semibold text-blue-400">
+                        რუკაზე ნახვა
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div className=" mx-2">
-                  <Trash2Icon size={16} />
+                  <CircularProgress
+                    progress={progress}
+                    size={15}
+                    showPercentage={false}
+                    strokeWidth={2}
+                    progressColor="#2196f3"
+                    backgroundColor="#8dc0eb"
+                    animationDuration={1000}
+                  />
                 </div>
-                {/* <div className="flex-grow bg-gray-900 w-full  px-3 py-1  flex justify-between items-center">
-                  <div className="flex gap-2">
-                    <Calendar1Icon size={14} />
-                    <div className="text-xs">
-                      {format(DateTaken!, "d MMM, HH:mm", { locale: ka });
-                    </div>
-                  </div>
-                  <Button className="" size={"icon"} variant={"ghost"}>
-                    <MapPin />
-                  </Button>
-                 
-                </div> */}
-
-                {/* <ImagePreviewCard
-                  status={status}
-                  name={name}
-                  url={url}
-                  DateTaken={DateTaken}
-                  location={location}
-                  onDelete={() => handleRemoveFile(index)}
-                  onDelete={() => handleRemoveFile(index)}
-                  progress={progress}
-                /> */}
               </div>
             )
           )}
