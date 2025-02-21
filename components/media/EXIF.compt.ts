@@ -91,7 +91,7 @@ export interface MetadataLocation {
   
           const marker = this.view.getUint16(offset);
           if (marker === 0xFFE1) {
-            const length = this.view.getUint16(offset + 2);
+            // const length = this.view.getUint16(offset + 2);
             
             if (!this.isOffsetValid(offset + 4, 4)) break;
   

@@ -1,0 +1,74 @@
+.mapSidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  background-color: var(--background);
+}
+
+@media (min-width: 640px) {
+  .mapSidebar {
+    position: relative;
+    top: unset;
+    left: unset;
+    width: 750px;
+  }
+}
+
+
+.map-footer{
+  position: relative;
+  border-radius: 12px;
+  box-sizing: content-box;
+}
+
+
+
+@property --angel{
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.map-footer::after, .map-footer::before{
+  --angel:0deg;
+  --animation-play-state: running;
+  content: '';
+  position: absolute;
+  background: conic-gradient(from var(--angel), yellow 0%, transparent 70%, transparent	 70%, yellow  100%);
+  /* background: conic-gradient(from var(--angel) at 50% 120%, #e85907, #eb5638, #f83fa4, #a87cff, #00c477, #b8b500, #daac00, #deab02); */
+  border-radius: 12px;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  /* transform: translate(-50%, -50%); */
+  translate: -50% -50%;
+  padding: 3px;
+  box-sizing: content-box;
+  animation: 2s spinner linear infinite;
+  animation-play-state: var(--animation-play-state, running);
+  /* animation-fill-mode: both; */
+  /* animation-play-state: paused; */
+}
+
+.map-footer::before{
+  filter: blur(10px);
+  /* opacity: 0.75; */
+}
+
+@keyframes spinner {
+  from {
+    --angel: 0deg;
+  }
+  to {
+    --angel: 360deg;
+  }
+}

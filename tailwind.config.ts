@@ -9,6 +9,10 @@ export default {
   ],
   theme: {
   	extend: {
+		height: {
+			'header-height': 'var(--header-height)',
+			'content-area-height': 'var(--content-area-height)'	
+		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
