@@ -22,10 +22,9 @@ export default function Home() {
   return (
     <div className={`h-full flex flex-col ${notoGeorgian.className}  `}>
       <header className="bg-gray-950 border-b border-b-blue-500 h-header-height flex-none flex px-4 items-center justify-between">
-        <div>Our Struggle</div>
+        <div>We Dreamed Europe</div>
       </header>
       <section className=" flex-1 flex  overflow-auto">
-        
         <ImagePicker />
       </section>
     </div>
