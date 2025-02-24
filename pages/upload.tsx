@@ -10,6 +10,7 @@ import {
   GetServerSidePropsContext,
   InferGetServerSidePropsType,
 } from "next";
+import SimpleImageUploader from "@/components/form/SimpIMGUploader.comp";
 
 const notoGeorgian = Noto_Sans_Georgian({
   variable: "--font-noto-georgian",
@@ -36,7 +37,7 @@ export default function Home({
     <div className={`h-full flex flex-col ${notoGeorgian.className}  `}>
       <HeaderComp />
       <section className=" flex-1 flex  overflow-auto">
-        <ImagePicker userId={userSession?.user?.id!} />
+        <SimpleImageUploader userId={userSession?.user?.id!} />
       </section>
     </div>
   );
