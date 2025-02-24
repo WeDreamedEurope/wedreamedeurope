@@ -16,21 +16,24 @@ export interface ChunkMetadata {
 interface UploadResult {
   success: boolean;
   message: string;
+  wasFinal: boolean;
 }
 
 // S3 Client initialization
 export const createS3Client = () => {
   if (!process.env.CLOUDFLARE_ACCESS_KEY_ID) {
-    throw new Error('CLOUDFLARE_ACCESS_KEY_ID environment variable is not set');
+    throw new Error("CLOUDFLARE_ACCESS_KEY_ID environment variable is not set");
   }
   if (!process.env.CLOUDFLARE_SECRET_ACCESS_KEY) {
-    throw new Error('CLOUDFLARE_SECRET_ACCESS_KEY environment variable is not set');
+    throw new Error(
+      "CLOUDFLARE_SECRET_ACCESS_KEY environment variable is not set"
+    );
   }
   if (!process.env.CLOUDFLARE_PUBLIC_BUCKET) {
-    throw new Error('CLOUDFLARE_PUBLIC_BUCKET environment variable is not set');
+    throw new Error("CLOUDFLARE_PUBLIC_BUCKET environment variable is not set");
   }
   if (!process.env.S3_ENDPOINT) {
-    throw new Error('S3_ENDPOINT environment variable is not set');
+    throw new Error("S3_ENDPOINT environment variable is not set");
   }
 
   return new S3Client({
@@ -39,7 +42,6 @@ export const createS3Client = () => {
     credentials: {
       accessKeyId: process.env.CLOUDFLARE_ACCESS_KEY_ID!,
       secretAccessKey: process.env.CLOUDFLARE_SECRET_ACCESS_KEY!,
-      
     },
   });
 };
@@ -63,7 +65,10 @@ const parseMultipartFormData = async (buffer: Buffer, boundary: string) => {
       currentPosition += 2;
     }
 
-    const nextBoundaryPosition = buffer.indexOf(boundaryBuffer, currentPosition);
+    const nextBoundaryPosition = buffer.indexOf(
+      boundaryBuffer,
+      currentPosition
+    );
     if (nextBoundaryPosition === -1) break;
 
     const part = buffer.slice(currentPosition, nextBoundaryPosition - 2);
@@ -135,18 +140,18 @@ const cleanupChunks = (metadata: ChunkMetadata, uploadDir: string): void => {
 export const uploadToR2 = async (
   s3Client: S3Client,
   fileBuffer: Buffer,
-  fileName: string
+  fileName: string,
+  userId: string
 ): Promise<void> => {
-  console.log(`Init R2 Upload`)
+  console.log(`Init R2 Upload`);
   const contentType = mime.lookup(fileName) || "application/octet-stream";
-  
+
   const command = new PutObjectCommand({
-    Bucket: process.env.CLOUDFLARE_PUBLIC_BUCKET!, 
-    Key: fileName,
+    Bucket: process.env.CLOUDFLARE_PUBLIC_BUCKET!,
+    Key: `${userId}/${fileName}`,
     Body: fileBuffer,
     ContentType: contentType,
   });
-
   await s3Client.send(command);
 };
 
@@ -158,28 +163,32 @@ const assembleAndUpload = async (
 ): Promise<void> => {
   const chunks: Buffer[] = [];
   const totalChunks = parseInt(metadata.totalChunks);
-  
-  console.log(`Starting file assembly for ${metadata.fileName} (${totalChunks} chunks)`);
-  
+
+  console.log(
+    `Starting file assembly for ${metadata.fileName} (${totalChunks} chunks)`
+  );
+
   for (let i = 1; i <= totalChunks; i++) {
     const chunkPath = path.join(uploadDir, `${metadata.fileId}_${i}`);
     console.log(`Checking for chunk ${i} at: ${chunkPath}`);
-    
+
     if (!fs.existsSync(chunkPath)) {
       throw new Error(`Missing chunk ${i} at path: ${chunkPath}`);
     }
-    
+
     const chunkData = fs.readFileSync(chunkPath);
     console.log(`Read chunk ${i}: ${chunkData.length} bytes`);
     chunks.push(chunkData);
   }
 
   const completeFileBuffer = Buffer.concat(chunks);
-  console.log(`File assembled successfully. Total size: ${completeFileBuffer.length} bytes`);
-  
+  console.log(
+    `File assembled successfully. Total size: ${completeFileBuffer.length} bytes`
+  );
+
   console.log(`Starting R2 upload for ${metadata.fileName}`);
   await uploadToR2(s3Client, completeFileBuffer, metadata.fileName);
-  
+
   console.log(`Upload successful, cleaning up temporary chunks...`);
   cleanupChunks(metadata, uploadDir);
   console.log(`Cleanup complete`);
@@ -194,23 +203,32 @@ const handleChunkUpload = async (
   try {
     const currentChunk = parseInt(metadata.chunkNumber);
     const totalChunks = parseInt(metadata.totalChunks);
-    
+
     console.log(`Processing chunk ${currentChunk} of ${totalChunks}`);
-    
+
     ensureUploadDirectory(uploadDir);
     saveChunk(fileData, metadata, uploadDir);
 
     if (currentChunk === totalChunks) {
-      console.log(`Final chunk received (${currentChunk}/${totalChunks}), starting assembly and upload...`);
+      console.log(
+        `Final chunk received (${currentChunk}/${totalChunks}), starting assembly and upload...`
+      );
       const s3Client = createS3Client();
       await assembleAndUpload(metadata, uploadDir, s3Client);
       return { success: true, message: "File uploaded successfully" };
     }
 
-    return { success: true, message: `Chunk ${currentChunk} of ${totalChunks} uploaded successfully` };
+    return {
+      success: true,
+      message: `Chunk ${currentChunk} of ${totalChunks} uploaded successfully`,
+    };
   } catch (error) {
     console.error("Error handling chunk upload:", error);
-    return { success: false, message: error instanceof Error ? error.message : "Unknown error occurred" };
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Unknown error occurred",
+    };
   }
 };
 
@@ -219,11 +237,6 @@ export const handleUploadRequest = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed" });
-    return;
-  }
-
   try {
     const uploadDir = path.join(process.cwd(), "uploads");
     const contentType = req.headers["content-type"] || "";
@@ -241,10 +254,13 @@ export const handleUploadRequest = async (
     });
 
     const buffer = Buffer.concat(chunks);
-    const { fileData, metadata } = await parseMultipartFormData(buffer, boundary);
-    
+    const { fileData, metadata } = await parseMultipartFormData(
+      buffer,
+      boundary
+    );
+
     const result = await handleChunkUpload(fileData, metadata, uploadDir);
-    
+
     if (result.success) {
       res.status(200).json(result);
     } else {
@@ -252,9 +268,10 @@ export const handleUploadRequest = async (
     }
   } catch (error) {
     console.error("Error processing upload:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: error instanceof Error ? error.message : "Unknown error occurred" 
+    res.status(500).json({
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Unknown error occurred",
     });
   }
 };

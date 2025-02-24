@@ -5,6 +5,10 @@ import db from "@/db/db";
 
 export const authOptions: NextAuthOptions = {
   adapter: DrizzleAdapter(db),
+  session: {
+    strategy: "jwt",
+  },
+  secret: "SomeVerySeriousSecretORWhatever",
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -18,6 +22,15 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+
+  callbacks: {
+    async jwt({ token, user }) {
+      return token;
+    },
+    async session({ session, token }) {
+      return {...session, user: {...session.user, id: token.sub}};
+    },
+  },
 };
 
 export default Nextauth(authOptions);
