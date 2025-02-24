@@ -8,6 +8,20 @@
       "when": 1739882966519,
       "tag": "0000_clear_cable",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1740320674150,
+      "tag": "0001_lowly_annihilus",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1740321220742,
+      "tag": "0002_wet_cerise",
+      "breakpoints": true
     }
   ]
 }
