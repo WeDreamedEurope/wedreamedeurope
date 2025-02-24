@@ -4,9 +4,12 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import { SessionProvider } from "next-auth/react";
 
-export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={session} refetchInterval={0}>
       <Head>
         <meta
           name="viewport"

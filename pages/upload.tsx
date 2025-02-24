@@ -14,13 +14,13 @@ import SimpleImageUploader from "@/components/form/SimpIMGUploader.comp";
 
 const notoGeorgian = Noto_Sans_Georgian({
   variable: "--font-noto-georgian",
-  subsets: ["georgian"],
+  subsets: ["georgian"],  
 });
 
 export default function Home({
   userSession,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  return (
+   return (
     <div className={`h-full flex flex-col ${notoGeorgian.className}  `}>
       <section className=" flex-1 flex  overflow-auto">
         <SimpleImageUploader userId={userSession?.user?.id!} />
