@@ -25,7 +25,7 @@ export default function Home() {
         <Button onClick={() => signIn()}>Log In Baby</Button>
       </header>
       <section className=" flex-1 flex  overflow-auto">
-        <ImagePicker />
+        <ImagePicker userId="" />
       </section>
     </div>
   );

@@ -16,7 +16,6 @@ export interface ChunkMetadata {
 interface UploadResult {
   success: boolean;
   message: string;
-  wasFinal: boolean;
 }
 
 // S3 Client initialization
@@ -140,18 +139,18 @@ const cleanupChunks = (metadata: ChunkMetadata, uploadDir: string): void => {
 export const uploadToR2 = async (
   s3Client: S3Client,
   fileBuffer: Buffer,
-  fileName: string,
-  userId: string
+  fileName: string
 ): Promise<void> => {
   console.log(`Init R2 Upload`);
   const contentType = mime.lookup(fileName) || "application/octet-stream";
 
   const command = new PutObjectCommand({
     Bucket: process.env.CLOUDFLARE_PUBLIC_BUCKET!,
-    Key: `${userId}/${fileName}`,
+    Key: fileName,
     Body: fileBuffer,
     ContentType: contentType,
   });
+
   await s3Client.send(command);
 };
 
@@ -237,6 +236,11 @@ export const handleUploadRequest = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
   try {
     const uploadDir = path.join(process.cwd(), "uploads");
     const contentType = req.headers["content-type"] || "";

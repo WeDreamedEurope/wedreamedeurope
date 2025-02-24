@@ -4,11 +4,7 @@ import { format } from "date-fns";
 import { ka } from "date-fns/locale";
 import exifr from "exifr";
 import { motion } from "framer-motion";
-import {
-  CheckCircleIcon,
-  Trash2Icon,
-  Upload
-} from "lucide-react";
+import { CheckCircleIcon, Trash2Icon, Upload } from "lucide-react";
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import CircularProgress from "../CircularProgress.comp";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
@@ -22,7 +18,7 @@ type ImageMeta = {
   status: "idle" | "uploading" | "success" | "error";
 };
 
-export default function ImagePicker() {
+export default function ImagePicker({ userId }: { userId: string }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [dismissedFiles, setDismissedFiles] = useState<File[]>([]);
@@ -193,8 +189,46 @@ export default function ImagePicker() {
     );
   };
 
+  const betterUpload = async () => {
+    for (let index = 0; index < selectedFiles.length; index++) {
+      const file = selectedFiles[index];
 
-  
+      console.log(file.name);
+      console.log(file.type);
+      const response = await fetch("/api/presign", {
+        method: "POST",
+        body: JSON.stringify({
+          fileName: file.name,
+          fileType: file.type,
+          userID: userId,
+        }),
+      });
+      const data = await response.json();
+      console.log(data);
+      if (data && typeof data === "string") {
+        try {
+          const uploadResponse = await fetch(data, {
+            method: "PUT",
+            body: file,
+            headers: {
+              "Content-Type": file.type,
+            },
+          });
+          if (uploadResponse.ok) {
+            console.log("Image uploaded successfully");
+            console.log(uploadResponse.status);
+            console.log(uploadResponse.statusText);
+          } else {
+            console.log(`Some Error Happened`);
+            console.log(uploadResponse);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
+  };
+
   const uploadImages = async () => {
     setInternalState("uploading");
     const uploades = selectedFiles.map((file, index) =>
@@ -319,7 +353,8 @@ export default function ImagePicker() {
         className="fixed bottom-0 left-0 max-w-2xl  w-full px-4 py-2 flex justify-center  items-center bg-transparent "
       >
         <Button
-          onClick={() => uploadImages()}
+          // onClick={() => uploadImages()}
+          onClick={() => betterUpload()}
           disabled={selectedFiles.length === 0}
           variant={"default"}
           size={"lg"}
