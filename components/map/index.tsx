@@ -1,5 +1,5 @@
+import { Feature, FeatureCollection, Polygon } from "geojson";
 import mapboxgl, { GeoJSONSource, LngLatBounds } from "mapbox-gl";
-import { Feature, Polygon, FeatureCollection } from "geojson";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef } from "react";
 const TOKEN =
@@ -10,6 +10,7 @@ interface MapComponentProps {
   isInteractive: boolean;
   onNewCoordinates: (coordinates: [number, number]) => void;
   points?: [number, number][];
+  selectedPointID?: number | null;
 }
 
 const AT_PARLIAMENT: coord = [44.79855398381976, 41.69672049439785];
@@ -69,9 +70,11 @@ const calculateCircleBounds = (
 const createGeoJSONPoints = (coordinates: [number, number][]) => {
   return {
     type: "FeatureCollection",
-    features: coordinates.map((coord) => ({
+    features: coordinates.map((coord, index) => ({
       type: "Feature",
-      properties: {},
+      properties: {
+        id: index,
+      },
       geometry: {
         type: "Point",
         coordinates: coord,
@@ -85,6 +88,7 @@ export default function MapComponent({
   isInteractive,
   onNewCoordinates,
   points = [],
+  selectedPointID,
 }: MapComponentProps) {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -135,7 +139,12 @@ export default function MapComponent({
         source: "points-source",
         paint: {
           "circle-radius": 4,
-          "circle-color": "#FF0000",
+          "circle-color": [
+            "case",
+            ["boolean", ["feature-state", "selected"], false],
+            "#00FF00",
+            "#FF0000",
+          ],
           "circle-opacity": 0.8,
         },
       });
@@ -162,7 +171,7 @@ export default function MapComponent({
         const bounds = calculateCircleBounds(coordinates, 0.02);
         mapRef.current!.fitBounds(bounds, {
           padding: 50,
-          maxZoom: 25,
+          maxZoom: 15,
           duration: 1000,
         });
       } else {
@@ -176,6 +185,8 @@ export default function MapComponent({
   useEffect(() => {
     if (mapRef.current && points.length > 0) {
       console.log("Updating points:", points);
+    if (mapRef.current && points.length > 0) {
+      console.log(`We Should Display Points!`)
       const source = mapRef.current.getSource("points-source") as GeoJSONSource;
       console.log("Source:", source);
       if (source) {
@@ -186,6 +197,19 @@ export default function MapComponent({
       }
     }
   }, [points]);
+
+  useEffect(() => {
+    if (!mapRef || !mapRef.current || !selectedPointID) return;
+
+    console.log(`We Are Ready To Update Point!`);
+    mapRef.current.setFeatureState(
+      {
+        source: "points-source",
+        id: selectedPointID,
+      },
+      { selected: true }
+    );
+  }, [selectedPointID]);
 
   const getInitialCoordinates = (): [number, number] => {
     return defaultLocation ? defaultLocation : AT_PARLIAMENT;

@@ -51,7 +51,7 @@ const MapTest = () => {
   };
 
   const loadTestImages = () => {
-    const n = 15; // specify the number of items
+    const n = 115; // specify the number of items
     const emptyArray = Array(n)
       .fill("")
       .map((_, i) => testImage);
@@ -65,7 +65,9 @@ const MapTest = () => {
   return (
     <DateTimeProvider>
       <div
+       
         className={`w-full h-full ${notoGeorgian.className} flex flex-col overflow-hidden `}
+      
       >
         <FormHeader />
         {/* <section className="w-full p-4 bg-purple-500 flex gap-4">
