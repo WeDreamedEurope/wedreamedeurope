@@ -22,7 +22,7 @@ const MapTest = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       loadTestImages();
-      console.log(`Now We Are Setting The Images`);  
+      console.log(`Now We Are Setting The Images`);
     }, 5000);
     return () => clearTimeout(timer);
   }, []);
@@ -51,7 +51,7 @@ const MapTest = () => {
   };
 
   const loadTestImages = () => {
-    const n = 115; // specify the number of items
+    const n = 15; // specify the number of items
     const emptyArray = Array(n)
       .fill("")
       .map((_, i) => testImage);
@@ -65,9 +65,7 @@ const MapTest = () => {
   return (
     <DateTimeProvider>
       <div
-       
         className={`w-full h-full ${notoGeorgian.className} flex flex-col overflow-hidden `}
-      
       >
         <FormHeader />
         {/* <section className="w-full p-4 bg-purple-500 flex gap-4">
@@ -89,29 +87,23 @@ const MapTest = () => {
           </section>
           {/* Map Sidebar */}
           <aside className="w-full grid grid-cols-2 bg-black p-4 lg:w-[60%] place-content-start gap-2 overflow-auto pb-32">
-            {loadedImages
-              .map((i, index) => (
-                <div
-                  key={index}
-                  className="w-full aspect-video flex flex-col relative border border-gray-600 "
-                >
-                  <div className="relative  w-full aspect-video">
-                    <Image
-                      src={testImage}
-                      fill
-                      alt=""
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="text-gray-300 font-semibold text-sm px-2 py-2  flex items-center justify-between ">
-                    <div>27.12.1986</div>
-                    <div>~ 4 მეტრში</div>
-                    <div>
-                      <Button size={"sm"}>რუკაზე ნახვა</Button>
-                    </div>
+            {loadedImages.map((i, index) => (
+              <div
+                key={index}
+                className="w-full aspect-video flex flex-col relative border border-gray-600 "
+              >
+                <div className="relative  w-full aspect-video">
+                  <Image src={testImage} fill alt="" className="object-cover" />
+                </div>
+                <div className="text-gray-300 font-semibold text-sm px-2 py-2  flex items-center justify-between ">
+                  <div>27.12.1986</div>
+                  <div>~ 4 მეტრში</div>
+                  <div>
+                    <Button size={"sm"}>რუკაზე ნახვა</Button>
                   </div>
                 </div>
-              ))}
+              </div>
+            ))}
           </aside>
         </section>
       </div>

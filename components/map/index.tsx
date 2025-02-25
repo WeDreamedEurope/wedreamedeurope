@@ -185,15 +185,18 @@ export default function MapComponent({
   useEffect(() => {
     if (mapRef.current && points.length > 0) {
       console.log("Updating points:", points);
-    if (mapRef.current && points.length > 0) {
-      console.log(`We Should Display Points!`)
-      const source = mapRef.current.getSource("points-source") as GeoJSONSource;
-      console.log("Source:", source);
-      if (source) {
-        console.log("%cSetting new data for points-source", "color:green");
-        source.setData(createGeoJSONPoints(points));
-      } else {
-        console.log("%cpoints-source not found", "color:red");
+      if (mapRef.current && points.length > 0) {
+        console.log(`We Should Display Points!`);
+        const source = mapRef.current.getSource(
+          "points-source"
+        ) as GeoJSONSource;
+        console.log("Source:", source);
+        if (source) {
+          console.log("%cSetting new data for points-source", "color:green");
+          source.setData(createGeoJSONPoints(points));
+        } else {
+          console.log("%cpoints-source not found", "color:red");
+        }
       }
     }
   }, [points]);
