@@ -89,7 +89,7 @@ export default function MapComponent({
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapMarker = useRef<mapboxgl.Marker | null>(null);
-
+  const readyToAcceptNewCoordinates = useRef(false);
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -148,8 +148,6 @@ export default function MapComponent({
       .addTo(mapRef.current);
 
     mapRef.current.on("click", (e) => {
-      // mapMarker.current!.setLngLat([e.lngLat.lng, e.lngLat.lat]);
-      // onNewCoordinates([e.lngLat.lng, e.lngLat.lat]);
       const coordinates = [e.lngLat.lng, e.lngLat.lat] as [number, number];
       const circleFeatures = createGeoJSONCircle(coordinates, 0.02);
       const source = mapRef.current?.getSource(
@@ -176,10 +174,15 @@ export default function MapComponent({
   }, []);
 
   useEffect(() => {
-    if (mapRef.current) {
+    if (mapRef.current && points.length > 0) {
+      console.log("Updating points:", points);
       const source = mapRef.current.getSource("points-source") as GeoJSONSource;
+      console.log("Source:", source);
       if (source) {
+        console.log("%cSetting new data for points-source", "color:green");
         source.setData(createGeoJSONPoints(points));
+      } else {
+        console.log("%cpoints-source not found", "color:red");
       }
     }
   }, [points]);

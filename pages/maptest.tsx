@@ -6,7 +6,7 @@ import { Photo_Location_Select } from "@/server/gis_query";
 import { Noto_Sans_Georgian } from "next/font/google";
 import { useEffect, useState } from "react";
 import testImage from "@/public/someimage.jpg";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { Button } from "@/components/ui/button";
 const notoGeorgian = Noto_Sans_Georgian({
   variable: "--font-noto-georgian",
@@ -17,22 +17,15 @@ const MapTest = () => {
     []
   );
 
-  const [loadedImages, setLoadedImages] = useState<string[]>([]);
+  const [loadedImages, setLoadedImages] = useState<StaticImageData[]>([]);
 
   useEffect(() => {
-
-
-
-    const timeoutId = setTimeout(() => {
-      loadTestImages()
-      console.log(`Shit Is Bussing!`)
-    }, Math.random() * 1000 + 2000);
-
-    return () => clearTimeout(timeoutId);
-
-
-
-  });
+    const timer = setTimeout(() => {
+      loadTestImages();
+      console.log(`Now We Are Setting The Images`);  
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const insertDummyData = async () => {
     const dummyData = generateRandomData();
@@ -58,15 +51,22 @@ const MapTest = () => {
   };
 
   const loadTestImages = () => {
-    const n = 5; // specify the number of items
+    const n = 15; // specify the number of items
     const emptyArray = Array(n)
       .fill("")
       .map((_, i) => testImage);
+
+    setPointsToDisplay(
+      generateRandomData(n).map(({ locationTakenAt }) => locationTakenAt)
+    );
+    setLoadedImages(emptyArray);
   };
 
   return (
     <DateTimeProvider>
-      <div className={`w-full h-full ${notoGeorgian.className} flex flex-col overflow-hidden `}>
+      <div
+        className={`w-full h-full ${notoGeorgian.className} flex flex-col overflow-hidden `}
+      >
         <FormHeader />
         {/* <section className="w-full p-4 bg-purple-500 flex gap-4">
           <Button onClick={() => insertDummyData()}>Insert Data</Button>
@@ -82,34 +82,34 @@ const MapTest = () => {
                 [44.76129881033887, 41.718473154007896] as [number, number]
               }
               isInteractive={true}
-              onNewCoordinates={() => { }}
+              onNewCoordinates={() => {}}
             />
           </section>
           {/* Map Sidebar */}
           <aside className="w-full grid grid-cols-2 bg-black p-4 lg:w-[60%] place-content-start gap-2 overflow-auto pb-32">
-            {Array(15).fill(null).map((i, index) =>
-              <div
-                key={i}
-                className="w-full aspect-video flex flex-col relative border border-gray-600 ">
-
+            {loadedImages
+              .map((i, index) => (
                 <div
-                  className="relative  w-full aspect-video"
-                  key={index}>
-                  <Image src={testImage} fill alt="" className="object-cover" />
-
+                  key={index}
+                  className="w-full aspect-video flex flex-col relative border border-gray-600 "
+                >
+                  <div className="relative  w-full aspect-video">
+                    <Image
+                      src={testImage}
+                      fill
+                      alt=""
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="text-gray-300 font-semibold text-sm px-2 py-2  flex items-center justify-between ">
+                    <div>27.12.1986</div>
+                    <div>~ 4 მეტრში</div>
+                    <div>
+                      <Button size={"sm"}>რუკაზე ნახვა</Button>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-gray-300 font-semibold text-sm px-2 py-2  flex items-center justify-between ">
-                  <div>
-                    27.12.1986
-                  </div>
-                  <div>
-                    ~ 4 მეტრში
-                  </div>
-                  <div>
-                    <Button size={'sm'}>რუკაზე ნახვა</Button>
-                  </div>
-                </div>
-              </div>)}
+              ))}
           </aside>
         </section>
       </div>

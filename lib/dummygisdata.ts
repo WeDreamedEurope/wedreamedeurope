@@ -1,6 +1,6 @@
 import { Photo_Location_Insert } from "@/server/gis_query";
 
-export function generateRandomData(): Photo_Location_Insert[] {
+export function generateRandomData(count = 15): Photo_Location_Insert[] {
   const records: Photo_Location_Insert[] = [];
   const centerLat = 44.762327177662875;
   const centerLng = 41.71848662012972;
@@ -51,8 +51,8 @@ export function generateRandomData(): Photo_Location_Insert[] {
     return result;
   }
 
-  // Generate 100 records
-  for (let i = 0; i < 100; i++) {
+  // Generate n Items
+  for (let i = 0; i < count; i++) {
     const randomLocation = randomPointInRadius(centerLat, centerLng, 1); // 1km radius
     const randomDate = randomTimestamp();
     const randomPhotoId = randomString();
