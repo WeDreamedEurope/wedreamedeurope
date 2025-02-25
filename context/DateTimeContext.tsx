@@ -23,6 +23,10 @@ interface DateTimeContextType {
   setMinute: (minutes: string) => void;
   isValidTime: boolean;
   changeTime: (increase: boolean) => void;
+  setLocation: (location: [number, number]) => void;
+  currentLocation: [number, number] | null;
+  setRadius: (radius: number) => void;
+  currentRadius: number;
 }
 
 const DateTimeContext = createContext<DateTimeContextType | undefined>(
@@ -34,6 +38,10 @@ export function DateTimeProvider({ children }: { children: ReactNode }) {
   const [hour, setHour] = useState<string>("");
   const [isValidTime, setIsValidTime] = useState(false);
   const [minute, setMinute] = useState<string>("");
+  const [currentLocation, setLocation] = useState<[number, number] | null>(
+    null
+  );
+  const [currentRadius, setRadius] = useState<number>(10);
   useEffect(() => {
     const validTime = checkTimeValidity(hour, minute);
     if (validTime && isDate(selectedDate)) {
@@ -85,6 +93,10 @@ export function DateTimeProvider({ children }: { children: ReactNode }) {
         setMinute,
         isValidTime,
         changeTime,
+        setLocation,
+        currentLocation,
+        setRadius,
+        currentRadius,
       }}
     >
       {children}
