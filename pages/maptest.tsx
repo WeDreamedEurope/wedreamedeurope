@@ -18,7 +18,7 @@ const MapTest = () => {
   );
 
   const [loadedImages, setLoadedImages] = useState<StaticImageData[]>([]);
-
+  const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
   useEffect(() => {
     const timer = setTimeout(() => {
       loadTestImages();
@@ -77,6 +77,7 @@ const MapTest = () => {
         <section className="w-full h-full mx-auto  flex ">
           <section className="w-full sm:w-[calc(100%-750px)] lg:w-[40%] h-full   relative bg-yellow-300 flex-shrink-0">
             <MapComponent
+              selectedPointID={selectedPointId}
               points={pointsToDisplay}
               defaultLocation={
                 [44.76129881033887, 41.718473154007896] as [number, number]
@@ -89,6 +90,9 @@ const MapTest = () => {
           <aside className="w-full grid grid-cols-2 bg-black p-4 lg:w-[60%] place-content-start gap-2 overflow-auto pb-32">
             {loadedImages.map((i, index) => (
               <div
+
+
+                onClick={()=>setSelectedPointId("1")}
                 key={index}
                 className="w-full aspect-video flex flex-col relative border border-gray-600 "
               >

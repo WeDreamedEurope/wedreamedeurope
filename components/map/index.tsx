@@ -10,7 +10,7 @@ interface MapComponentProps {
   isInteractive: boolean;
   onNewCoordinates: (coordinates: [number, number]) => void;
   points?: [number, number][];
-  selectedPointID?: number | null;
+  selectedPointID: string | null;
 }
 
 const AT_PARLIAMENT: coord = [44.79855398381976, 41.69672049439785];
@@ -67,17 +67,18 @@ const calculateCircleBounds = (
   );
 };
 
-const createGeoJSONPoints = (coordinates: [number, number][]) => {
+const createGeoJSONPoints = (points: [number, number][]) => {
   return {
     type: "FeatureCollection",
-    features: coordinates.map((coord, index) => ({
+    features: points.map((point, index) => ({
       type: "Feature",
+      id: index.toString(), // Add ID at the feature level for feature-state
       properties: {
-        id: index,
+        pointId: index.toString(), // Keep ID in properties for data access
       },
       geometry: {
         type: "Point",
-        coordinates: coord,
+        coordinates: point,
       },
     })),
   } as FeatureCollection;
@@ -93,7 +94,8 @@ export default function MapComponent({
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapMarker = useRef<mapboxgl.Marker | null>(null);
-  const readyToAcceptNewCoordinates = useRef(false);
+  const previousSelectedPointRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -142,7 +144,7 @@ export default function MapComponent({
           "circle-color": [
             "case",
             ["boolean", ["feature-state", "selected"], false],
-            "#00FF00",
+            "purple",
             "#FF0000",
           ],
           "circle-opacity": 0.8,
@@ -183,35 +185,43 @@ export default function MapComponent({
   }, []);
 
   useEffect(() => {
-    if (mapRef.current && points.length > 0) {
+    if (mapRef.current && mapRef.current.isStyleLoaded() && points.length > 0) {
       console.log("Updating points:", points);
-      if (mapRef.current && points.length > 0) {
-        console.log(`We Should Display Points!`);
-        const source = mapRef.current.getSource(
-          "points-source"
-        ) as GeoJSONSource;
-        console.log("Source:", source);
-        if (source) {
-          console.log("%cSetting new data for points-source", "color:green");
-          source.setData(createGeoJSONPoints(points));
-        } else {
-          console.log("%cpoints-source not found", "color:red");
-        }
+      const source = mapRef.current.getSource("points-source") as GeoJSONSource;
+      if (source) {
+        console.log("%cSetting new data for points-source", "color:green");
+        source.setData(createGeoJSONPoints(points));
+      } else {
+        console.log("%cpoints-source not found", "color:red");
       }
     }
   }, [points]);
 
   useEffect(() => {
-    if (!mapRef || !mapRef.current || !selectedPointID) return;
+    if (!mapRef.current || !mapRef.current.isStyleLoaded()) return;
 
-    console.log(`We Are Ready To Update Point!`);
-    mapRef.current.setFeatureState(
-      {
-        source: "points-source",
-        id: selectedPointID,
-      },
-      { selected: true }
-    );
+    // First, clear the previous selection
+    if (previousSelectedPointRef.current) {
+      mapRef.current.setFeatureState(
+        { source: "points-source", id: previousSelectedPointRef.current },
+        { selected: false }
+      );
+    }
+
+    // Then set the new selection
+    if (selectedPointID) {
+      console.log(
+        `%cHighlighting point with ID: ${selectedPointID}`,
+        "color:orange"
+      );
+      mapRef.current.setFeatureState(
+        { source: "points-source", id: selectedPointID },
+        { selected: true }
+      );
+
+      // Update the ref with current selection
+      previousSelectedPointRef.current = selectedPointID;
+    }
   }, [selectedPointID]);
 
   const getInitialCoordinates = (): [number, number] => {
