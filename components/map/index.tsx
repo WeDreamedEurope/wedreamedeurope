@@ -158,7 +158,7 @@ export default function MapComponent({
       .setLngLat(initialLocation)
       .addTo(mapRef.current);
 
-    mapRef.current.on("click", (e) => {
+    mapRef.current.on("dblclick", (e) => {
       const coordinates = [e.lngLat.lng, e.lngLat.lat] as [number, number];
       const circleFeatures = createGeoJSONCircle(coordinates, 0.02);
       const source = mapRef.current?.getSource(
@@ -173,11 +173,34 @@ export default function MapComponent({
         const bounds = calculateCircleBounds(coordinates, 0.02);
         mapRef.current!.fitBounds(bounds, {
           padding: 50,
-          maxZoom: 15,
+          maxZoom: 20,
           duration: 1000,
         });
+        onNewCoordinates(coordinates);
       } else {
         console.log(`There Is No Source!`);
+      }
+    });
+
+    mapRef.current.on("click", "points-layer", (e) => {
+      e.originalEvent.stopPropagation();
+      e.preventDefault();
+      if (e.features && e.features.length > 0) {
+        const feature = e.features[0];
+        const pointID = feature.id?.toString();
+        console.log(`Point ID: ${pointID}`);
+      }
+    });
+
+    mapRef.current.on("mouseenter", "points-layer", (e) => {
+      if (mapRef.current) {
+        mapRef.current.getCanvas().style.cursor = "pointer";
+      }
+    });
+
+    mapRef.current.on("mouseleave", "points-layer", () => {
+      if (mapRef.current) {
+        mapRef.current.getCanvas().style.cursor = "";
       }
     });
 
@@ -185,11 +208,9 @@ export default function MapComponent({
   }, []);
 
   useEffect(() => {
-    if (mapRef.current && mapRef.current.isStyleLoaded() && points.length > 0) {
-      console.log("Updating points:", points);
+    if (mapRef.current && points.length > 0) {
       const source = mapRef.current.getSource("points-source") as GeoJSONSource;
       if (source) {
-        console.log("%cSetting new data for points-source", "color:green");
         source.setData(createGeoJSONPoints(points));
       } else {
         console.log("%cpoints-source not found", "color:red");
@@ -210,10 +231,6 @@ export default function MapComponent({
 
     // Then set the new selection
     if (selectedPointID) {
-      console.log(
-        `%cHighlighting point with ID: ${selectedPointID}`,
-        "color:orange"
-      );
       mapRef.current.setFeatureState(
         { source: "points-source", id: selectedPointID },
         { selected: true }

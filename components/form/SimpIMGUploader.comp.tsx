@@ -43,12 +43,14 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
         ]);
 
         if (EXIFData && EXIFData.longitude && EXIFData.longitude) {
+          console.log(EXIFData);
           const {
             DateTimeOriginal,
             GPSLatitude,
             GPSLongitude,
             latitude,
             longitude,
+            orientation,
           } = EXIFData;
 
           okayFiles.push(file);

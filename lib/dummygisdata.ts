@@ -1,9 +1,14 @@
 import { Photo_Location_Insert } from "@/server/gis_query";
 
-export function generateRandomData(count = 10): Photo_Location_Insert[] {
+export function generateRandomData(
+  count = 10,
+  lat: number,
+  lng: number,
+  radiusInKM = 1
+): Photo_Location_Insert[] {
   const records: Photo_Location_Insert[] = [];
-  const centerLat = 44.762327177662875;
-  const centerLng = 41.71848662012972;
+  // const centerLat = 44.762327177662875;
+  // const centerLng = 41.71848662012972;
   const earthRadiusKm = 6371; // Earth's radius in kilometers
 
   // Helper function to generate a random point within a radius
@@ -53,7 +58,7 @@ export function generateRandomData(count = 10): Photo_Location_Insert[] {
 
   // Generate 100 records
   for (let i = 0; i < count; i++) {
-    const randomLocation = randomPointInRadius(centerLat, centerLng, 1); // 1km radius
+    const randomLocation = randomPointInRadius(lat, lng, radiusInKM); // 1km radius
     const randomDate = randomTimestamp();
     const randomPhotoId = randomString();
 
@@ -67,6 +72,49 @@ export function generateRandomData(count = 10): Photo_Location_Insert[] {
   return records;
 }
 
-// Generate and log the data
-// const randomData = generateRandomData();
-// console.log(JSON.stringify(randomData, null, 2));
+/**
+ * Calculates the distance between two geographic coordinates using the Haversine formula.
+ *
+ * @param {[number, number]} coord1 - First coordinate as [longitude, latitude]
+ * @param {[number, number]} coord2 - Second coordinate as [longitude, latitude]
+ * @returns {number} - Distance in meters
+ */
+export function calculateDistanceInMeters(
+  coord1: [number, number],
+  coord2: [number, number]
+): number {
+  // Earth's radius in meters
+  const earthRadius = 6371000;
+
+  // Convert degrees to radians
+  const toRadians = (degrees: number): number => degrees * (Math.PI / 180);
+
+  // Extract coordinates
+  const [lon1, lat1] = coord1;
+  const [lon2, lat2] = coord2;
+
+  // Calculate differences in coordinates
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lon2 - lon1);
+
+  // Haversine formula
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(lat1)) *
+      Math.cos(toRadians(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  // Calculate distance
+  const distance = earthRadius * c;
+
+  return distance;
+}
+
+// Example usage:
+// const tbilisiCenter: [number, number] = [44.79855, 41.69672]; // [longitude, latitude]
+// const rustaveli: [number, number] = [44.79320, 41.70129];     // [longitude, latitude]
+// const distance = calculateDistanceInMeters(tbilisiCenter, rustaveli);
+// console.log(`Distance: ${distance.toFixed(2)} meters`);

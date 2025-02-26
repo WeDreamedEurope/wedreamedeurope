@@ -1,7 +1,10 @@
 import FormHeader from "@/components/form/FormHeader";
 import MapComponent from "@/components/map";
 import { DateTimeProvider } from "@/context/DateTimeContext";
-import { generateRandomData } from "@/lib/dummygisdata";
+import {
+  calculateDistanceInMeters,
+  generateRandomData,
+} from "@/lib/dummygisdata";
 import { Photo_Location_Select } from "@/server/gis_query";
 import { Noto_Sans_Georgian } from "next/font/google";
 import { useEffect, useState } from "react";
@@ -19,24 +22,6 @@ const MapTest = () => {
 
   const [loadedImages, setLoadedImages] = useState<StaticImageData[]>([]);
   const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      loadTestImages();
-      console.log(`Now We Are Setting The Images`);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const insertDummyData = async () => {
-    const dummyData = generateRandomData();
-    const response = await fetch("/api/map", {
-      method: "post",
-      body: JSON.stringify(dummyData),
-    });
-    const data = await response.json();
-
-    console.log(data);
-  };
 
   const LoadConfigData = async () => {
     const params = new URLSearchParams({
@@ -50,16 +35,24 @@ const MapTest = () => {
     setPointsToDisplay(data.map(({ locationTakenAt }) => locationTakenAt));
   };
 
-  const loadTestImages = () => {
-    const n = 15; // specify the number of items
+  const loadTestImages = (coordinates: [number, number]) => {
+    const n = 5; // specify the number of items
     const emptyArray = Array(n)
       .fill("")
       .map((_, i) => testImage);
 
-    setPointsToDisplay(
-      generateRandomData(n).map(({ locationTakenAt }) => locationTakenAt)
-    );
+    console.log(`YO I Hear You!`);
     setLoadedImages(emptyArray);
+    const randomPoints = generateRandomData(
+      n,
+      coordinates[0],
+      coordinates[1],
+      0.05
+    ).map(({ locationTakenAt }) => locationTakenAt);
+    console.log(
+      randomPoints.map((point) => calculateDistanceInMeters(coordinates, point))
+    );
+    setPointsToDisplay(randomPoints);
   };
 
   return (
@@ -83,18 +76,16 @@ const MapTest = () => {
                 [44.76129881033887, 41.718473154007896] as [number, number]
               }
               isInteractive={true}
-              onNewCoordinates={() => {}}
+              onNewCoordinates={(arg) => loadTestImages(arg)}
             />
           </section>
           {/* Map Sidebar */}
           <aside className="w-full grid grid-cols-2 bg-black p-4 lg:w-[60%] place-content-start gap-2 overflow-auto pb-32">
             {loadedImages.map((i, index) => (
               <div
-
-
-                onClick={()=>setSelectedPointId("1")}
+                onClick={() => setSelectedPointId(index.toString())}
                 key={index}
-                className="w-full aspect-video flex flex-col relative border border-gray-600 "
+                className="w-full aspect-video flex flex-col relative border border-gray-600 hover:cursor-pointer "
               >
                 <div className="relative  w-full aspect-video">
                   <Image src={testImage} fill alt="" className="object-cover" />
