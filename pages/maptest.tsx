@@ -1,28 +1,21 @@
 import FormHeader from "@/components/form/FormHeader";
 import MapComponent from "@/components/map";
+import MapSidebar from "@/components/map/Sidebar/Sidebar.comp";
 import { DateTimeProvider } from "@/context/DateTimeContext";
-import {
-  calculateDistanceInMeters,
-  generateRandomData,
-} from "@/lib/dummygisdata";
+import { MapProvider, useMapContext } from "@/context/MapContenxt";
+import { generateRandomData } from "@/lib/dummygisdata";
+import testImage from "@/public/someimage.jpg";
 import { Photo_Location_Select } from "@/server/gis_query";
 import { Noto_Sans_Georgian } from "next/font/google";
-import { useEffect, useState } from "react";
-import testImage from "@/public/someimage.jpg";
-import Image, { StaticImageData } from "next/image";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 const notoGeorgian = Noto_Sans_Georgian({
   variable: "--font-noto-georgian",
   subsets: ["georgian"],
 });
 const MapTest = () => {
-  const [pointsToDisplay, setPointsToDisplay] = useState<[number, number][]>(
-    []
-  );
-
-  const [loadedImages, setLoadedImages] = useState<StaticImageData[]>([]);
+  const [loadedImages, setLoadedImages] = useState<Photo_Location_Select[]>([]);
   const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
-
+  const { setPointsToDisplay, pointsToDisplay } = useMapContext();
   const LoadConfigData = async () => {
     const params = new URLSearchParams({
       center: JSON.stringify([44.76129881033887, 41.718473154007896]),
@@ -41,68 +34,52 @@ const MapTest = () => {
       .fill("")
       .map((_, i) => testImage);
 
-    console.log(`YO I Hear You!`);
-    setLoadedImages(emptyArray);
     const randomPoints = generateRandomData(
       n,
       coordinates[0],
       coordinates[1],
       0.05
-    ).map(({ locationTakenAt }) => locationTakenAt);
-    console.log(
-      randomPoints.map((point) => calculateDistanceInMeters(coordinates, point))
     );
-    setPointsToDisplay(randomPoints);
+
+    const images = emptyArray.map<Photo_Location_Select>((_, index) => ({
+      dateTakenAt: randomPoints[index]!.dateTakenAt!,
+      id: index,
+      locationTakenAt: randomPoints[index]!.locationTakenAt!,
+      photoId: index.toString(),
+    }));
+    setLoadedImages(images);
   };
 
   return (
-    <DateTimeProvider>
-      <div
-        className={`w-full h-full ${notoGeorgian.className} flex flex-col overflow-hidden `}
-      >
-        <FormHeader />
-        {/* <section className="w-full p-4 bg-purple-500 flex gap-4">
-          <Button onClick={() => insertDummyData()}>Insert Data</Button>
-          <Button variant={"secondary"} onClick={() => LoadConfigData()}>
-            Load Points
-          </Button>
-        </section> */}
-        <section className="w-full h-full mx-auto  flex ">
-          <section className="w-full sm:w-[calc(100%-750px)] lg:w-[40%] h-full   relative bg-yellow-300 flex-shrink-0">
-            <MapComponent
-              selectedPointID={selectedPointId}
-              points={pointsToDisplay}
-              defaultLocation={
-                [44.76129881033887, 41.718473154007896] as [number, number]
-              }
-              isInteractive={true}
-              onNewCoordinates={(arg) => loadTestImages(arg)}
-            />
+    <MapProvider>
+      <DateTimeProvider>
+        <div
+          className={`w-full h-full ${notoGeorgian.className} flex flex-col overflow-hidden `}
+        >
+          <FormHeader />
+
+          <section className="w-full h-full mx-auto  flex ">
+            <section className="w-full sm:w-[calc(100%-750px)] lg:w-[40%] h-full   relative bg-yellow-300 flex-shrink-0">
+              <MapComponent
+                selectedPointID={selectedPointId}
+                points={pointsToDisplay}
+                defaultLocation={
+                  [44.76129881033887, 41.718473154007896] as [number, number]
+                }
+                isInteractive={true}
+                onNewCoordinates={(arg) => loadTestImages(arg)}
+              />
+            </section>
+            <aside className="w-full bg-black  lg:w-[60%]  overflow-auto">
+            
+            <MapSidebar photos={loadedImages} />
+
+            </aside>
+            {/* Map Sidebar */}
           </section>
-          {/* Map Sidebar */}
-          <aside className="w-full grid grid-cols-2 bg-black p-4 lg:w-[60%] place-content-start gap-2 overflow-auto pb-32">
-            {loadedImages.map((i, index) => (
-              <div
-                onClick={() => setSelectedPointId(index.toString())}
-                key={index}
-                className="w-full aspect-video flex flex-col relative border border-gray-600 hover:cursor-pointer "
-              >
-                <div className="relative  w-full aspect-video">
-                  <Image src={testImage} fill alt="" className="object-cover" />
-                </div>
-                <div className="text-gray-300 font-semibold text-sm px-2 py-2  flex items-center justify-between ">
-                  <div>27.12.1986</div>
-                  <div>~ 4 მეტრში</div>
-                  <div>
-                    <Button size={"sm"}>რუკაზე ნახვა</Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </aside>
-        </section>
-      </div>
-    </DateTimeProvider>
+        </div>
+      </DateTimeProvider>
+    </MapProvider>
   );
 };
 
