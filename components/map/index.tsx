@@ -172,11 +172,23 @@ export default function MapComponent({
 
     // Then set the new selection
     if (selectedPointId) {
+      const source = mapRef.current.getSource("points-source") as GeoJSONSource;
+      const searialized = source.serialize().data as FeatureCollection;
+      const foundOne = searialized.features.find(
+        (f) => f.id === selectedPointId
+      ) as Feature;
+
+      if (foundOne) {
+        mapRef.current.flyTo({
+          // @ts-ignore
+          center: foundOne.geometry.coordinates,
+        });
+      }
+
       mapRef.current.setFeatureState(
         { source: "points-source", id: selectedPointId },
         { selected: true }
       );
-
       // Update the ref with current selection
       previousSelectedPointRef.current = selectedPointId;
     }
