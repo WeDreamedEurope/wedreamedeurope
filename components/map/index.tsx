@@ -23,8 +23,12 @@ export default function MapComponent({
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapMarker = useRef<mapboxgl.Marker | null>(null);
   const previousSelectedPointRef = useRef<string | null>(null);
-  const { pointsToDisplay, setSelectedLocation, selectedPointId } =
-    useMapContext();
+  const {
+    pointsToDisplay,
+    setSelectedLocation,
+    selectedPointId,
+    setHoveredPointId,
+  } = useMapContext();
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -135,7 +139,14 @@ export default function MapComponent({
 
     mapRef.current.on("mouseenter", "points-layer", (e) => {
       if (mapRef.current) {
+        e.originalEvent.stopPropagation();
         mapRef.current.getCanvas().style.cursor = "pointer";
+        if (e.features && e.features.length > 0) {
+          const feature = e.features[0];
+          const pointID = feature.id?.toString();
+          if (pointID) setHoveredPointId(pointID);
+          console.log(`Hovering over point ID: ${pointID}`);
+        }
       }
     });
 

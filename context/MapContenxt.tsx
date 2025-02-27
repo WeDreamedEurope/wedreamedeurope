@@ -9,6 +9,8 @@ interface IMapContext {
   setSelectedPointId: (id: string) => void;
   debugText?: string;
   setDebugText: (text: string) => void;
+  hoveredPointId: string | null;
+  setHoveredPointId: (pointId: string) => void;
 }
 
 const MapContext = createContext<IMapContext | undefined>(undefined);
@@ -17,6 +19,7 @@ export const MapProvider = ({ children }: { children: ReactNode }) => {
   const [selectedLocation, setSelectedLocation] = useState<
     [number, number] | null
   >(null);
+  const [hoveredPointId, setHoveredPointId] = useState<string | null>(null);
   const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
   const [pointsToDisplay, setPointsToDisplay] = useState<[number, number][]>(
     []
@@ -34,6 +37,8 @@ export const MapProvider = ({ children }: { children: ReactNode }) => {
         setPointsToDisplay,
         setDebugText,
         debugText,
+        hoveredPointId,
+        setHoveredPointId,
       }}
     >
       {children}

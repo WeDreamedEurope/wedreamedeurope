@@ -19,7 +19,7 @@ const SidebarGallery = () => {
   const { setSelectedPointId, selectedLocation, setPointsToDisplay } =
     useMapContext();
   const [photos, setPhotos] = useState<Photo_Location_Client[]>([]);
-  
+
   useEffect(() => {
     if (selectedLocation) {
       const randomPhotos = randomPhotosGenerator(selectedLocation);
