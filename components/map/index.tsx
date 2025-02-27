@@ -40,7 +40,7 @@ export default function MapComponent({
       center: initialLocation,
       zoom: 15,
       interactive: isInteractive,
-      // doubleClickZoom:false
+      doubleClickZoom: false,
     });
 
     mapRef.current.on("load", () => {
@@ -105,11 +105,6 @@ export default function MapComponent({
           features: [circleFeatures],
         });
 
-        // mapRef.current?.flyTo({
-        //   center: coordinates,
-        //   zoom: 20,
-        //   essential: true,
-        // });
         const bounds = calculateCircleBounds(coordinates, 0.02);
         mapRef.current!.fitBounds(bounds, {
           padding: 25,
@@ -121,7 +116,6 @@ export default function MapComponent({
           setSelectedLocation(coordinates);
           mapRef.current?.doubleClickZoom.enable();
         });
-        // mapRef.current?.doubleClickZoom.enable()
       } else {
         console.log(`There Is No Source!`);
       }
