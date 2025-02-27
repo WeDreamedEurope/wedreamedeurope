@@ -1,25 +1,23 @@
-import {
-  CalendarIcon,
-  FileWarning,
-  Info,
-  InfoIcon,
-  MapIcon,
-  Triangle,
-  TriangleAlert,
-  WarehouseIcon,
-} from "lucide-react";
+import { useMapContext } from "@/context/MapContenxt";
+import { CalendarIcon, FileWarning, MapIcon } from "lucide-react";
 
 export default function Sidebartutorial() {
+  const { selectedLocation } = useMapContext();
   return (
     <div className="w-full h-full  flex-col  flex items-center justify-center text-gray-200 ">
       <div className="bg-gray-900 p-6">
         <h1 className="font-semibold mb-4">როგორ ვიპოვნოთ ფოტოები</h1>
-        <article className="flex flex-col gap-4 text-sm ">
-          <div className="flex items-center gap-2 text-yellow-200">
+        
+        <article className="flex flex-col gap-4 text-sm transition-colors ">
+          <div
+            className={`flex items-center gap-2 ${
+              selectedLocation ? "text-green-200" : "text-yellow-200"
+            } `}
+          >
             <MapIcon size={18} />
             რუკაზე ორჯერ დაკლიკებით მონიშნეთ სასურველი ლოკაცია
           </div>
-          <div className="flex items-center gap-2 text-yellow-200">
+          <div className="flex items-center gap-2 text-yellow-200 opacity-35">
             <CalendarIcon size={18} />
             აირჩიეთ თვის სასურველი რიცხვი და დრო
           </div>

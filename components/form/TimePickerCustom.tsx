@@ -2,7 +2,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ClockIcon, FastForward, Rewind } from "lucide-react";
 import { useDateTimeContext } from "@/context/DateTimeContext";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useState } from "react";
 
 export const TimePickerCustom = () => {
@@ -18,24 +22,36 @@ export const TimePickerCustom = () => {
 
   const [open, setIsOpen] = useState(false);
 
+  const getInputClass = (conditional: boolean) => {
+    return cn(
+      "w-12 placeholder:text-yellow-100 h-8 bg-yellow-700  text-center  [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-sm",
+      {
+        "bg-green-800 text-green-300": conditional,
+      }
+    );
+  };
+
   const getLabel = () => (hours && minutes ? `${hours}:${minutes}` : "საათი");
 
   const mainContent = () => {
     return (
       <div
         className={cn(
-          "flex items-center gap-2 text-black p-2 rounded-lg focus:outline-yellow-800 transition-colors bg-yellow-950",
+          "flex border border-yellow-900 items-center gap-2 text-black transition-all  rounded-md focus:outline-yellow-800  bg-yellow-200 z-40 ",
           {
-            "bg-green-950": isValidTime,
-            // "opacity-35": !selectedDate,
+            "border-green-900":isValidTime,
+            "bg-green-200": isValidTime,
+            "opacity-35": !selectedDate,
             "pointer-events-none": !selectedDate,
+            "cursor-not-allowed": !selectedDate,
+
           }
         )}
       >
         <Button
-          disabled={!isValidTime}
+          // disabled={!isValidTime}
           title="-10წუთი"
-          className="text-white"
+          className="text-yellow-950"
           variant={"ghost"}
           size={"icon"}
           onClick={(e) => {
@@ -58,13 +74,10 @@ export const TimePickerCustom = () => {
             inputMode="numeric"
             pattern="[0-9]*"
             placeholder="HH"
-            className={cn(
-              "w-12 h-10 bg-yellow-700  text-center  [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-sm",
-              hours !== "" && "bg-green-800 text-green-300"
-            )}
+            className={getInputClass(hours !== "")}
             maxLength={2}
           />
-          <span>:</span>
+          <span className="mx-2 text-gray-400">:</span>
           <input
             value={minutes}
             onChange={(e) => setMinutes(e.target.value)}
@@ -72,17 +85,14 @@ export const TimePickerCustom = () => {
             inputMode="numeric"
             pattern="[0-9]*"
             placeholder="MM"
-            className={cn(
-              "w-12 h-10 bg-yellow-700  text-center  [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-sm",
-              minutes !== "" && "bg-green-800 text-green-300"
-            )}
+            className={getInputClass(minutes !== "")}
             maxLength={2}
           />
         </div>
         <Button
           // disabled={!isValidTime}
           title="+10წუთი"
-          className="text-white disabled:opacity-40"
+          className="text-yellow-950 disabled:opacity-40"
           variant={"ghost"}
           size={"icon"}
           onClick={(e) => {

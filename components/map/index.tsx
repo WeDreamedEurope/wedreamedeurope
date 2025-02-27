@@ -1,9 +1,8 @@
+import { useMapContext } from "@/context/MapContenxt";
 import { Feature, FeatureCollection, Polygon } from "geojson";
 import mapboxgl, { GeoJSONSource, LngLatBounds } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef } from "react";
-const TOKEN =
-  "pk.eyJ1IjoicmVkaG9vZCIsImEiOiJjbTZ3ZHlqeGkwbHRkMmlzODVlcGl5N2RxIn0.ogMd_1w-fwWi24Jz2JktIQ";
 type coord = [number, number];
 interface MapComponentProps {
   defaultLocation: [number, number] | null;
@@ -14,75 +13,6 @@ interface MapComponentProps {
 }
 
 const AT_PARLIAMENT: coord = [44.79855398381976, 41.69672049439785];
-
-const createGeoJSONCircle = (
-  center: [number, number],
-  radiusInKm: number,
-  points = 64
-): Feature<Polygon> => {
-  const coords = {
-    latitude: center[1],
-    longitude: center[0],
-  };
-
-  const km = radiusInKm;
-  const ret: [number, number][] = [];
-  const distanceX = km / (111.32 * Math.cos((coords.latitude * Math.PI) / 180));
-  const distanceY = km / 110.574;
-
-  let theta, x, y;
-  for (let i = 0; i < points; i++) {
-    theta = (i / points) * (2 * Math.PI);
-    x = distanceX * Math.cos(theta);
-    y = distanceY * Math.sin(theta);
-    ret.push([coords.longitude + x, coords.latitude + y]);
-  }
-  ret.push(ret[0]);
-
-  return {
-    type: "Feature",
-    geometry: {
-      type: "Polygon",
-      coordinates: [ret],
-    },
-    properties: {},
-  };
-};
-
-const calculateCircleBounds = (
-  center: [number, number],
-  radiusInKm: number
-): LngLatBounds => {
-  const km = radiusInKm;
-  const lat = center[1];
-  const lng = center[0];
-
-  // Calculate the rough bounds (approximate)
-  const latChange = km / 111.32; // 1 degree of latitude is approximately 111.32 km
-  const lngChange = km / (111.32 * Math.cos((lat * Math.PI) / 180)); // Adjust for latitude
-
-  return new mapboxgl.LngLatBounds(
-    [lng - lngChange, lat - latChange], // Southwest
-    [lng + lngChange, lat + latChange] // Northeast
-  );
-};
-
-const createGeoJSONPoints = (points: [number, number][]) => {
-  return {
-    type: "FeatureCollection",
-    features: points.map((point, index) => ({
-      type: "Feature",
-      id: index.toString(), // Add ID at the feature level for feature-state
-      properties: {
-        pointId: index.toString(), // Keep ID in properties for data access
-      },
-      geometry: {
-        type: "Point",
-        coordinates: point,
-      },
-    })),
-  } as FeatureCollection;
-};
 
 export default function MapComponent({
   defaultLocation,
@@ -95,11 +25,12 @@ export default function MapComponent({
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapMarker = useRef<mapboxgl.Marker | null>(null);
   const previousSelectedPointRef = useRef<string | null>(null);
-
+  const {setDebugText, setSelectedLocation} = useMapContext();
   useEffect(() => {
+    console.log(process.env.MAPBOX_API_KEY!)
     if (!mapContainerRef.current) return;
 
-    mapboxgl.accessToken = TOKEN;
+    mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY!;
     const initialLocation = getInitialCoordinates();
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -107,6 +38,7 @@ export default function MapComponent({
       center: initialLocation,
       zoom: 15,
       interactive: isInteractive,
+      // doubleClickZoom:false
     });
 
     mapRef.current.on("load", () => {
@@ -159,6 +91,7 @@ export default function MapComponent({
       .addTo(mapRef.current);
 
     mapRef.current.on("dblclick", (e) => {
+      mapRef.current?.doubleClickZoom.disable()
       const coordinates = [e.lngLat.lng, e.lngLat.lat] as [number, number];
       const circleFeatures = createGeoJSONCircle(coordinates, 0.02);
       const source = mapRef.current?.getSource(
@@ -170,13 +103,25 @@ export default function MapComponent({
           features: [circleFeatures],
         });
 
+        // mapRef.current?.flyTo({
+        //   center: coordinates,
+        //   zoom: 20,
+        //   essential: true,
+        // });
         const bounds = calculateCircleBounds(coordinates, 0.02);
         mapRef.current!.fitBounds(bounds, {
-          padding: 50,
+          padding: 25,
           maxZoom: 20,
           duration: 1000,
+          
         });
-        onNewCoordinates(coordinates);
+        mapRef.current?.once('moveend',()=>{
+          
+          onNewCoordinates(coordinates);
+          setSelectedLocation(coordinates);
+          mapRef.current?.doubleClickZoom.enable()
+        })
+        // mapRef.current?.doubleClickZoom.enable()
       } else {
         console.log(`There Is No Source!`);
       }
@@ -240,7 +185,75 @@ export default function MapComponent({
       previousSelectedPointRef.current = selectedPointID;
     }
   }, [selectedPointID]);
+  const createGeoJSONCircle = (
+    center: [number, number],
+    radiusInKm: number,
+    points = 64
+  ): Feature<Polygon> => {
+    const coords = {
+      latitude: center[1],
+      longitude: center[0],
+    };
 
+    const km = radiusInKm;
+    const ret: [number, number][] = [];
+    const distanceX =
+      km / (111.32 * Math.cos((coords.latitude * Math.PI) / 180));
+    const distanceY = km / 110.574;
+
+    let theta, x, y;
+    for (let i = 0; i < points; i++) {
+      theta = (i / points) * (2 * Math.PI);
+      x = distanceX * Math.cos(theta);
+      y = distanceY * Math.sin(theta);
+      ret.push([coords.longitude + x, coords.latitude + y]);
+    }
+    ret.push(ret[0]);
+
+    return {
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: [ret],
+      },
+      properties: {},
+    };
+  };
+
+  const calculateCircleBounds = (
+    center: [number, number],
+    radiusInKm: number
+  ): LngLatBounds => {
+    const km = radiusInKm;
+    const lat = center[1];
+    const lng = center[0];
+
+    // Calculate the rough bounds (approximate)
+    const latChange = km / 111.32; // 1 degree of latitude is approximately 111.32 km
+    const lngChange = km / (111.32 * Math.cos((lat * Math.PI) / 180)); // Adjust for latitude
+
+    return new mapboxgl.LngLatBounds(
+      [lng - lngChange, lat - latChange], // Southwest
+      [lng + lngChange, lat + latChange] // Northeast
+    );
+  };
+
+  const createGeoJSONPoints = (points: [number, number][]) => {
+    return {
+      type: "FeatureCollection",
+      features: points.map((point, index) => ({
+        type: "Feature",
+        id: index.toString(), // Add ID at the feature level for feature-state
+        properties: {
+          pointId: index.toString(), // Keep ID in properties for data access
+        },
+        geometry: {
+          type: "Point",
+          coordinates: point,
+        },
+      })),
+    } as FeatureCollection;
+  };
   const getInitialCoordinates = (): [number, number] => {
     return defaultLocation ? defaultLocation : AT_PARLIAMENT;
   };

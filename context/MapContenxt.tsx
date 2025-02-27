@@ -7,16 +7,11 @@ interface IMapContext {
   setPointsToDisplay: (points: [number, number][]) => void;
   selectedPointId: string | null;
   setSelectedPointId: (id: string) => void;
+  debugText?: string;
+  setDebugText: (text: string) => void;
 }
 
-const MapContext = createContext<IMapContext>({
-  selectedLocation: null,
-  setSelectedLocation: () => {},
-  pointsToDisplay: [],
-  selectedPointId: null,
-  setSelectedPointId: () => {},
-  setPointsToDisplay: () => {},
-});
+const MapContext = createContext<IMapContext | undefined>(undefined);
 
 export const MapProvider = ({ children }: { children: ReactNode }) => {
   const [selectedLocation, setSelectedLocation] = useState<
@@ -26,6 +21,7 @@ export const MapProvider = ({ children }: { children: ReactNode }) => {
   const [pointsToDisplay, setPointsToDisplay] = useState<[number, number][]>(
     []
   );
+  const [debugText, setDebugText] = useState<string>("Initial Debug Text");
 
   return (
     <MapContext.Provider
@@ -36,6 +32,8 @@ export const MapProvider = ({ children }: { children: ReactNode }) => {
         selectedPointId,
         setSelectedPointId,
         setPointsToDisplay,
+        setDebugText,
+        debugText,
       }}
     >
       {children}

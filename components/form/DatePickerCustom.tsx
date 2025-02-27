@@ -14,38 +14,37 @@ import { useState } from "react";
 export const DatePickerCustom = () => {
   const { selectedDate, setCurrentDate } = useDateTimeContext();
   const [open, setOpen] = useState(false);
-  
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={"default"}
           className={cn(
-            "sm:w-[280px] justify-start text-left font-normal",
-            !selectedDate && "text-muted-foreground"
+            "sm:w-[280px] justify-start text-left  bg-yellow-200 hover:bg-yellow-300 text-yellow-950 font-semibold border border-yellow-900",
+            {
+              "bg-green-200 text-green-950 border-green-900 hover:bg-green-300": selectedDate,
+            }
           )}
         >
           <CalendarIcon />
           {selectedDate ? (
             format(selectedDate, "PPP")
           ) : (
-            <span>თარიღი</span>
+            <span>აირჩიე თარიღი</span>
           )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto" align="start">
         <Calendar
-          
-          classNames={{
-          
-          }}
+          classNames={{}}
           mode="single"
           selected={selectedDate}
           onSelect={(selected) => {
             setCurrentDate(selected);
-            // setTimeout(() => {
-            //   setOpen(false);
-            // }, 500);
+            setTimeout(() => {
+              setOpen(false);
+            }, 500);
           }}
           initialFocus
         />

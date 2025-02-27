@@ -1,6 +1,6 @@
 import MapComponent from "@/components/map";
 
-import FormHeader from "@/components/form/FormHeader";
+import DateAndTimeForm from "@/components/form/FormHeader";
 import { Button } from "@/components/ui/button";
 import { DateTimeProvider } from "@/context/DateTimeContext";
 import styles from "@/styles/map.module.css";
@@ -18,7 +18,7 @@ const Map = () => {
   return (
     <DateTimeProvider>
       <div className={`w-full h-full ${notoGeorgian.className} flex flex-col `}>
-        <FormHeader />
+        <DateAndTimeForm />
         <section className="w-full h-full mx-auto  flex ">
           <section className="w-full sm:w-[calc(100%-750px)] h-full  flex-shrink relative bg-yellow-300">
             <MapComponent

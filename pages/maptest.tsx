@@ -1,4 +1,4 @@
-import FormHeader from "@/components/form/FormHeader";
+import DateAndTimeForm from "@/components/form/FormHeader";
 import MapComponent from "@/components/map";
 import MapSidebar from "@/components/map/Sidebar/Sidebar.comp";
 import { DateTimeProvider } from "@/context/DateTimeContext";
@@ -15,7 +15,7 @@ const notoGeorgian = Noto_Sans_Georgian({
 const MapTest = () => {
   const [loadedImages, setLoadedImages] = useState<Photo_Location_Select[]>([]);
   const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
-  const { setPointsToDisplay, pointsToDisplay } = useMapContext();
+  
   const LoadConfigData = async () => {
     const params = new URLSearchParams({
       center: JSON.stringify([44.76129881033887, 41.718473154007896]),
@@ -25,7 +25,6 @@ const MapTest = () => {
       method: "get",
     });
     const data = (await response.json()) as Photo_Location_Select[];
-    setPointsToDisplay(data.map(({ locationTakenAt }) => locationTakenAt));
   };
 
   const loadTestImages = (coordinates: [number, number]) => {
@@ -51,35 +50,38 @@ const MapTest = () => {
   };
 
   return (
-    <MapProvider>
-      <DateTimeProvider>
+   <MapProvider>
+     <DateTimeProvider>
         <div
-          className={`w-full h-full ${notoGeorgian.className} flex flex-col overflow-hidden `}
+          className={`w-full h-full ${notoGeorgian.className} flex flex-col overflow-hidden bg-black `}
         >
-          <FormHeader />
+          <DateAndTimeForm />
 
           <section className="w-full h-full mx-auto  flex ">
             <section className="w-full sm:w-[calc(100%-750px)] lg:w-[40%] h-full   relative bg-yellow-300 flex-shrink-0">
               <MapComponent
                 selectedPointID={selectedPointId}
-                points={pointsToDisplay}
+                points={[]}
                 defaultLocation={
                   [44.76129881033887, 41.718473154007896] as [number, number]
                 }
                 isInteractive={true}
-                onNewCoordinates={(arg) => loadTestImages(arg)}
+                onNewCoordinates={(arg) => {
+                  console.log(`We Are Setting Location Baby!`);
+                  loadTestImages(arg);
+                  console.log(arg);
+                  
+                }}
               />
             </section>
             <aside className="w-full bg-black  lg:w-[60%]  overflow-auto">
-            
-            <MapSidebar photos={loadedImages} />
-
+              <MapSidebar photos={loadedImages} />
             </aside>
             {/* Map Sidebar */}
           </section>
         </div>
       </DateTimeProvider>
-    </MapProvider>
+   </MapProvider>
   );
 };
 
