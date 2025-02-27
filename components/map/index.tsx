@@ -18,16 +18,14 @@ export default function MapComponent({
   defaultLocation,
   isInteractive,
   onNewCoordinates,
-  points = [],
-  selectedPointID,
 }: MapComponentProps) {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapMarker = useRef<mapboxgl.Marker | null>(null);
   const previousSelectedPointRef = useRef<string | null>(null);
-  const {setDebugText, setSelectedLocation} = useMapContext();
+  const { pointsToDisplay, setSelectedLocation, selectedPointId } =
+    useMapContext();
   useEffect(() => {
-    console.log(process.env.MAPBOX_API_KEY!)
     if (!mapContainerRef.current) return;
 
     mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY!;
@@ -64,7 +62,7 @@ export default function MapComponent({
       // Add source and layer for points
       mapRef.current!.addSource("points-source", {
         type: "geojson",
-        data: createGeoJSONPoints(points),
+        data: createGeoJSONPoints(pointsToDisplay),
       });
 
       mapRef.current!.addLayer({
@@ -91,7 +89,7 @@ export default function MapComponent({
       .addTo(mapRef.current);
 
     mapRef.current.on("dblclick", (e) => {
-      mapRef.current?.doubleClickZoom.disable()
+      mapRef.current?.doubleClickZoom.disable();
       const coordinates = [e.lngLat.lng, e.lngLat.lat] as [number, number];
       const circleFeatures = createGeoJSONCircle(coordinates, 0.02);
       const source = mapRef.current?.getSource(
@@ -113,14 +111,12 @@ export default function MapComponent({
           padding: 25,
           maxZoom: 20,
           duration: 1000,
-          
         });
-        mapRef.current?.once('moveend',()=>{
-          
+        mapRef.current?.once("moveend", () => {
           onNewCoordinates(coordinates);
           setSelectedLocation(coordinates);
-          mapRef.current?.doubleClickZoom.enable()
-        })
+          mapRef.current?.doubleClickZoom.enable();
+        });
         // mapRef.current?.doubleClickZoom.enable()
       } else {
         console.log(`There Is No Source!`);
@@ -153,15 +149,15 @@ export default function MapComponent({
   }, []);
 
   useEffect(() => {
-    if (mapRef.current && points.length > 0) {
+    if (mapRef.current && pointsToDisplay.length > 0) {
       const source = mapRef.current.getSource("points-source") as GeoJSONSource;
       if (source) {
-        source.setData(createGeoJSONPoints(points));
+        source.setData(createGeoJSONPoints(pointsToDisplay));
       } else {
         console.log("%cpoints-source not found", "color:red");
       }
     }
-  }, [points]);
+  }, [pointsToDisplay]);
 
   useEffect(() => {
     if (!mapRef.current || !mapRef.current.isStyleLoaded()) return;
@@ -175,16 +171,16 @@ export default function MapComponent({
     }
 
     // Then set the new selection
-    if (selectedPointID) {
+    if (selectedPointId) {
       mapRef.current.setFeatureState(
-        { source: "points-source", id: selectedPointID },
+        { source: "points-source", id: selectedPointId },
         { selected: true }
       );
 
       // Update the ref with current selection
-      previousSelectedPointRef.current = selectedPointID;
+      previousSelectedPointRef.current = selectedPointId;
     }
-  }, [selectedPointID]);
+  }, [selectedPointId]);
   const createGeoJSONCircle = (
     center: [number, number],
     radiusInKm: number,

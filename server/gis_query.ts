@@ -2,7 +2,10 @@ import db from "@/db/db";
 import { photoLocations } from "@/drizzle/schema";
 import { sql } from "drizzle-orm";
 
-export type Photo_Location_Select = typeof photoLocations.$inferSelect;
+export type Photo_Location_Client = typeof photoLocations.$inferSelect & {
+  distance: number;
+};
+type Photo_Location_Select = typeof photoLocations.$inferSelect;
 export type Photo_Location_Insert = typeof photoLocations.$inferInsert;
 
 export const InsertGeoInformation = async (
