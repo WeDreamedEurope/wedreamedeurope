@@ -93,7 +93,8 @@ export default function MapComponent({
       .addTo(mapRef.current);
 
     mapRef.current.on("dblclick", (e) => {
-      mapRef.current?.doubleClickZoom.disable();
+      console.log(`Double Clicked!`);
+      // mapRef.current?.doubleClickZoom.disable();
       const coordinates = [e.lngLat.lng, e.lngLat.lat] as [number, number];
       const circleFeatures = createGeoJSONCircle(coordinates, 0.02);
       const source = mapRef.current?.getSource(
@@ -114,7 +115,7 @@ export default function MapComponent({
         mapRef.current?.once("moveend", () => {
           onNewCoordinates(coordinates);
           setSelectedLocation(coordinates);
-          mapRef.current?.doubleClickZoom.enable();
+          // mapRef.current?.doubleClickZoom.enable();
         });
       } else {
         console.log(`There Is No Source!`);
