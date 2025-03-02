@@ -93,7 +93,8 @@ export default function MapComponent({
       .addTo(mapRef.current);
 
     mapRef.current.on("dblclick", (e) => {
-      console.log(`Double Clicked!`);
+      
+      // console.log(`Double Clicked!`);
       // mapRef.current?.doubleClickZoom.disable();
       const coordinates = [e.lngLat.lng, e.lngLat.lat] as [number, number];
       const circleFeatures = createGeoJSONCircle(coordinates, 0.02);
