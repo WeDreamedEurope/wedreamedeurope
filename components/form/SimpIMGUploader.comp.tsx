@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { CheckCircleIcon, Trash2Icon, Upload } from "lucide-react";
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import { ClipLoader } from "react-spinners";
+import UploadPSA from "./UploadPSA.comp";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
 const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {
@@ -161,12 +162,14 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
   };
 
   const betterUpload = async () => {
+    setInternalState("uploading");
     const PromisedUploades = selectedFiles.map((file, index) =>
       singleImageUpload(file, index)
     );
 
     const results = await Promise.allSettled(PromisedUploades);
     console.log(results);
+    setInternalState("success");
   };
 
   const getIcon = (index: number, progress: number) => {
@@ -218,9 +221,11 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
       </div>
 
       <section>
-        <section className="flex flex-col  items-center mt-4"></section>
-
-        <div></div>
+        {localPreviewUrls.length === 0 && (
+          <div>
+            <UploadPSA />
+          </div>
+        )}
 
         <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start mb-10    ">
           {localPreviewUrls.map(
@@ -273,33 +278,24 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
         <Button
           // onClick={() => uploadImages()}
           onClick={() => betterUpload()}
-          disabled={selectedFiles.length === 0}
+          disabled={selectedFiles.length === 0 || internalState === "uploading"}
           variant={"default"}
           size={"lg"}
           className={cn(
-            "w-full disabled:cursor-not-allowed disabled:opacity-20 relative transition-all ",
+            "w-full disabled:cursor-not-allowed disabled:opacity-20 relative transition-all bg-green-800  hover:bg-green-700 ",
             {
-              "bg-green-800":
-                internalState === "uploading" || selectedFiles.length > 0,
-              "hover:bg-green-700":
-                internalState === "uploading" || selectedFiles.length > 0,
-              "text-green-300":
-                internalState === "uploading" || selectedFiles.length > 0,
-              "cursor-not-allowed": internalState === "uploading",
-              "opacity-20": internalState === "uploading",
-              "animate-pulse": internalState === "uploading",
+              "bg-yellow-700 cursor-not-allowed  ":
+                internalState === "uploading",
             }
           )}
         >
-          {/* <div
-            style={
-              { 
-                "--scale": 0.2,
-              } as CSSProperties
-            }
-            className={`${styles.uploadButton}`}
-          /> */}
-          <span>ატვირთვა</span>
+          <span
+            className={`${
+              internalState === "uploading" ? "animate-pulse" : ""
+            }`}
+          >
+            ატვირთვა
+          </span>
         </Button>
       </section>
     </div>
