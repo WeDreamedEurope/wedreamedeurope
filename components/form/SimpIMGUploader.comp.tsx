@@ -181,7 +181,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
   };
 
   return (
-    <div className="w-full  border-yellow-500 max-w-2xl  sm:mx-auto  p-4  relative mx-0   overflow-auto pb-20 ">
+    <div className="w-full   max-w-2xl  sm:mx-auto  p-4  relative mx-0   overflow-auto pb-20 ">
       <input
         className="hidden"
         type="file"

@@ -2,17 +2,27 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-export function withAuth<P extends object>(WrappedComponent: React.ComponentType<P>) {
+// Define the auth configuration interface
+interface AuthConfig {
+  redirectUrl?: string; // Optional redirect URL
+}
+
+// Modify the HOC to accept both AuthConfig and generic props
+export function withAuth<P extends object>(
+  WrappedComponent: React.ComponentType<P>,
+  authConfig: AuthConfig = {} // Default empty config
+) {
   return function WithAuth(props: P) {
     const { data: session, status } = useSession();
     const router = useRouter();
+    const redirectUrl = authConfig.redirectUrl || "/login"; // Use custom URL or default to /login
 
     useEffect(() => {
       if (status === "loading") return;
       if (!session) {
-        router.replace("/login");
+        router.replace(redirectUrl);
       }
-    }, [session, status, router]);
+    }, [session, status, router, redirectUrl]);
 
     if (status === "loading") {
       return (

@@ -27,7 +27,10 @@ export default function Home() {
       <section className="p-16">
         <h2 className="text-5xl font-bold text">We Dreamed Europe</h2>
         <div className="max-w-2xl mt-4 text-base text-gray-300 leading-relaxed space-y-2">
-        ეს პლატფორმა შეიქმნა იმისთვის, რომ დავეხმაროთ ერთმანეთს უსამართლო ჯარიმების გასაჩივრებაში. თუ თვლი, რომ უსაფუძვლოდ დაგაჯარიმეს, აქ შეგიძლია მოიძიო ფოტო და ვიდეო მტკიცებულებები, რომლებიც დაადასტურებენ შენს უდანაშაულობას.
+          ეს პლატფორმა შეიქმნა იმისთვის, რომ დავეხმაროთ ერთმანეთს უსამართლო
+          ჯარიმების გასაჩივრებაში. თუ თვლი, რომ უსაფუძვლოდ დაგაჯარიმეს, აქ
+          შეგიძლია მოიძიო ფოტო და ვიდეო მტკიცებულებები, რომლებიც დაადასტურებენ
+          შენს უდანაშაულობას.
         </div>
       </section>
       <div className="px-16 py-8  text-gray-200 flex gap-6">
@@ -40,9 +43,9 @@ export default function Home() {
           <h2 className="text-xl font-semibold">მოიძიე ფოტო-ვიდეო მასალა</h2>
           <div className="text-sm mt-2 space-y-1 leading-relaxed text-[#e6e7e0] font-medium">
             <p>
-               აირჩიე დრო, მონიშნე ლოკაცია და მიიღე სასურველ დროსა და ადგილზე გადაღებული ფოტო-ვიდეო მასალა
+              აირჩიე დრო, მონიშნე ლოკაცია და მიიღე სასურველ დროსა და ადგილზე
+              გადაღებული ფოტო-ვიდეო მასალა
             </p>
-            
           </div>
           <div className="flex-grow" />
           <footer className="w-full mt-4">
@@ -51,7 +54,6 @@ export default function Home() {
               მოიძიე
             </button>
           </footer>
-
         </article>
         <article className="bg-[#3C3D37] p-4 rounded-lg w-1/2">
           <h5
@@ -62,11 +64,10 @@ export default function Home() {
           <h2 className="text-xl font-semibold">ატვირთე ფოტო-ვიდეო მასალა</h2>
           <div className="text-sm mt-2 space-y-1 leading-relaxed text-[#B3B4AC] font-semibold">
             <p>
-              ჩვენ გადავამუშავებთ EXIF მონაცემებს (გადაღების დრო და ადგილი)  რათა უკანონოდ
-              დაჯარიმებულებმა  ადვილად  მოიძიონ უდანაშაულობის დამამტკიცებელი ფოტო-ვიდეო
-              მასალა
+              ჩვენ გადავამუშავებთ EXIF მონაცემებს (გადაღების დრო და ადგილი) რათა
+              უკანონოდ დაჯარიმებულებმა ადვილად მოიძიონ უდანაშაულობის
+              დამამტკიცებელი ფოტო-ვიდეო მასალა
             </p>
-
           </div>
           <footer className="w-full mt-4">
             <button className="px-3 h-8 gap-2 flex items-center rounded-sm bg-[#66d2ce] text-black font-semibold text-xs hover:bg-[#85DBD8] transition-colors  ">
