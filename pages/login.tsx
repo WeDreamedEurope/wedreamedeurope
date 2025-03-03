@@ -1,4 +1,4 @@
-import { CameraIcon, MapIcon, MapPinCheckIcon, MapPinIcon } from "lucide-react";
+import { CameraIcon, MapPinCheckIcon } from "lucide-react";
 import { Noto_Sans_Georgian } from "next/font/google";
 import Link from "next/link";
 const notoGeorgian = Noto_Sans_Georgian({

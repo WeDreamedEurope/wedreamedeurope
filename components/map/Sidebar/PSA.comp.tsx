@@ -2,17 +2,10 @@ import { useDateTimeContext } from "@/context/DateTimeContext";
 import { useMapContext } from "@/context/MapContenxt";
 import {
   CalendarIcon,
-  CameraIcon,
   Clock,
-  Clock1,
-  Clock10,
-  Clock10Icon,
-  FileWarning,
-  ImageIcon,
   ImagePlayIcon,
-  MapIcon,
+  MapIcon
 } from "lucide-react";
-import { ClockLoader } from "react-spinners";
 
 export default function Sidebartutorial() {
   const { selectedLocation } = useMapContext();

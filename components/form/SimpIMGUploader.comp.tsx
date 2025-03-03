@@ -9,7 +9,7 @@ import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import UploadPSA from "./UploadPSA.comp";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
-const CHUNK_SIZE = 750 * 1024; // 750KB chunks
+// const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {
   url: string;
   name: string;
@@ -51,7 +51,6 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
             GPSLongitude,
             latitude,
             longitude,
-            orientation,
           } = EXIFData;
 
           okayFiles.push(file);
@@ -172,7 +171,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     setInternalState("success");
   };
 
-  const getIcon = (index: number, progress: number) => {
+  const getIcon = (index: number) => {
     if (localPreviewUrls[index].status == "success") {
       // return <CheckIcon size={15} className="text-green-300" />;
       return <CheckCircleIcon className="text-green-300" />;
@@ -204,11 +203,8 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
             ${isDragging ? 'border-blue-500 bg-blue-500 bg-opacity-10' : 'border-gray-600 hover:border-gray-500'} 
             
             transition-all duration-200`}
-          onDragOver={(e) => {
-            e.preventDefault();
-            setIsDragging(true);
-          }}
-          onDragLeave={() => setIsDragging(false)}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
           onDrop={handleDragDrop}
         >
            <>

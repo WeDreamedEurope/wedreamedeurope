@@ -229,15 +229,16 @@ export default function ImagePicker({ userId }: { userId: string }) {
     }
   };
 
-  const uploadImages = async () => {
-    setInternalState("uploading");
-    const uploades = selectedFiles.map((file, index) =>
-      uploadImage(file, index)
-    );
-    const results = await Promise.all(uploades);
-    console.log(results);
-    setInternalState("idle");
-  };
+
+  // const uploadImages = async () => {
+  //   setInternalState("uploading");
+  //   const uploades = selectedFiles.map((file, index) =>
+  //     uploadImage(file, index)
+  //   );
+  //   const results = await Promise.all(uploades);
+  //   console.log(results);
+  //   setInternalState("idle");
+  // };
 
   const getIcon = (index: number, progress: number) => {
     console.log(internalState);

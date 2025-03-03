@@ -1,7 +1,7 @@
-import ImagePicker from "@/components/form/FilePicker.comp";
-import { MagnetIcon, Search, SearchCheck, Upload } from "lucide-react";
+import { SearchCheck, Upload } from "lucide-react";
 import { Noto_Sans_Georgian } from "next/font/google";
 import local from "next/font/local";
+import Link from "next/link";
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
 //   subsets: ["latin"],
@@ -48,11 +48,14 @@ export default function Home() {
             </p>
           </div>
           <div className="flex-grow" />
-          <footer className="w-full mt-4">
-            <button className="px-3 h-8 flex items-center rounded-sm bg-[#66d2ce] text-black font-semibold text-xs hover:bg-[#85DBD8] transition-colors  ">
+          <footer className="w-full mt-4 flex">
+            <Link
+              href={"/maptest"}
+              className="px-3 h-8 flex items-center rounded-sm bg-[#66d2ce] text-black font-semibold text-xs hover:bg-[#85DBD8] transition-colors  "
+            >
               <SearchCheck size={14} />
               მოიძიე
-            </button>
+            </Link>
           </footer>
         </article>
         <article className="bg-[#3C3D37] p-4 rounded-lg w-1/2">
@@ -60,7 +63,7 @@ export default function Home() {
             className={`${BPGDeJavuSans.className} text-[10px] text-blue-300 tracking-wider font-semibold`}
           >
             როგორ შეგიძლია დაგვეხმარო
-          </h5>
+          </h5>  
           <h2 className="text-xl font-semibold">ატვირთე ფოტო-ვიდეო მასალა</h2>
           <div className="text-sm mt-2 space-y-1 leading-relaxed text-[#B3B4AC] font-semibold">
             <p>

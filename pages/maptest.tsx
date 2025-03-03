@@ -2,9 +2,7 @@ import DateAndTimeForm from "@/components/form/FormHeader";
 import MapComponent from "@/components/map";
 import MapSidebar from "@/components/map/Sidebar/Sidebar.comp";
 import { DateTimeProvider } from "@/context/DateTimeContext";
-import { MapProvider, useMapContext } from "@/context/MapContenxt";
-import { generateRandomData } from "@/lib/dummygisdata";
-import testImage from "@/public/someimage.jpg";
+import { MapProvider } from "@/context/MapContenxt";
 import { Photo_Location_Client } from "@/server/gis_query";
 
 import { Noto_Sans_Georgian } from "next/font/google";
@@ -42,7 +40,8 @@ const MapTest = () => {
             </section>
             <aside 
             className="w-full absolute z-50 h-screen     pointer-events-none sm:pointer-events-auto top-0    lg:w-[60%]  overflow-auto sm:relative">
-              <MapSidebar photos={loadedImages} />
+              {/* <MapSidebar photos={loadedImages} /> */}
+              <MapSidebar />
             </aside>
           </section>
         </div>

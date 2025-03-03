@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useMapContext } from "@/context/MapContenxt";
 import {
   calculateDistanceInMeters,
@@ -5,18 +6,15 @@ import {
 } from "@/lib/dummygisdata";
 import { Photo_Location_Client } from "@/server/gis_query";
 import { format } from "date-fns";
-import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
-import testImage from "@/public/someimage.jpg";
-import { Button } from "@/components/ui/button";
 import { ka } from "date-fns/locale";
+import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
 const tempShit =
   "https://images.unsplash.com/photo-1485056981035-7a565c03c6aa?q=80&w=1473&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 const SidebarGallery = () => {
   const { setSelectedPointId, selectedLocation, setPointsToDisplay } =
     useMapContext();
   const [photos, setPhotos] = useState<Photo_Location_Client[]>([]);
-  const [shouldAnimate, setShouldAnimate] = useState(false);
   const randomPhotosGenerator = (location: [number, number]) =>
     generateRandomData(500, 44.762327177662875, 41.71848662012972, 0.5)
       .map<Photo_Location_Client>((i, index) => ({

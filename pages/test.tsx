@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Popover } from "@radix-ui/react-popover";
-import { useEffect } from "react";
 
 export default function Test() {
   const MainContent = () => {

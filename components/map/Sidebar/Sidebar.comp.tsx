@@ -3,11 +3,11 @@ import { useDateTimeContext } from "@/context/DateTimeContext";
 import { useMapContext } from "@/context/MapContenxt";
 import Sidebartutorial from "./PSA.comp";
 import SidebarGallery from "./SidebarGallery.comp";
-type Props = {
-  photos: Photo_Location_Client[];
-};
+// type Props = {
+//   photos: Photo_Location_Client[];
+// };
 
-export default function MapSidebar({ photos }: Props) {
+export default function MapSidebar() {
   const { selectedLocation } = useMapContext();
   const { isValidTime } = useDateTimeContext();
   return (

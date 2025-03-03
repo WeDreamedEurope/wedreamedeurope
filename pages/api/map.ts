@@ -1,11 +1,10 @@
 import {
   getPhotosInRadius,
-  insertPhotoLocations,
-  Photo_Location_Insert,
+  insertPhotoLocations
 } from "@/server/gis_query";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function (req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
     return await postData(req, res);
   } else if (req.method === "GET") {
