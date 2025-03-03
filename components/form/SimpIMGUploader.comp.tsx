@@ -24,7 +24,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [dismissedFiles, setDismissedFiles] = useState<File[]>([]);
   const [localPreviewUrls, setLocalPreviewUrls] = useState<ImageMeta[]>([]);
-  const [dragging, setDragging] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [internalState, setInternalState] = useState<
     "idle" | "selected" | "uploading" | "success" | "error"
   >("idle");
@@ -88,7 +88,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     evt.preventDefault();
     evt.stopPropagation();
     console.log(`Drag Enter`);
-    setDragging(true);
+    setIsDragging(true);
   };
   const handleDragOver = (evt: DragEvent) => {
     evt.preventDefault();
@@ -98,7 +98,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
   const handleDragDrop = (evt: DragEvent) => {
     evt.preventDefault();
     evt.stopPropagation();
-    setDragging(false);
+    setIsDragging(false);
     const { files } = evt.dataTransfer;
 
     if (files && files.length > 0) {
@@ -108,7 +108,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
   const handleDragLeave = (evt: DragEvent) => {
     evt.preventDefault();
     evt.stopPropagation();
-    setDragging(false);
+    setIsDragging(false);
     console.log(`Drag Leave`);
     // console.log(evt.dataTransfer.files);
   };
@@ -199,26 +199,36 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
           გამო
         </article>
       )}
-      <div
-        onDragEnter={handleDragEnter}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDragDrop}
-        onClick={() => inputRef.current?.click()}
-        className={`
-            ${dragging ? "border-blue-500" : "border-gray-300"}
-            w-full h-48  border-dashed rounded-lg flex flex-col items-center justify-center curpser-pointer transition-colors`}
-      >
-        <Upload size={48} />
-        <Button variant={"ghost"} className="text-blue-300 mt-4">
-          მონიშნე ფოტოები
-        </Button>
-        <article className="flex  gap-2 text-xs text-gray-400 mt-2 opacity-70 ">
-          <div> მაქსიმუმ 10MB.</div>
-          <div> ფორმატი jpeg </div>
-        </article>
-        {/* <p className="text-gray-500 text-sm">Click to select a file</p> */}
-      </div>
+      <div 
+          className={`border-2 border-dashed rounded-lg p-8 text-center mb-6 
+            ${isDragging ? 'border-blue-500 bg-blue-500 bg-opacity-10' : 'border-gray-600 hover:border-gray-500'} 
+            
+            transition-all duration-200`}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={handleDragDrop}
+        >
+           <>
+              <Upload className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+              <label htmlFor="file-input" className="cursor-pointer">
+                <span className="bg-blue-600 hover:bg-blue-700 transition px-4 py-2 rounded inline-block mb-4">
+                  აირჩიეთ ფაილი
+                </span>
+                <input 
+                  id="file-input" 
+                  type="file" 
+                  accept=".jpg,.jpeg" 
+                  className="hidden" 
+                  onChange={handleFileSelect}
+                />
+              </label>
+              <p className="text-gray-400">ან ჩააგდეთ ფაილი აქ</p>
+            </>
+        </div>
+        
 
       <section>
         {localPreviewUrls.length === 0 && (
@@ -289,13 +299,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
             }
           )}
         >
-          <span
-            className={`${
-              internalState === "uploading" ? "animate-pulse" : ""
-            }`}
-          >
-            ატვირთვა
-          </span>
+          <span className={`${internalState === 'uploading' ? 'animate-pulse' : ''}`}>ატვირთვა</span>
         </Button>
       </section>
     </div>
