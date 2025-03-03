@@ -15,7 +15,7 @@ export function withAuth<P extends object>(
   return function WithAuth(props: P) {
     const { data: session, status } = useSession();
     const router = useRouter();
-    const redirectUrl = authConfig.redirectUrl || "/login"; // Use custom URL or default to /login
+    const redirectUrl = authConfig.redirectUrl || "/"; // Use custom URL or default to /login
 
     useEffect(() => {
       if (status === "loading") return;
