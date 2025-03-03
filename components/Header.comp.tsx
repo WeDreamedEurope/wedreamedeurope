@@ -1,7 +1,14 @@
+import { ArrowRight, Trash, UserIcon } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { Button } from "./ui/button";
 import Image from "next/image";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import local from "next/font/local";
+import Link from "next/link";
+import { useRouter } from "next/router";
+
+const BPGDeJavuSans = local({
+  src: "./BPGDeJavuSans.woff2",
+});
 
 export default function Header() {
   const { data: session } = useSession();
@@ -24,6 +31,8 @@ export default function Header() {
 }
 
 const UserExists = ({ profileUrl }: { profileUrl: string }) => {
+  const router = useRouter();
+
   return (
     <>
       <Popover>
@@ -35,9 +44,37 @@ const UserExists = ({ profileUrl }: { profileUrl: string }) => {
             <Image src={profileUrl} alt="profile" fill />
           </button>
         </PopoverTrigger>
-        <PopoverContent asChild className="bg-black border-none min-w-[200px] text-gray-200" align="end">
+        <PopoverContent
+          asChild
+          className={`bg-[#47533B] text-sm border-none min-w-[200px] w-auto text-gray-200 h-auto  ${BPGDeJavuSans.className}`}
+          align="end"
+        >
           <div className="flex flex-col gap-2 bg-black">
-            Lorem ipsum dolor sit amet.
+            <Link
+              href={"/profile"}
+              className={`h-10  items-center px-2 gap-2 hover:text-gray-300 ${
+                router.pathname === "/profile" ? "hidden" : "flex"
+              }`}
+            >
+              <UserIcon size={16} />
+              პროფილი
+            </Link>
+            <button
+              onClick={() => signOut()}
+              className="h-10 flex  px-2 gap-2 items-center text-red-400 hover:text-red-500"
+            >
+              <span className="">
+                <Trash size={16} />
+              </span>
+              <span className="">პროფილის წაშლა</span>
+            </button>
+            <button
+              onClick={() => signOut()}
+              className="h-10 flex  px-2 gap-2 items-center hover:text-gray-300"
+            >
+              <ArrowRight size={16} />
+              გამოსვლა
+            </button>
           </div>
         </PopoverContent>
       </Popover>
