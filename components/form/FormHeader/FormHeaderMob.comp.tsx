@@ -52,7 +52,7 @@ export default function FormHeaderMob() {
         <DialogTrigger asChild>
           <Button
             variant={"outline"}
-            className={cn( "bg-purple-600 z-40", {
+            className={cn(" z-40", {
               "border-yellow-400 animate-pulse": !isValidTime || !selectedDate,
               "border-green-400 animate-none bg-green-900":
                 isValidTime && selectedDate,
