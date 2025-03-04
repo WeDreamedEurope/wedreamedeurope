@@ -14,7 +14,7 @@ export default function MapSidebar() {
   const { isValidTime } = useDateTimeContext();
   return (
     <div className="w-full h-full">
-      <header className="w-full  bg-gray-700 ">
+      <header className="w-full    pointer-events-auto bg-gray-800 ">
         <DateAndTimeForm />
       </header>
       {selectedLocation && isValidTime ? (

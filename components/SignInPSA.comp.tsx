@@ -24,7 +24,7 @@ export default function SignInPSA() {
           </div>
         </section>
         <footer className="mt-6 flex w-full items-center justify-center">
-          <Button 
+          <Button
             onClick={() => signIn("google")}
             className="bg-white hover:bg-gray-100 text-gray-800 font-medium py-1.5 px-4 border border-gray-300 rounded-md shadow-sm flex items-center space-x-2 h-10"
           >

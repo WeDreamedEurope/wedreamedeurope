@@ -52,7 +52,7 @@ export default function FormHeaderMob() {
         <DialogTrigger asChild>
           <Button
             variant={"outline"}
-            className={cn({
+            className={cn( "bg-purple-600 z-40", {
               "border-yellow-400 animate-pulse": !isValidTime || !selectedDate,
               "border-green-400 animate-none bg-green-900":
                 isValidTime && selectedDate,
@@ -139,11 +139,12 @@ export default function FormHeaderMob() {
                 className="text-white disabled:opacity-40"
                 variant={"ghost"}
                 size={"icon"}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  changeTime(true);
-                }}
+                // onClick={(e) => {
+                //   e.preventDefault();
+                //   e.stopPropagation();
+                //   changeTime(true);
+                //   console.log(`Change Of Time`)
+                // }}
                 onTouchStart={(e) => {
                   e.preventDefault();
                   changeTime(true);
