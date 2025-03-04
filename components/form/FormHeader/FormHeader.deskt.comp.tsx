@@ -8,7 +8,7 @@ const FomrHeaderDesktop = () => {
 
   const {isValidTime} = useDateTimeContext()
   return (
-    <section className="hidden w-full min-h-20 items-center sm:flex   px-4   sm:gap-6 h-20   ">
+    <section className="hidden w-full min-h-20 items-center sm:flex   px-4   sm:gap-6 h-20    ">
       <div className="  flex-shrink-0">
         <DatePickerCustom />
       </div>

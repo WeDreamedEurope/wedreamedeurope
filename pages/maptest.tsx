@@ -21,7 +21,7 @@ const MapTest = () => {
         <div
           className={`w-full h-full ${notoGeorgian.className} flex flex-col overflow-hidden bg-black `}
         >
-          <DateAndTimeForm />
+          {/* <DateAndTimeForm /> */}
 
           <section className="w-full h-full mx-auto  flex ">
             <section className="w-full sm:w-[calc(100%-750px)] lg:w-[40%] h-full   relative bg-yellow-300 flex-shrink-0">
@@ -38,8 +38,7 @@ const MapTest = () => {
                 }}
               />
             </section>
-            <aside 
-            className="w-full absolute z-50 h-screen     pointer-events-none sm:pointer-events-auto top-0    lg:w-[60%]  overflow-auto sm:relative">
+            <aside className="w-full absolute z-50 h-screen     pointer-events-none sm:pointer-events-auto top-0    lg:w-[60%]  overflow-auto sm:relative">
               {/* <MapSidebar photos={loadedImages} /> */}
               <MapSidebar />
             </aside>

@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useDateTimeContext } from "@/context/DateTimeContext";
 import { useState } from "react";
+import { ka } from "date-fns/locale";
 
 export const DatePickerCustom = () => {
   const { selectedDate, setCurrentDate } = useDateTimeContext();
@@ -29,7 +30,8 @@ export const DatePickerCustom = () => {
         >
           <CalendarIcon />
           {selectedDate ? (
-            format(selectedDate, "PPP")
+            format(selectedDate, "d MMMM", { locale: ka }) 
+            // format(selectedDate, "PPP", {locale:ka})
           ) : (
             <span>აირჩიე თარიღი</span>
           )}
