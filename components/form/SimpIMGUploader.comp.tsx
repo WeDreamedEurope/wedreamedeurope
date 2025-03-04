@@ -267,7 +267,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
                   </div>
                 </div>
                 <div className=" mx-4 w-6 h-6 sm:w-8 sm:h-8">
-                  {getIcon(index, progress)}
+                  {getIcon(index )}
                 </div>
               </motion.div>
             )
