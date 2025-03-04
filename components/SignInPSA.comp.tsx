@@ -4,22 +4,28 @@ import { signIn } from "next-auth/react";
 
 export default function SignInPSA() {
   return (
-    <article className="sm:mx-auto max-w-2xl ">
+    <article className="sm:mx-auto max-w-2xl  ">
       <div className="bg-[#2F3727] text-white p-4 rounded-lg font-semibold">
         <div className="text-center">
           ფოტოების ასატვირთად საჭიროა Google ანგარიშით ავტორიზაცია
         </div>
         <section className="mt-4 text-sm flex flex-col gap-3">
           <div className="flex gap-1 items-center text-gray-100 font-normal">
-            <CheckIcon size={16} />
+            <span className="flex-shrink-0">
+              <CheckIcon size={16} />
+            </span>
             ანგარიში არის სრულიად ანონიმური
           </div>
           <div className="flex gap-1 items-center text-gray-100 font-normal">
-            <CheckIcon size={16} />
+            <span className="flex-shrink-0">
+              <CheckIcon size={16} />
+            </span>
             შეგიძლიათ წაშალოთ ერთი დაკლიკებით
           </div>
-          <div className="flex gap-1 items-center text-gray-100 font-normal">
-            <CheckIcon size={16} />
+          <div className="inline-flex gap-1 items-start text-gray-100 font-normal">
+            <span className="flex-shrink-0">
+              <CheckIcon size={16} />
+            </span>
             მხოლოდ გამოიყენება სპამისგან თავის დასაცავად
           </div>
         </section>

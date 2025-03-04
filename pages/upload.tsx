@@ -1,9 +1,6 @@
 import SimpleImageUploader from "@/components/form/SimpIMGUploader.comp";
 import SignInPSA from "@/components/SignInPSA.comp";
-import { withAuth } from "@/components/WithAuth.com";
-import { Sign } from "crypto";
-import { de } from "date-fns/locale";
-import { CheckIcon, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { Noto_Sans_Georgian } from "next/font/google";
 import { useEffect, useState } from "react";
@@ -44,7 +41,7 @@ function UploadThing() {
         {status === "authenticated" ? (
           <SimpleImageUploader userId={session?.user?.id} />
         ) : (
-          <span className="translate-y-1/4 w-full">
+          <span className="translate-y-1/4 w-full px-4">
             <SignInPSA />
           </span>
         )}
