@@ -93,13 +93,14 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     evt.preventDefault();
     evt.stopPropagation();
     console.log(`Drag Over`);
+    setIsDragging(true);
   };
   const handleDragDrop = (evt: DragEvent) => {
     evt.preventDefault();
     evt.stopPropagation();
     setIsDragging(false);
     const { files } = evt.dataTransfer;
-
+    console.log(`File Was Dropped`);
     if (files && files.length > 0) {
       processFiles(files);
     }
@@ -198,33 +199,39 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
           გამო
         </article>
       )}
-      <div 
-          className={`border-2 border-dashed rounded-lg p-8 text-center mb-6 
-            ${isDragging ? 'border-blue-500 bg-blue-500 bg-opacity-10' : 'border-gray-600 hover:border-gray-500'} 
+      <div
+        className={`border-2 border-dashed rounded-lg p-8 text-center mb-6 
+            ${
+              isDragging
+                ? "border-blue-500 bg-blue-500 bg-opacity-10"
+                : "border-gray-600 hover:border-gray-500"
+            } 
             
             transition-all duration-200`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDragDrop}
-        >
-           <>
-              <Upload className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-              <label htmlFor="file-input" className="cursor-pointer">
-                <span className="bg-blue-600 hover:bg-blue-700 transition px-4 py-2 rounded inline-block mb-4">
-                  აირჩიეთ ფაილი
-                </span>
-                <input 
-                  id="file-input" 
-                  type="file" 
-                  accept=".jpg,.jpeg" 
-                  className="hidden" 
-                  onChange={handleFileSelect}
-                />
-              </label>
-              <p className="text-gray-400">ან ჩააგდეთ ფაილი აქ</p>
-            </>
-        </div>
-        
+        onDragEnter={handleDragEnter}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDragDrop}
+      >
+        <>
+          <Upload className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+          <label htmlFor="file-input" className="cursor-pointer">
+            <span className="bg-blue-600 hover:bg-blue-700 transition px-4 py-2 rounded inline-block mb-4">
+              აირჩიეთ ფაილი
+            </span>
+            <input
+              id="file-input"
+              type="file"
+              accept=".jpg,.jpeg"
+              className="hidden"
+              onChange={handleFileSelect}
+            />
+          </label>
+          <p className="text-gray-400">
+            ან ჩააგდეთ ფაილი აქ {isDragging ? "Yes" : "NO"}
+          </p>
+        </>
+      </div>
 
       <section>
         {localPreviewUrls.length === 0 && (
@@ -267,7 +274,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
                   </div>
                 </div>
                 <div className=" mx-4 w-6 h-6 sm:w-8 sm:h-8">
-                  {getIcon(index )}
+                  {getIcon(index)}
                 </div>
               </motion.div>
             )
@@ -295,7 +302,13 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
             }
           )}
         >
-          <span className={`${internalState === 'uploading' ? 'animate-pulse' : ''}`}>ატვირთვა</span>
+          <span
+            className={`${
+              internalState === "uploading" ? "animate-pulse" : ""
+            }`}
+          >
+            ატვირთვა
+          </span>
         </Button>
       </section>
     </div>
