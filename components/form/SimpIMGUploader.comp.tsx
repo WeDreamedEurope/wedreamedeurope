@@ -200,7 +200,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
         </article>
       )}
       <div
-        className={`border-2 border-dashed rounded-lg p-8 text-center mb-6 
+        className={`border-2 border-dashed rounded-lg p-8 text-center mb-6  transition-colors duration-300
             ${
               isDragging
                 ? "border-blue-500 bg-blue-500 bg-opacity-10"
