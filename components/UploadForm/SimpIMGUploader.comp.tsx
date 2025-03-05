@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { ka } from "date-fns/locale";
 import exifr from "exifr";
 import { AnimatePresence, motion } from "framer-motion";
-import { CheckCircleIcon, Trash2Icon } from "lucide-react";
+import { CheckCircleIcon, Trash, Trash2Icon } from "lucide-react";
 import { ChangeEvent, useRef, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import UploadPSA from "../form/UploadPSA.comp";
@@ -31,7 +31,6 @@ const DissmisedFilesPSA = ({ shouldDisplay }: { shouldDisplay: boolean }) => {
 };
 
 export default function SimpleImageUploader({ userId }: { userId: string }) {
-  const inputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [dismissedFiles, setDismissedFiles] = useState<File[]>([]);
   const [localPreviewUrls, setLocalPreviewUrls] = useState<ImageMeta[]>([]);
@@ -87,13 +86,8 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     setDismissedFiles((prev) => [...prev, ...wrongFiles]);
   };
 
-  const handleFileSelect = (event: ChangeEvent) => {
-    const filez = (event.target as HTMLInputElement).files;
-    if (!filez) return;
-    processFiles(filez);
-  };
-
   const handleRemoveFile = (index: number) => {
+    console.log(`We Should Remove From Index ${index}`);
     setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
     URL.revokeObjectURL(localPreviewUrls[index].url);
     setLocalPreviewUrls((prev) => prev.filter((_, i) => i !== index));
@@ -159,7 +153,12 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     } else if (localPreviewUrls[index].status == "uploading") {
       return <ClipLoader size={24} color="yellow" speedMultiplier={0.25} />;
     } else {
-      return <Trash2Icon className="hover:text-green-300" onClick={() => handleRemoveFile(index)} />;
+      return (
+        <Trash2Icon
+          className="hover:text-green-300"
+          onClick={() => handleRemoveFile(index)}
+        />
+      );
     }
   };
 
@@ -187,12 +186,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
                     duration: 1.2,
                   },
                 }}
-                exit={{
-                  opacity: 0,
-                  transition: {
-                    duration: 1.2,
-                  },
-                }}
+            
                 key={index}
                 className="  relative min-w-full     flex    items-center gap-2     overflow-hidden  border border-gray-800 "
               >
@@ -210,13 +204,20 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
                         {format(DateTaken!, "d MMM, HH:mm", { locale: ka })}
                       </div>
                       <div className="text-[10px] font-semibold text-blue-400">
-                        {status}
+                        {index}
                       </div>
                     </div>
                   </div>
                 </div>
-                <button className=" mx-4 w-6 h-6 sm:w-8 sm:h-8">
-                  {getIcon(index)}
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleRemoveFile(index);
+                  }}
+                  className=" mx-4 w-6 h-6 sm:w-8 sm:h-8"
+                >
+                  <Trash2Icon />
                 </button>
               </motion.div>
             )
