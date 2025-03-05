@@ -1,6 +1,7 @@
 import { AlertCircle } from "lucide-react";
 
-export default function UploadPSA() {
+export default function UploadPSA({shouldDisplay}: {shouldDisplay: boolean}) {
+  if (!shouldDisplay) return null;
   return (
     <div className="flex flex-col gap-2  text-sm leading-relaxed p-4 rounded-md text-yellow-100">
       <div className=" bg-opacity-50 border border-yellow-700 rounded-lg p-4">

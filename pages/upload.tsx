@@ -1,4 +1,4 @@
-import SimpleImageUploader from "@/components/form/SimpIMGUploader.comp";
+import SimpleImageUploader from "@/components/UploadForm/SimpIMGUploader.comp";
 import SignInPSA from "@/components/SignInPSA.comp";
 import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -37,7 +37,7 @@ function UploadThing() {
 
   return (
     <div className={`h-full flex flex-col ${notoGeorgian.className}  `}>
-      <section className=" flex-1 flex  overflow-auto">
+      <section className=" flex-1 flex  ">
         {status === "authenticated" ? (
           <SimpleImageUploader userId={session?.user?.id} />
         ) : (

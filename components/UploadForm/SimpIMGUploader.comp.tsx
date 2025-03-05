@@ -3,11 +3,12 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ka } from "date-fns/locale";
 import exifr from "exifr";
-import { motion } from "framer-motion";
-import { CheckCircleIcon, Trash2Icon, Upload } from "lucide-react";
-import { ChangeEvent, DragEvent, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { CheckCircleIcon, Trash2Icon } from "lucide-react";
+import { ChangeEvent, useRef, useState } from "react";
 import { ClipLoader } from "react-spinners";
-import UploadPSA from "./UploadPSA.comp";
+import UploadPSA from "../form/UploadPSA.comp";
+import UploadForm from "./UploadForm.comp";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
 // const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {
@@ -19,12 +20,21 @@ type ImageMeta = {
   status: "idle" | "uploading" | "success" | "error";
 };
 
+const DissmisedFilesPSA = ({ shouldDisplay }: { shouldDisplay: boolean }) => {
+  return (
+    shouldDisplay && (
+      <article className=" bg-red-300 text-red-800 rounded-xl p-2 text-xs font-semibold">
+        ფაილი უარყოფილია EXIF მონაცემების არ არსებობის გამო
+      </article>
+    )
+  );
+};
+
 export default function SimpleImageUploader({ userId }: { userId: string }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [dismissedFiles, setDismissedFiles] = useState<File[]>([]);
   const [localPreviewUrls, setLocalPreviewUrls] = useState<ImageMeta[]>([]);
-  const [isDragging, setIsDragging] = useState(false);
   const [internalState, setInternalState] = useState<
     "idle" | "selected" | "uploading" | "success" | "error"
   >("idle");
@@ -81,36 +91,6 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     const filez = (event.target as HTMLInputElement).files;
     if (!filez) return;
     processFiles(filez);
-  };
-
-  const handleDragEnter = (evt: DragEvent) => {
-    evt.preventDefault();
-    evt.stopPropagation();
-    console.log(`Drag Enter`);
-    setIsDragging(true);
-  };
-  const handleDragOver = (evt: DragEvent) => {
-    evt.preventDefault();
-    evt.stopPropagation();
-    console.log(`Drag Over`);
-    setIsDragging(true);
-  };
-  const handleDragDrop = (evt: DragEvent) => {
-    evt.preventDefault();
-    evt.stopPropagation();
-    setIsDragging(false);
-    const { files } = evt.dataTransfer;
-    console.log(`File Was Dropped`);
-    if (files && files.length > 0) {
-      processFiles(files);
-    }
-  };
-  const handleDragLeave = (evt: DragEvent) => {
-    evt.preventDefault();
-    evt.stopPropagation();
-    setIsDragging(false);
-    console.log(`Drag Leave`);
-    // console.log(evt.dataTransfer.files);
   };
 
   const handleRemoveFile = (index: number) => {
@@ -183,113 +163,71 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     }
   };
 
+  const handleDrop = (file: File) => {
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    processFiles(dataTransfer.files);
+  };
+
   return (
-    <div className="w-full   max-w-2xl  sm:mx-auto  p-4  relative mx-0   overflow-auto pb-20 ">
-      <input
-        className="hidden"
-        type="file"
-        ref={inputRef}
-        multiple
-        onChange={handleFileSelect}
-      />
+    <div className="w-full   max-w-2xl  sm:mx-auto    relative mx-0    h-auto flex-1       flex flex-col  ">
+      <DissmisedFilesPSA shouldDisplay={dismissedFiles.length > 0} />
+      <UploadForm onFileDropped={handleDrop} />
 
-      {dismissedFiles.length > 0 && (
-        <article className=" bg-red-300 text-red-800 rounded-xl p-2 text-xs font-semibold">
-          {dismissedFiles.length} ფაილი უარყოფილია EXIF მონაცემების არ არსებობის
-          გამო
-        </article>
-      )}
-      <div
-        className={`border-2 border-dashed rounded-lg p-8 text-center mb-6  transition-colors duration-300
-            ${
-              isDragging
-                ? "border-blue-500 bg-blue-500 bg-opacity-10"
-                : "border-gray-600 hover:border-gray-500"
-            } 
-            
-            transition-all duration-200`}
-        onDragEnter={handleDragEnter}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDragDrop}
-      >
-        <>
-          <Upload className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-          <label htmlFor="file-input" className="cursor-pointer">
-            <span className="bg-blue-600 hover:bg-blue-700 transition px-4 py-2 rounded inline-block mb-4">
-              აირჩიეთ ფაილი
-            </span>
-            <input
-              id="file-input"
-              type="file"
-              accept=".jpg,.jpeg"
-              className="hidden"
-              onChange={handleFileSelect}
-            />
-          </label>
-          <p className="text-gray-400">
-            ან ჩააგდეთ ფაილი აქ {isDragging ? "Yes" : "NO"}
-          </p>
-        </>
-      </div>
-
-      <section>
-        {localPreviewUrls.length === 0 && (
-          <div>
-            <UploadPSA />
-          </div>
-        )}
-
-        <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start mb-10    ">
+      <section className="flex-grow ">
+        <UploadPSA shouldDisplay={localPreviewUrls.length === 0} />
+        <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start     ">
           {localPreviewUrls.map(
             ({ name, url, DateTaken, location, progress, status }, index) => (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: 1,
-                  transition: {
-                    duration: 1.2,
-                  },
-                }}
-                key={index}
-                className="  relative min-w-full     flex    items-center gap-2     overflow-hidden  border border-gray-800 "
-              >
-                <img
-                  src={url}
-                  alt={name}
-                  className="object-cover  aspect-square w-[20%]  flex-shrink"
-                />
+              <AnimatePresence>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    opacity: 1,
+                    transition: {
+                      duration: 1.2,
+                    },
+                  }}
+                  exit={{
+                    opacity: 0,
+                    transition: {
+                      duration: 1.2,
+                    },
+                  }}
+                  key={index}
+                  className="  relative min-w-full     flex    items-center gap-2     overflow-hidden  border border-gray-800 "
+                >
+                  <img
+                    src={url}
+                    alt={name}
+                    className="object-cover  aspect-square w-[20%]  flex-shrink"
+                  />
 
-                <div className="flex-grow text-gray-300  flex items-center  ">
-                  <div className="space-y-2">
-                    <div className="text-xs line-clamp-1">{name}</div>
-                    <div className="flex gap-4 items-center">
-                      <div className="flex text-[10px]">
-                        {format(DateTaken!, "d MMM, HH:mm", { locale: ka })}
-                      </div>
-                      <div className="text-[10px] font-semibold text-blue-400">
-                        {status}
+                  <div className="flex-grow text-gray-300  flex items-center  ">
+                    <div className="space-y-2">
+                      <div className="text-xs line-clamp-1">{name}</div>
+                      <div className="flex gap-4 items-center">
+                        <div className="flex text-[10px]">
+                          {format(DateTaken!, "d MMM, HH:mm", { locale: ka })}
+                        </div>
+                        <div className="text-[10px] font-semibold text-blue-400">
+                          {status}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className=" mx-4 w-6 h-6 sm:w-8 sm:h-8">
-                  {getIcon(index)}
-                </div>
-              </motion.div>
+                  <button className=" mx-4 w-6 h-6 sm:w-8 sm:h-8">
+                    {getIcon(index)}
+                  </button>
+                </motion.div>
+              </AnimatePresence>
             )
           )}
         </div>
       </section>
-      <section
-        style={{
-          left: "50%",
-          transform: "translateX(-50%)",
-        }}
-        className="fixed bottom-0 left-0 max-w-2xl  w-full px-4 py-2 flex justify-center  items-center bg-transparent "
-      >
+
+      <footer className="sticky bottom-0 left-0 max-w-2xl  w-full px-4 py-2 flex justify-center z-50  items-center bg-[#181c14] ">
         <Button
-          // onClick={() => uploadImages()}
           onClick={() => betterUpload()}
           disabled={selectedFiles.length === 0 || internalState === "uploading"}
           variant={"default"}
@@ -310,7 +248,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
             ატვირთვა
           </span>
         </Button>
-      </section>
+      </footer>
     </div>
   );
 }
