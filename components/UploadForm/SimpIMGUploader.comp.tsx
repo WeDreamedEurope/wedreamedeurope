@@ -52,6 +52,14 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
           "GPSLongitude",
         ]);
 
+        // newPreviewUrls.push({
+        //   url: URL.createObjectURL(file),
+        //   DateTaken: new Date(),
+        //   location: [2323, 3232],
+        //   name: file.name,
+        //   progress: 0,
+        //   status: "idle",
+        // });
         if (EXIFData && EXIFData.longitude && EXIFData.longitude) {
           console.log(EXIFData);
           const {
@@ -155,7 +163,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     } else {
       return (
         <Trash2Icon
-          className="hover:text-green-300"
+          className="hover:text-red-300"
           onClick={() => handleRemoveFile(index)}
         />
       );
@@ -186,7 +194,6 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
                     duration: 1.2,
                   },
                 }}
-            
                 key={index}
                 className="  relative min-w-full     flex    items-center gap-2     overflow-hidden  border border-gray-800 "
               >
@@ -204,21 +211,12 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
                         {format(DateTaken!, "d MMM, HH:mm", { locale: ka })}
                       </div>
                       <div className="text-[10px] font-semibold text-blue-400">
-                        {index}
+                        {status}
                       </div>
                     </div>
                   </div>
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleRemoveFile(index);
-                  }}
-                  className=" mx-4 w-6 h-6 sm:w-8 sm:h-8"
-                >
-                  <Trash2Icon />
-                </button>
+                <button className="mr-4">{getIcon(index)}</button>
               </motion.div>
             )
           )}
