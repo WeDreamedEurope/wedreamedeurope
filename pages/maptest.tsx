@@ -38,7 +38,7 @@ const MapTest = () => {
                 }}
               />
             </section>
-            <aside className="w-full absolute z-50 h-screen     pointer-events-none sm:pointer-events-auto top-0    lg:w-[60%]  overflow-auto sm:relative">
+            <aside className="w-full flex absolute  z-50 h-full  pointer-events-none sm:pointer-events-auto   top-0    lg:w-[60%]  overflow-auto sm:relative">
               {/* <MapSidebar photos={loadedImages} /> */}
               <MapSidebar />
             </aside>
