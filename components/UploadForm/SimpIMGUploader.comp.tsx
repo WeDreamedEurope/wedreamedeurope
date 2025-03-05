@@ -179,7 +179,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
   return (
     <div className="w-full   max-w-2xl  sm:mx-auto    relative mx-0    h-auto flex-1       flex flex-col  ">
       <DissmisedFilesPSA shouldDisplay={dismissedFiles.length > 0} />
-      <UploadForm onFileDropped={handleDrop} />
+      <UploadForm onFileDropped={handleDrop} processFiles={processFiles} />
 
       <section className="flex-grow ">
         <UploadPSA shouldDisplay={localPreviewUrls.length === 0} />
