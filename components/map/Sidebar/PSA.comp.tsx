@@ -28,9 +28,9 @@ export default function Sidebartutorial() {
             აირჩიეთ თვის სასურველი რიცხვი და დრო
           </div>
         </article>
-        <div className="flex flex-col gap-4 mt-4 text-xs bg-gray-800 p-3 opacity-60 rounded-lg items-center font-semibold text-gray-400">
+        <div className="flex flex-col gap-4 mt-6 text-xs bg-gray-800   opacity-60 rounded-lg  font-semibold text-gray-400">
           <div className="flex gap-2 items-center">
-            <ImagePlayIcon size={24} />
+            <ImagePlayIcon size={16} />
             ფოტოები ნაჩვენები იქნება მონიშნული ლოკაციის 10 მეტრიან რადიუსში
           </div>
           <div className="flex gap-2 items-center w-full">

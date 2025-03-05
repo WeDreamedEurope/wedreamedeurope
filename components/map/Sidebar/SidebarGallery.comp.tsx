@@ -42,7 +42,7 @@ const SidebarGallery = () => {
   }, [selectedLocation, memoizedPhotos, setPointsToDisplay]);
 
   return (
-    <article className="w-full relative sm:grid sm:grid-flow-row sm:grid-cols-2 min-h-full h-auto p-0 sm:p-4 place-content-start gap-2 py-5 pointer-events-auto sm:pb-32 text-gray-900 bg-[#121212] space-y-3 px-2">
+    <article className="w-full relative sm:grid sm:grid-flow-row sm:grid-cols-2 h-auto flex-grow  p-0  place-content-start gap-2 py-5 pointer-events-auto sm:pb-32 text-gray-900 bg-[#121212] space-y-3 px-2">
       {photos.map((i, index) => (
         <div
           onClick={() => setSelectedPointId(index.toString())}

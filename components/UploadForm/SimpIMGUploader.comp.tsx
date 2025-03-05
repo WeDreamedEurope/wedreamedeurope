@@ -9,6 +9,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import UploadPSA from "../form/UploadPSA.comp";
 import UploadForm from "./UploadForm.comp";
+import { useRouter } from "next/router";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
 // const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {
@@ -37,6 +38,8 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
   const [internalState, setInternalState] = useState<
     "idle" | "selected" | "uploading" | "success" | "error"
   >("idle");
+
+  const router = useRouter();
 
   const processFiles = async (files: FileList) => {
     console.log("processing file");
@@ -114,6 +117,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
 
   const singleImageUpload = async (file: File, index: number) => {
     updateStatus(index, "uploading");
+    // This is where we get the presigned url
     const urlResponse = await fetch("/api/presign", {
       method: "POST",
       body: JSON.stringify({
@@ -135,7 +139,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
       });
       if (uploadResponse.ok && uploadResponse.status == 200) {
         updateStatus(index, "success");
-        return Promise.resolve();
+        return Promise.resolve(file.name);
       } else {
         updateStatus(index, "error");
         return Promise.reject();
@@ -150,13 +154,19 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     );
 
     const results = await Promise.allSettled(PromisedUploades);
-    console.log(results);
+  
+    localStorage.setItem(
+      "uploadedFiles",
+      JSON.stringify(
+        results.filter((r) => r.status == "fulfilled").map((r) => r.value)
+      )
+    );
     setInternalState("success");
+    router.push("/profile");
   };
 
   const getIcon = (index: number) => {
     if (localPreviewUrls[index].status == "success") {
-      // return <CheckIcon size={15} className="text-green-300" />;
       return <CheckCircleIcon className="text-green-300" />;
     } else if (localPreviewUrls[index].status == "uploading") {
       return <ClipLoader size={24} color="yellow" speedMultiplier={0.25} />;
