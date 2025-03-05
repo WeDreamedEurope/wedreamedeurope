@@ -36,16 +36,14 @@ function UploadThing() {
   }
 
   return (
-    <div className={`h-full flex flex-col ${notoGeorgian.className}  `}>
-      <section className=" flex-1 flex  ">
+    <div className={`h-full flex flex-col ${notoGeorgian.className}   `}>
         {status === "authenticated" ? (
           <SimpleImageUploader userId={session?.user?.id} />
         ) : (
-          <span className="translate-y-1/4 w-full px-4">
+          <span className="translate-y-1/2 w-full px-4">
             <SignInPSA />
           </span>
         )}
-      </section>
     </div>
   );
 }

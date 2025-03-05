@@ -159,7 +159,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     } else if (localPreviewUrls[index].status == "uploading") {
       return <ClipLoader size={24} color="yellow" speedMultiplier={0.25} />;
     } else {
-      return <Trash2Icon onClick={() => handleRemoveFile(index)} />;
+      return <Trash2Icon className="hover:text-green-300" onClick={() => handleRemoveFile(index)} />;
     }
   };
 
@@ -179,48 +179,46 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
         <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start     ">
           {localPreviewUrls.map(
             ({ name, url, DateTaken, location, progress, status }, index) => (
-              <AnimatePresence>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity: 1,
-                    transition: {
-                      duration: 1.2,
-                    },
-                  }}
-                  exit={{
-                    opacity: 0,
-                    transition: {
-                      duration: 1.2,
-                    },
-                  }}
-                  key={index}
-                  className="  relative min-w-full     flex    items-center gap-2     overflow-hidden  border border-gray-800 "
-                >
-                  <img
-                    src={url}
-                    alt={name}
-                    className="object-cover  aspect-square w-[20%]  flex-shrink"
-                  />
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: 1,
+                  transition: {
+                    duration: 1.2,
+                  },
+                }}
+                exit={{
+                  opacity: 0,
+                  transition: {
+                    duration: 1.2,
+                  },
+                }}
+                key={index}
+                className="  relative min-w-full     flex    items-center gap-2     overflow-hidden  border border-gray-800 "
+              >
+                <img
+                  src={url}
+                  alt={name}
+                  className="object-cover  aspect-square w-[20%]  flex-shrink"
+                />
 
-                  <div className="flex-grow text-gray-300  flex items-center  ">
-                    <div className="space-y-2">
-                      <div className="text-xs line-clamp-1">{name}</div>
-                      <div className="flex gap-4 items-center">
-                        <div className="flex text-[10px]">
-                          {format(DateTaken!, "d MMM, HH:mm", { locale: ka })}
-                        </div>
-                        <div className="text-[10px] font-semibold text-blue-400">
-                          {status}
-                        </div>
+                <div className="flex-grow text-gray-300  flex items-center  ">
+                  <div className="space-y-2">
+                    <div className="text-xs line-clamp-1">{name}</div>
+                    <div className="flex gap-4 items-center">
+                      <div className="flex text-[10px]">
+                        {format(DateTaken!, "d MMM, HH:mm", { locale: ka })}
+                      </div>
+                      <div className="text-[10px] font-semibold text-blue-400">
+                        {status}
                       </div>
                     </div>
                   </div>
-                  <button className=" mx-4 w-6 h-6 sm:w-8 sm:h-8">
-                    {getIcon(index)}
-                  </button>
-                </motion.div>
-              </AnimatePresence>
+                </div>
+                <button className=" mx-4 w-6 h-6 sm:w-8 sm:h-8">
+                  {getIcon(index)}
+                </button>
+              </motion.div>
             )
           )}
         </div>

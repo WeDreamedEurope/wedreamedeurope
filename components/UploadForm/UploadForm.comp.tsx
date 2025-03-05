@@ -2,7 +2,11 @@ import { Upload } from "lucide-react";
 import { useState } from "react";
 import React from "react";
 
-export default function UploadForm({ onFileDropped }: { onFileDropped: (file: File) => void }) {
+export default function UploadForm({
+  onFileDropped,
+}: {
+  onFileDropped: (file: File) => void;
+}) {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragEnter = (evt: React.DragEvent<HTMLDivElement>) => {
@@ -27,7 +31,7 @@ export default function UploadForm({ onFileDropped }: { onFileDropped: (file: Fi
     evt.preventDefault();
     evt.stopPropagation();
     setIsDragging(false);
-    
+
     const files = evt.dataTransfer.files;
     if (files.length > 0) {
       onFileDropped(files[0]);
@@ -36,7 +40,7 @@ export default function UploadForm({ onFileDropped }: { onFileDropped: (file: Fi
 
   return (
     <div
-      className={`border-2 border-dashed rounded-lg p-8 text-center mb-6  transition-colors duration-300 sticky top-0 bg-[#181c14] z-40
+      className={`sm:border-2 sm:border-dashed  rounded-lg p-8 text-center mb-6  transition-colors duration-300 sticky top-0 bg-[#181c14] z-40
       ${
         isDragging
           ? "border-blue-500 bg-blue-500 bg-opacity-10"
