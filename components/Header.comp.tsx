@@ -15,7 +15,9 @@ export default function Header() {
 
   return (
     <header className=" h-header-height flex-none flex px-4 items-center justify-between">
-      <div>We Dreamed Europe</div>
+      <Link href={"/"} className="select-none ">
+        We Dreamed Europe
+      </Link>
       {session?.user ? (
         <UserExists profileUrl={session.user.image!} />
       ) : (

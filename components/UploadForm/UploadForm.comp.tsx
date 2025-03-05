@@ -1,5 +1,5 @@
 import { Upload } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import React from "react";
 
 export default function UploadForm({
@@ -8,6 +8,14 @@ export default function UploadForm({
   onFileDropped: (file: File) => void;
 }) {
   const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      onFileDropped(files[0]);
+    }
+  };
 
   const handleDragEnter = (evt: React.DragEvent<HTMLDivElement>) => {
     evt.preventDefault();
@@ -55,6 +63,13 @@ export default function UploadForm({
     >
       <>
         <Upload className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+        <input
+          ref={fileInputRef}
+          type="file"
+          id="file-input"
+          className="hidden"
+          onChange={handleFileSelect}
+        />
         <label htmlFor="file-input" className="cursor-pointer">
           <span className="bg-blue-600 hover:bg-blue-700 transition px-4 py-2 rounded inline-block mb-4">
             აირჩიეთ ფაილი
