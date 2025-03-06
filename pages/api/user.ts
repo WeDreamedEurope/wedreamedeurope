@@ -1,8 +1,8 @@
-import database from "@/db/db";
-import { photoLocations } from "@/drizzle/schema";
-import { Photo_Location_Insert } from "@/server/gis_query";
-import { NextApiResponse } from "next";
-import { NextApiRequest } from "next";
+import {
+  insertPhotoLocations,
+  Photo_Location_Insert,
+} from "@/server/gis_query";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
@@ -23,10 +23,10 @@ export default async function handler(
             dateTakenAt: photo.dateTakenAt,
           })
         );
-        const savedPhotoLocations = await database
-          .insert(photoLocations)
-          .values(photoLocationsFromPayload)
-          .returning();
+        
+        const savedPhotoLocations = await insertPhotoLocations(
+          photoLocationsFromPayload
+        );
 
         res.status(200).json(savedPhotoLocations);
       } else {

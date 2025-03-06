@@ -38,3 +38,31 @@ export async function getPhotosInRadius(
       )`
     );
 }
+
+export async function getPhotosInRadiusAndTimeRange(
+  coordinates: [number, number],
+  radiusInMeters: number,
+  referenceTime: Date,
+  minutesRange: number
+): Promise<Photo_Location_Select[]> {
+  const timeRangeInMinutes = minutesRange;
+  const startTime = new Date(
+    referenceTime.getTime() - timeRangeInMinutes * 60000
+  );
+  const endTime = new Date(
+    referenceTime.getTime() + timeRangeInMinutes * 60000
+  );
+
+  return await database
+    .select()
+    .from(photoLocations)
+    .where(
+      sql`ST_DWithin(
+        ${sql`ST_SetSRID(ST_MakePoint(${coordinates[0]}, ${coordinates[1]}), 4326)::geography`},
+        ST_SetSRID(location_taken_at::geometry, 4326)::geography,
+        ${radiusInMeters}
+      )
+      AND date_taken_at >= ${startTime}
+      AND date_taken_at <= ${endTime}`
+    );
+}
