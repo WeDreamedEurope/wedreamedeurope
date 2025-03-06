@@ -19,6 +19,7 @@ const SidebarGallery = () => {
     generateRandomData(500, 44.762327177662875, 41.71848662012972, 0.5)
       .map<Photo_Location_Client>((i, index) => ({
         ...i,
+        userId: i.userId || null,
         id: index,
         dateTakenAt: format(i.dateTakenAt!, "dd MMM HH:mm", { locale: ka }),
         distance: calculateDistanceInMeters(location, i.locationTakenAt),
@@ -46,7 +47,7 @@ const SidebarGallery = () => {
       {photos.map((i, index) => (
         <div
           onClick={() => setSelectedPointId(index.toString())}
-          key={index}
+          key={index} 
           className="min-w-full h-auto flex flex-col relative sm:border-gray-600 hover:cursor-pointer text-red-300 bg-[#202127] overflow-hidden rounded-md"
         >
           <div className="relative w-full aspect-video min-w-full">
