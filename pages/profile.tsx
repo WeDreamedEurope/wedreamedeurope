@@ -1,18 +1,45 @@
 import { Button } from "@/components/ui/button";
 import { withAuth } from "@/components/WithAuth.com";
-import testImage from "@/public/someimage.jpg";
 import { Trash } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+
+type FileFromLocalStorage = {
+  name: string;
+  extension: string;
+};
+
 const Profile = () => {
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    const filesFromLocalStorage = JSON.parse(
+      localStorage.getItem("uploadedFiles") || "[]"
+    );
+    if (session?.user && Array.isArray(filesFromLocalStorage)) {
+      const publicURL = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_URL!;
+      const bucketName = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_BUCKET!;
+      const url = `${publicURL}/${bucketName}/${session.user.id}/`;
+      const mappedURLS = filesFromLocalStorage.map((file) => `${url}${file}`);
+      console.log(mappedURLS);
+      setUploadedFiles(mappedURLS);
+    }
+  }, [session]);
+
   return (
     <div className="flex flex-col   mt-8 w-full  sm:mx-auto max-w-5xl ">
       <section className="flex flex-col bg-green-500/10 p-4 rounded-lg ">
         <section className="flex items-center justify-between mb-4">
           <h1 className="text-base font-semibold ">ბოლოს ატვირთული ფოტოები</h1>
-          <Button size={"sm"} variant={'destructive'}>ფოტოების წაშლა</Button>
+          <Button size={"sm"} variant={"destructive"}>
+            ფოტოების წაშლა
+          </Button>
         </section>
         <div className="grid grid-cols-4 gap-2">
-          {Array.from({ length: 10 }).map((_, index) => (
+          {uploadedFiles.map((file, index) => (
             <div
               key={index}
               className="w-full aspect-video object-cover relative"
@@ -24,9 +51,7 @@ const Profile = () => {
               </div>
               <Image
                 fill
-                src={
-                  "https://images.unsplash.com/photo-1513894697031-3e3aa4c54326?q=80&w=1473&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                }
+                src={file}
                 alt="test"
                 className="w-full h-full object-cover"
               />

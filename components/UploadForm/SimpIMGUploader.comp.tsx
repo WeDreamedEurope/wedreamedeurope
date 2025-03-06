@@ -55,37 +55,38 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
           "GPSLongitude",
         ]);
 
-        // newPreviewUrls.push({
-        //   url: URL.createObjectURL(file),
-        //   DateTaken: new Date(),
-        //   location: [2323, 3232],
-        //   name: file.name,
-        //   progress: 0,
-        //   status: "idle",
-        // });
-        if (EXIFData && EXIFData.longitude && EXIFData.longitude) {
-          console.log(EXIFData);
-          const {
-            DateTimeOriginal,
-            GPSLatitude,
-            GPSLongitude,
-            latitude,
-            longitude,
-          } = EXIFData;
+        newPreviewUrls.push({
+          url: URL.createObjectURL(file),
+          DateTaken: new Date(),
+          location: [2323, 3232],
+          name: file.name.replace(/\s+/g, "_"),
+          progress: 0,
+          status: "idle",
+        });
+        okayFiles.push(file);
+        // if (EXIFData && EXIFData.longitude && EXIFData.longitude) {
+        //   console.log(EXIFData);
+        //   const {
+        //     DateTimeOriginal,
+        //     GPSLatitude,
+        //     GPSLongitude,
+        //     latitude,
+        //     longitude,
+        //   } = EXIFData;
 
-          okayFiles.push(file);
-          newPreviewUrls.push({
-            url: URL.createObjectURL(file),
-            name: file.name,
-            DateTaken: DateTimeOriginal || null,
-            location:
-              GPSLatitude && GPSLongitude ? [longitude, latitude] : null,
-            progress: 0,
-            status: "idle",
-          });
-        } else {
-          wrongFiles.push(file);
-        }
+        //   okayFiles.push(file);
+        //   newPreviewUrls.push({
+        //     url: URL.createObjectURL(file),
+        //     name: file.name,
+        //     DateTaken: DateTimeOriginal || null,
+        //     location:
+        //       GPSLatitude && GPSLongitude ? [longitude, latitude] : null,
+        //     progress: 0,
+        //     status: "idle",
+        //   });
+        // } else {
+        //   wrongFiles.push(file);
+        // }
       } catch (error) {
         console.error("Error parsing EXIF:", error);
       }
@@ -121,7 +122,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     const urlResponse = await fetch("/api/presign", {
       method: "POST",
       body: JSON.stringify({
-        fileName: file.name,
+        fileName: file.name.replace(/\s+/g, "_"),
         fileType: file.type,
         userID: userId,
       }),
@@ -139,7 +140,8 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
       });
       if (uploadResponse.ok && uploadResponse.status == 200) {
         updateStatus(index, "success");
-        return Promise.resolve(file.name);
+        console.log(`Uploaded File ${file.name}`);
+        return Promise.resolve(file.name.replace(/\s+/g, "_"));
       } else {
         updateStatus(index, "error");
         return Promise.reject();
@@ -154,12 +156,16 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     );
 
     const results = await Promise.allSettled(PromisedUploades);
-  
+
     localStorage.setItem(
       "uploadedFiles",
       JSON.stringify(
         results.filter((r) => r.status == "fulfilled").map((r) => r.value)
       )
+    );
+
+    console.log(
+      results.filter((r) => r.status == "fulfilled").map((r) => r.value)
     );
     setInternalState("success");
     router.push("/profile");
@@ -252,7 +258,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
               internalState === "uploading" ? "animate-pulse" : ""
             }`}
           >
-            ატვირთვა
+            ატვირთვა {selectedFiles.length} ფაილი
           </span>
         </Button>
       </footer>
