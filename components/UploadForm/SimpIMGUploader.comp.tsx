@@ -17,7 +17,7 @@ import { Photo_Location_Insert } from "@/server/gis_query";
 type ImageMeta = {
   url: string;
   name: string;
-  DateTaken:string
+  DateTaken: string;
   location: [number, number] | null;
   progress: number;
   status: "idle" | "uploading" | "success" | "error";
@@ -163,7 +163,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     console.log(metaData);
     const afterSave = await CollectPhotoMetaData(metaData);
     console.log(afterSave);
-   
+
     setInternalState("success");
     // router.push("/profile");
   };
