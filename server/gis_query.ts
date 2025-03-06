@@ -1,4 +1,4 @@
-import db from "@/db/db";
+import database from "@/db/db";
 import { photoLocations } from "@/drizzle/schema";
 import { sql } from "drizzle-orm";
 
@@ -15,7 +15,7 @@ export const InsertGeoInformation = async (
 };
 
 export async function insertPhotoLocations(locations: Photo_Location_Insert[]) {
-  return await db.insert(photoLocations).values(
+  return await database.insert(photoLocations).values(
     locations.map((location) => ({
       ...location,
       locationTakenAt: sql`ST_SetSRID(ST_MakePoint(${location.locationTakenAt[0]}, ${location.locationTakenAt[1]}), 4326)::point`,
@@ -27,7 +27,7 @@ export async function getPhotosInRadius(
   coordinates: [number, number],
   radiusInMeters: number
 ): Promise<Photo_Location_Select[]> {
-  return await db
+  return await database
     .select()
     .from(photoLocations)
     .where(

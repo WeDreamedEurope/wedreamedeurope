@@ -1,10 +1,10 @@
 import Nextauth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import db from "@/db/db";
+import database from "@/db/db";
 
 export const authOptions: NextAuthOptions = {
-  adapter: DrizzleAdapter(db),
+  adapter: DrizzleAdapter(database),
   session: {
     strategy: "jwt",
   },

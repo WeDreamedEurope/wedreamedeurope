@@ -10,12 +10,14 @@ import { ClipLoader } from "react-spinners";
 import UploadPSA from "../form/UploadPSA.comp";
 import UploadForm from "./UploadForm.comp";
 import { useRouter } from "next/router";
+import { CollectPhotoMetaData } from "@/server/user.server";
+import { Photo_Location_Insert } from "@/server/gis_query";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
 // const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {
   url: string;
   name: string;
-  DateTaken: Date | null;
+  DateTaken:string
   location: [number, number] | null;
   progress: number;
   status: "idle" | "uploading" | "success" | "error";
@@ -55,38 +57,34 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
           "GPSLongitude",
         ]);
 
-        newPreviewUrls.push({
-          url: URL.createObjectURL(file),
-          DateTaken: new Date(),
-          location: [2323, 3232],
-          name: file.name.replace(/\s+/g, "_"),
-          progress: 0,
-          status: "idle",
-        });
-        okayFiles.push(file);
-        // if (EXIFData && EXIFData.longitude && EXIFData.longitude) {
-        //   console.log(EXIFData);
-        //   const {
-        //     DateTimeOriginal,
-        //     GPSLatitude,
-        //     GPSLongitude,
-        //     latitude,
-        //     longitude,
-        //   } = EXIFData;
+        if (
+          EXIFData &&
+          EXIFData.longitude &&
+          EXIFData.longitude &&
+          EXIFData.DateTimeOriginal
+        ) {
+          console.log(EXIFData);
+          const {
+            DateTimeOriginal,
+            GPSLatitude,
+            GPSLongitude,
+            latitude,
+            longitude,
+          } = EXIFData;
 
-        //   okayFiles.push(file);
-        //   newPreviewUrls.push({
-        //     url: URL.createObjectURL(file),
-        //     name: file.name,
-        //     DateTaken: DateTimeOriginal || null,
-        //     location:
-        //       GPSLatitude && GPSLongitude ? [longitude, latitude] : null,
-        //     progress: 0,
-        //     status: "idle",
-        //   });
-        // } else {
-        //   wrongFiles.push(file);
-        // }
+          okayFiles.push(file);
+          newPreviewUrls.push({
+            url: URL.createObjectURL(file),
+            name: file.name,
+            DateTaken: new Date(DateTimeOriginal).toISOString(),
+            location:
+              GPSLatitude && GPSLongitude ? [longitude, latitude] : null,
+            progress: 0,
+            status: "idle",
+          });
+        } else {
+          wrongFiles.push(file);
+        }
       } catch (error) {
         console.error("Error parsing EXIF:", error);
       }
@@ -138,6 +136,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
           "Content-Type": file.type,
         },
       });
+
       if (uploadResponse.ok && uploadResponse.status == 200) {
         updateStatus(index, "success");
         console.log(`Uploaded File ${file.name}`);
@@ -157,18 +156,29 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
 
     const results = await Promise.allSettled(PromisedUploades);
 
-    localStorage.setItem(
-      "uploadedFiles",
-      JSON.stringify(
-        results.filter((r) => r.status == "fulfilled").map((r) => r.value)
-      )
-    );
+    const metaData = results
+      .filter((res) => res.status == "fulfilled")
+      .map((res) => extractMetaData(res.value!));
 
-    console.log(
-      results.filter((r) => r.status == "fulfilled").map((r) => r.value)
-    );
+    console.log(metaData);
+    const afterSave = await CollectPhotoMetaData(metaData);
+    console.log(afterSave);
+   
     setInternalState("success");
     // router.push("/profile");
+  };
+
+  const extractMetaData = (fileName: string): Photo_Location_Insert => {
+    const fromPreviewUrls = localPreviewUrls.find(
+      (prev) => prev.name == fileName
+    );
+    if (!fromPreviewUrls) throw new Error("File Not Found");
+    return {
+      userId: userId,
+      locationTakenAt: fromPreviewUrls.location!,
+      photoId: fromPreviewUrls.name,
+      dateTakenAt: fromPreviewUrls.DateTaken!,
+    };
   };
 
   const getIcon = (index: number) => {

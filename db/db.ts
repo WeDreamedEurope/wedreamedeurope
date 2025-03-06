@@ -1,9 +1,9 @@
 import { drizzle } from "drizzle-orm/neon-serverless";
 import ws from "ws";
 
-const db = drizzle({
+const database = drizzle({
   connection: process.env.DB_URL!,
   ws: ws,
 });
 
-export default db;
+export default database;
