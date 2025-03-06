@@ -1,20 +1,12 @@
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ka } from "date-fns/locale";
 import exifr from "exifr";
-import {
-  Calendar1Icon,
-  CheckCircleIcon,
-  CheckIcon,
-  MapPin,
-  Trash2Icon,
-  Upload,
-} from "lucide-react";
-import { ChangeEvent, CSSProperties, DragEvent, useRef, useState } from "react";
-import CircularProgress from "../CircularProgress.comp";
-import styles from "@/styles/mis.module.css";
-import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { CheckCircleIcon, Trash2Icon, Upload } from "lucide-react";
+import { ChangeEvent, DragEvent, useRef, useState } from "react";
+import CircularProgress from "../CircularProgress.comp";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
 const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {
@@ -26,7 +18,7 @@ type ImageMeta = {
   status: "idle" | "uploading" | "success" | "error";
 };
 
-export default function ImagePicker() {
+export default function ImagePicker({ userId }: { userId: string }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [dismissedFiles, setDismissedFiles] = useState<File[]>([]);
@@ -35,7 +27,6 @@ export default function ImagePicker() {
   const [internalState, setInternalState] = useState<
     "idle" | "selected" | "uploading" | "success" | "error"
   >("idle");
-  const [totalProgress, setTotalProgress] = useState<number>(0);
 
   const processFiles = async (files: FileList) => {
     console.log("processing file");
@@ -198,36 +189,68 @@ export default function ImagePicker() {
     );
   };
 
-  const calculateTotalProgress = () =>
-    `${
-      localPreviewUrls.filter(({ status }) => status === "success").length
-    } / ${localPreviewUrls.length}`;
+  const betterUpload = async () => {
+    for (let index = 0; index < selectedFiles.length; index++) {
+      const file = selectedFiles[index];
 
-  const uploadImages = async () => {
-    setInternalState("uploading");
-    const uploades = selectedFiles.map((file, index) =>
-      uploadImage(file, index)
-    );
-    const results = await Promise.all(uploades);
-    console.log(results);
-    setInternalState("idle");
+      console.log(file.name);
+      console.log(file.type);
+      const response = await fetch("/api/presign", {
+        method: "POST",
+        body: JSON.stringify({
+          fileName: file.name,
+          fileType: file.type,
+          userID: userId,
+        }),
+      });
+      const data = await response.json();
+      console.log(data);
+      if (data && typeof data === "string") {
+        try {
+          const uploadResponse = await fetch(data, {
+            method: "PUT",
+            body: file,
+            headers: {
+              "Content-Type": file.type,
+            },
+          });
+          if (uploadResponse.ok) {
+            console.log("Image uploaded successfully");
+            console.log(uploadResponse.status);
+            console.log(uploadResponse.statusText);
+          } else {
+            console.log(`Some Error Happened`);
+            console.log(uploadResponse);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
   };
 
+
+  // const uploadImages = async () => {
+  //   setInternalState("uploading");
+  //   const uploades = selectedFiles.map((file, index) =>
+  //     uploadImage(file, index)
+  //   );
+  //   const results = await Promise.all(uploades);
+  //   console.log(results);
+  //   setInternalState("idle");
+  // };
+
   const getIcon = (index: number, progress: number) => {
+    console.log(internalState);
+    console.log(localPreviewUrls[index].status);
     if (localPreviewUrls[index].status == "success") {
       // return <CheckIcon size={15} className="text-green-300" />;
-      return <CheckCircleIcon size={15} className="text-green-300" />;
-    } else if (internalState == "idle") {
-      return (
-        <span>
-          <Trash2Icon size={15} onClick={() => handleRemoveFile(index)} />
-        </span>
-      );
+      return <CheckCircleIcon className="text-green-300" />;
     } else if (internalState == "uploading") {
       return (
         <CircularProgress
           progress={progress}
-          size={15}
+          size={24}
           showPercentage={false}
           strokeWidth={2}
           progressColor="#2196f3"
@@ -235,11 +258,13 @@ export default function ImagePicker() {
           animationDuration={1000}
         />
       );
+    } else {
+      return <Trash2Icon onClick={() => handleRemoveFile(index)} />;
     }
   };
 
   return (
-    <div className="w-full  sm:mx-auto  p-4  relative mx-0 max-w-full  overflow-auto pb-20 ">
+    <div className="w-full  border-yellow-500 max-w-2xl  sm:mx-auto  p-4  relative mx-0   overflow-auto pb-20 ">
       <input
         className="hidden"
         type="file"
@@ -280,7 +305,7 @@ export default function ImagePicker() {
 
         <div></div>
 
-        <div className="grid grid-flow-row-dense sm:grid-cols-3 gap-4 mt-4 items-start justify-start mb-10    ">
+        <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start mb-10    ">
           {localPreviewUrls.map(
             ({ name, url, DateTaken, location, progress, status }, index) => (
               <motion.div
@@ -313,22 +338,36 @@ export default function ImagePicker() {
                     </div>
                   </div>
                 </div>
-                <div className=" mx-2">{getIcon(index, progress)}</div>
+                <div className=" mx-4 w-6 h-6 sm:w-8 sm:h-8">
+                  {getIcon(index, progress)}
+                </div>
               </motion.div>
             )
           )}
         </div>
       </section>
-      <section className="fixed bottom-0 left-0 w-full px-4 py-2 flex justify-center  items-center bg-black ">
+      <section
+        style={{
+          left: "50%",
+          transform: "translateX(-50%)",
+        }}
+        className="fixed bottom-0 left-0 max-w-2xl  w-full px-4 py-2 flex justify-center  items-center bg-transparent "
+      >
         <Button
-          onClick={() => uploadImages()}
+          // onClick={() => uploadImages()}
+          onClick={() => betterUpload()}
           disabled={selectedFiles.length === 0}
           variant={"default"}
           size={"lg"}
           className={cn(
-            "w-full disabled:cursor-not-allowed disabled:opacity-20 relative ",
+            "w-full disabled:cursor-not-allowed disabled:opacity-20 relative transition-all ",
             {
-              "bg-yellow-400": internalState === "uploading",
+              "bg-green-800":
+                internalState === "uploading" || selectedFiles.length > 0,
+              "hover:bg-green-700":
+                internalState === "uploading" || selectedFiles.length > 0,
+              "text-green-300":
+                internalState === "uploading" || selectedFiles.length > 0,
               "cursor-not-allowed": internalState === "uploading",
               "opacity-20": internalState === "uploading",
               "animate-pulse": internalState === "uploading",
@@ -349,6 +388,5 @@ export default function ImagePicker() {
     </div>
   );
 }
-
 
 // ]4nPjB+E24_1

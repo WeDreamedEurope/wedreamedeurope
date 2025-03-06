@@ -1,5 +1,7 @@
 import { handleUploadRequest } from "@/server/imageUploader";
 import { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./auth/[...nextauth]";
 
 export const config = {
   api: {
@@ -11,5 +13,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  await handleUploadRequest(req, res);
+  if (req.method === "POST") {
+    const serverSession = await getServerSession(req, res, authOptions);
+    console.log(serverSession?.user);
+    await handleUploadRequest(req, res);
+  }
 }

@@ -12,7 +12,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import MapComponent from "@/components/map";
-import Modal from "@/components/layout/Moda.com";
+import Modal from "@/components/layout/Modal.com";
 type Props = {
   url: string;
   name: string;
@@ -175,6 +175,7 @@ export function ImagePreviewCard({
       >
         <div className="w-full aspect-video ">
           <MapComponent
+            selectedPointID={null}
             isInteractive={location ? false : true}
             defaultLocation={location ? location : null}
             onNewCoordinates={(coordinates) =>
