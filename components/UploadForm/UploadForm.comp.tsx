@@ -7,7 +7,7 @@ export default function UploadForm({
   processFiles,
 }: {
   processFiles: (files: FileList) => void;
-  onFileDropped: (file: File) => void;
+  onFileDropped: (files: FileList) => void;
 }) {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -44,7 +44,7 @@ export default function UploadForm({
 
     const files = evt.dataTransfer.files;
     if (files.length > 0) {
-      onFileDropped(files[0]);
+      onFileDropped(files);
     }
   };
 
