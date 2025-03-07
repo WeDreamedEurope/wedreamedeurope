@@ -11,12 +11,15 @@ import usePhotoLoader from "@/hooks/usePhotoloader.hook";
 
 // <DateAndTimeForm />
 export default function MapSidebar() {
-  const { stateOfAction } = usePhotoLoader();
+  const { stateOfAction, tempHandlerOrWhatever, photos } = usePhotoLoader();
   return (
     <div className="w-full  flex-col bg-red-400 flex">
       <header className="w-full    pointer-events-auto bg-gray-800 sticky top-0 z-50 ">
         <DateAndTimeForm />
       </header>
+      <div
+      onClick={()=> tempHandlerOrWhatever()}
+      >{stateOfAction}</div>
       {stateOfAction === "loaded" ? (
         <SidebarGallery />
       ) : (

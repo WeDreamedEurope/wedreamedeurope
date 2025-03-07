@@ -1,5 +1,5 @@
 import { Photo_Location_Insert } from "@/server/gis_query";
-
+import { format, toZonedTime } from "date-fns-tz";
 export function generateRandomData(
   count = 10,
   hourFrom = 19,
@@ -35,26 +35,104 @@ export function generateRandomData(
   }
 
   // Helper function to generate a random timestamp between specified hours and minutes
-  function randomTimestamp(
-    fromHour: number,
-    fromMinute: number,
-    toHour: number,
-    toMinute: number
-  ) {
-    const startMinutes = fromHour * 60 + fromMinute;
-    const endMinutes = toHour * 60 + toMinute;
 
-    const randomTotalMinutes =
-      Math.floor(Math.random() * (endMinutes - startMinutes + 1)) +
-      startMinutes;
+/**
+ * Generates a random timestamp between specified hours and minutes in UTC format
+ * 
+ * @param fromHour Starting hour (0-23) in local time
+ * @param fromMinute Starting minute (0-59) in local time
+ * @param toHour Ending hour (0-23) in local time
+ * @param toMinute Ending minute (0-59) in local time
+ * @param year Optional year (defaults to current year)
+ * @param month Optional month (1-12, defaults to current month)
+ * @param day Optional day (1-31, defaults to current day)
+ * @returns ISO 8601 formatted timestamp string in UTC (Z format)
+ */
+function randomTimestamp(
+  fromHour: number,
+  fromMinute: number,
+  toHour: number,
+  toMinute: number,
+  year?: number,
+  month?: number,
+  day?: number
+): string {
+  // Get the current date for defaults if not provided
+  const now = new Date();
+  
+  // Use provided values or defaults
+  const useYear = year || now.getFullYear();
+  const useMonth = month ? month - 1 : now.getMonth(); // JavaScript months are 0-indexed
+  const useDay = day || now.getDate();
+  
+  // Convert hours and minutes to total minutes
+  const startMinutes = fromHour * 60 + fromMinute;
+  const endMinutes = toHour * 60 + toMinute;
 
-    const randomHour = Math.floor(randomTotalMinutes / 60);
-    const randomMinute = randomTotalMinutes % 60;
-    const randomSecond = Math.floor(Math.random() * 60);
+  // Generate random minutes within the range
+  const randomTotalMinutes =
+    Math.floor(Math.random() * (endMinutes - startMinutes + 1)) +
+    startMinutes;
 
-    const date = new Date(2024, 1, 18, randomHour, randomMinute, randomSecond);
-    return date.toISOString(); // ISO 8601 format with timezone
-  }
+  // Convert back to hours and minutes
+  const randomHour = Math.floor(randomTotalMinutes / 60);
+  const randomMinute = randomTotalMinutes % 60;
+  const randomSecond = Math.floor(Math.random() * 60);
+
+  // Create a date object with the random time in local time
+  const localDate = new Date(useYear, useMonth, useDay, randomHour, randomMinute, randomSecond);
+  
+  // Convert to UTC time
+  const utcDate = new Date(localDate.toISOString());
+  
+  // Return ISO 8601 formatted string with Z suffix indicating UTC
+  return utcDate.toISOString();
+}
+
+
+
+
+  // function randomTimestamp(
+  //   fromHour: number,
+  //   fromMinute: number,
+  //   toHour: number,
+  //   toMinute: number,
+  //   timezone: string = "Asia/Tbilisi"
+  // ): string {
+  //   // Convert hours and minutes to total minutes
+  //   const startMinutes = fromHour * 60 + fromMinute;
+  //   const endMinutes = toHour * 60 + toMinute;
+
+  //   // Generate random minutes within the range
+  //   const randomTotalMinutes =
+  //     Math.floor(Math.random() * (endMinutes - startMinutes + 1)) +
+  //     startMinutes;
+
+  //   // Convert back to hours and minutes
+  //   const randomHour = Math.floor(randomTotalMinutes / 60);
+  //   const randomMinute = randomTotalMinutes % 60;
+  //   const randomSecond = Math.floor(Math.random() * 60);
+
+  //   // Create a date object for February 18, 2024 with the random time
+  //   const localDate = new Date(
+  //     2024,
+  //     2,
+  //     8,  
+  //     randomHour,
+  //     randomMinute,
+  //     randomSecond
+  //   );
+
+  //   // Create a proper zoned time in the specified timezone
+  //   // This handles DST and other timezone complexities correctly
+  //   const zonedDate = toZonedTime(localDate, timezone);
+
+  //   // Format the date in ISO 8601 format with the timezone information
+  //   // This format is compatible with PostgreSQL timestamptz
+  //   return format(zonedDate, "yyyy-MM-dd'T'HH:mm:ssXXX", {
+  //     timeZone: timezone,
+  //   });
+  // }
 
   // Helper function to generate a random string
   function randomString(length = 10) {

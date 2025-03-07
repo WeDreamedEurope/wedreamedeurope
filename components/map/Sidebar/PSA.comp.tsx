@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { useDateTimeContext } from "@/context/DateTimeContext";
 import { useMapContext } from "@/context/MapContenxt";
-import { calculateDistanceInMeters, generateRandomData } from "@/lib/dummygisdata";
+import {
+  calculateDistanceInMeters,
+  generateRandomData,
+} from "@/lib/dummygisdata";
 import { Photo_Location_Client } from "@/server/gis_query";
 import { CollectPhotoMetaData } from "@/server/user.server";
 import { getDate, getHours, getMinutes, getMonth, getTime } from "date-fns";
@@ -13,7 +16,7 @@ const DebugActions = () => {
 
   const generateData = async () => {
     const data = generateRandomData(
-      50,
+      30,
       19,
       0,
       21,
@@ -30,7 +33,7 @@ const DebugActions = () => {
 
   const loadData = async () => {
     const response = await fetch("/api/photolibrary/getall");
-    const photos = await response.json();
+    const photos = await response.json() ;
     console.log(
       (photos as Photo_Location_Client[]).map((i) => ({
         month: getMonth(i.dateTakenAt!),

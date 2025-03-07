@@ -23,7 +23,7 @@ export default async function handler(
             dateTakenAt: photo.dateTakenAt,
           })
         );
-        
+
         const savedPhotoLocations = await insertPhotoLocations(
           photoLocationsFromPayload
         );

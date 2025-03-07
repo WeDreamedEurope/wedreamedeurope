@@ -17,7 +17,7 @@ export async function insertPhotoLocations(locations: Photo_Location_Insert[]) {
 
 export const CollectPhotoMetaData = async (photoMetaData: Photo_Location_Insert[]) => {
  
-console.log(photoMetaData)
+
   const response = await fetch("/api/user", {
     method: "POST",
     body: JSON.stringify(photoMetaData),

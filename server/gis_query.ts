@@ -1,5 +1,6 @@
 import database from "@/db/db";
 import { photoLocations } from "@/drizzle/schema";
+import { addMinutes, subMinutes } from "date-fns";
 import { sql } from "drizzle-orm";
 
 export type Photo_Location_Client = typeof photoLocations.$inferSelect & {
@@ -15,12 +16,15 @@ export const InsertGeoInformation = async (
 };
 
 export async function insertPhotoLocations(locations: Photo_Location_Insert[]) {
-  return await database.insert(photoLocations).values(
-    locations.map((location) => ({
-      ...location,
-      locationTakenAt: sql`ST_SetSRID(ST_MakePoint(${location.locationTakenAt[0]}, ${location.locationTakenAt[1]}), 4326)::point`,
-    }))
-  );
+  return await database
+    .insert(photoLocations)
+    .values(
+      locations.map((location) => ({
+        ...location,
+        locationTakenAt: sql`ST_SetSRID(ST_MakePoint(${location.locationTakenAt[0]}, ${location.locationTakenAt[1]}), 4326)::point`,
+      }))
+    )
+    .returning();
 }
 
 export async function getPhotosInRadius(
@@ -64,6 +68,28 @@ export async function getPhotosInRadiusAndTimeRange(
       )
       AND date_taken_at >= ${startTime}
       AND date_taken_at <= ${endTime}`
+    );
+}
+export async function getPhotosInRadiusAndTimeRangeRedux(
+  coordinates: [number, number],
+  radiusInMeters: number,
+  referenceTime: Date,
+  minutesRange: number
+): Promise<Photo_Location_Select[]> {
+  const timeRangeInMinutes = minutesRange;
+  const startTime = subMinutes(referenceTime, timeRangeInMinutes);
+  const endTime = addMinutes(referenceTime, timeRangeInMinutes);
+
+  console.log(referenceTime);
+  console.log(startTime, endTime);
+
+  return await database
+    .select()
+    .from(photoLocations)
+    .where(
+      sql`
+      date_taken_at BETWEEN ${startTime} AND ${endTime}
+    `
     );
 }
 
