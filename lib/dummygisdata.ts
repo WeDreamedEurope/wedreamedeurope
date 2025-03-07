@@ -2,13 +2,15 @@ import { Photo_Location_Insert } from "@/server/gis_query";
 
 export function generateRandomData(
   count = 10,
+  hourFrom = 19,
+  minuteFrom = 0,
+  hourTo = 21,
+  minuteTo = 0,
   lat: number,
   lng: number,
   radiusInKM = 1
 ): Photo_Location_Insert[] {
   const records: Photo_Location_Insert[] = [];
-  // const centerLat = 44.762327177662875;
-  // const centerLng = 41.71848662012972;
   const earthRadiusKm = 6371; // Earth's radius in kilometers
 
   // Helper function to generate a random point within a radius
@@ -32,13 +34,22 @@ export function generateRandomData(
     return [newLat, newLng];
   }
 
-  // Helper function to generate a random timestamp between 19:00 and 21:00
-  function randomTimestamp() {
-    const startHour = 19;
-    const endHour = 21;
-    const randomHour =
-      Math.floor(Math.random() * (endHour - startHour + 1)) + startHour;
-    const randomMinute = Math.floor(Math.random() * 60);
+  // Helper function to generate a random timestamp between specified hours and minutes
+  function randomTimestamp(
+    fromHour: number,
+    fromMinute: number,
+    toHour: number,
+    toMinute: number
+  ) {
+    const startMinutes = fromHour * 60 + fromMinute;
+    const endMinutes = toHour * 60 + toMinute;
+
+    const randomTotalMinutes =
+      Math.floor(Math.random() * (endMinutes - startMinutes + 1)) +
+      startMinutes;
+
+    const randomHour = Math.floor(randomTotalMinutes / 60);
+    const randomMinute = randomTotalMinutes % 60;
     const randomSecond = Math.floor(Math.random() * 60);
 
     const date = new Date(2024, 1, 18, randomHour, randomMinute, randomSecond);
@@ -59,7 +70,7 @@ export function generateRandomData(
   // Generate 100 records
   for (let i = 0; i < count; i++) {
     const randomLocation = randomPointInRadius(lat, lng, radiusInKM); // 1km radius
-    const randomDate = randomTimestamp();
+    const randomDate = randomTimestamp(hourFrom, minuteFrom, hourTo, minuteTo);
     const randomPhotoId = randomString();
 
     records.push({

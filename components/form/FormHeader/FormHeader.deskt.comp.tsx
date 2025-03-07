@@ -1,12 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { FormHeaderProps } from ".";
 import { DatePickerCustom } from "../DatePickerCustom";
 import { TimePickerCustom } from "../TimePickerCustom";
-import { useDateTimeContext } from "@/context/DateTimeContext";
 
-const FomrHeaderDesktop = () => {
-
-
-  const {isValidTime} = useDateTimeContext()
+const FomrHeaderDesktop = ({ readyForLoad, doSearch }: FormHeaderProps) => {
   return (
     <section className="hidden w-full min-h-20 items-center sm:flex   px-4   sm:gap-6 h-20    ">
       <div className="  flex-shrink-0">
@@ -18,7 +15,11 @@ const FomrHeaderDesktop = () => {
         </div>
       </div>
       <div>
-        <Button disabled={!isValidTime} variant={"secondary"}>
+        <Button
+          onClick={doSearch}
+          disabled={!readyForLoad}
+          variant={"secondary"}
+        >
           მოძებნე
         </Button>
       </div>

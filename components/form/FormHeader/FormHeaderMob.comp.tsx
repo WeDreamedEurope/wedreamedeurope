@@ -15,8 +15,9 @@ import { format } from "date-fns";
 import { ka } from "date-fns/locale";
 import { Calendar1, FastForward, PlusIcon, Rewind } from "lucide-react";
 import { useState } from "react";
+import { FormHeaderProps } from ".";
 
-export default function FormHeaderMob() {
+export default function FormHeaderMob({readyForLoad, doSearch}:FormHeaderProps) {
   const {
     selectedDate,
     setCurrentDate,
@@ -156,8 +157,10 @@ export default function FormHeaderMob() {
           </section>
           <DialogFooter>
             <Button
+              disabled={!readyForLoad}
               onClick={() => {
                 setIsDialogOpen(false);
+                doSearch()
               }}
               size={"lg"}
             >

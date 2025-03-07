@@ -39,12 +39,11 @@ export const TimePickerCustom = () => {
         className={cn(
           "flex border border-yellow-900 items-center gap-2 text-black transition-all  rounded-md focus:outline-yellow-800  bg-yellow-200 z-40 ",
           {
-            "border-green-900":isValidTime,
+            "border-green-900": isValidTime,
             "bg-green-200": isValidTime,
             "opacity-35": !selectedDate,
             "pointer-events-none": !selectedDate,
             "cursor-not-allowed": !selectedDate,
-
           }
         )}
       >

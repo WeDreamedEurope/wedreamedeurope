@@ -5,7 +5,7 @@ import { sql } from "drizzle-orm";
 export type Photo_Location_Client = typeof photoLocations.$inferSelect & {
   distance: number;
 };
-type Photo_Location_Select = typeof photoLocations.$inferSelect;
+export type Photo_Location_Select = typeof photoLocations.$inferSelect;
 export type Photo_Location_Insert = typeof photoLocations.$inferInsert;
 
 export const InsertGeoInformation = async (
@@ -65,4 +65,23 @@ export async function getPhotosInRadiusAndTimeRange(
       AND date_taken_at >= ${startTime}
       AND date_taken_at <= ${endTime}`
     );
+}
+
+export async function getAllPhotos() {
+  return await database.select().from(photoLocations);
+}
+
+export async function getAllPhotosClient(): Promise<Photo_Location_Client[]> {
+  const photos = await fetch("/api/photolibrary", { method: "GET" });
+  return photos.json();
+}
+
+export async function getPhotosInRadiusAndTimeRangeClient(
+  arg: Photo_Location_Select
+): Promise<Photo_Location_Client[]> {
+  const photos = await fetch("/api/photolibrary", {
+    method: "POST",
+    body: JSON.stringify(arg),
+  });
+  return photos.json();
 }
