@@ -17,7 +17,10 @@ import { Calendar1, FastForward, PlusIcon, Rewind } from "lucide-react";
 import { useState } from "react";
 import { FormHeaderProps } from ".";
 
-export default function FormHeaderMob({readyForLoad, doSearch}:FormHeaderProps) {
+export default function FormHeaderMob({
+  readyForLoad,
+  doSearch,
+}: FormHeaderProps) {
   const {
     selectedDate,
     setCurrentDate,
@@ -140,12 +143,6 @@ export default function FormHeaderMob({readyForLoad, doSearch}:FormHeaderProps) 
                 className="text-white disabled:opacity-40"
                 variant={"ghost"}
                 size={"icon"}
-                // onClick={(e) => {
-                //   e.preventDefault();
-                //   e.stopPropagation();
-                //   changeTime(true);
-                //   console.log(`Change Of Time`)
-                // }}
                 onTouchStart={(e) => {
                   e.preventDefault();
                   changeTime(true);
@@ -160,7 +157,7 @@ export default function FormHeaderMob({readyForLoad, doSearch}:FormHeaderProps) 
               disabled={!readyForLoad}
               onClick={() => {
                 setIsDialogOpen(false);
-                doSearch()
+                doSearch();
               }}
               size={"lg"}
             >

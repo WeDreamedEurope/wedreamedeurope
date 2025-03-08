@@ -10,7 +10,7 @@ import { usePhotoLoader } from "@/context/PhotoLoaderContext";
 export default function MapSidebar() {
   const { stateOfAction } = usePhotoLoader();
   return (
-    <div className="w-full  flex-col bg-red-400 flex">
+    <div className="w-full  flex-col -400 flex">
       <header className="w-full    pointer-events-auto bg-gray-800 sticky top-0 z-50 ">
         <DateAndTimeForm />
       </header>
