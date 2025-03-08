@@ -3,6 +3,7 @@ import MapComponent from "@/components/map";
 import MapSidebar from "@/components/map/Sidebar/Sidebar.comp";
 import { DateTimeProvider } from "@/context/DateTimeContext";
 import { MapProvider } from "@/context/MapContenxt";
+import { PhotoLoaderProvider } from "@/context/PhotoLoaderContext";
 import { Photo_Location_Client } from "@/server/gis_query";
 
 import { Noto_Sans_Georgian } from "next/font/google";
@@ -40,7 +41,9 @@ const MapTest = () => {
             </section>
             <aside className="w-full flex absolute  z-50 h-full  pointer-events-none sm:pointer-events-auto   top-0    lg:w-[60%]  overflow-auto sm:relative">
               {/* <MapSidebar photos={loadedImages} /> */}
-              <MapSidebar />
+              <PhotoLoaderProvider>
+                <MapSidebar />
+              </PhotoLoaderProvider>
             </aside>
           </section>
         </div>

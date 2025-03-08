@@ -1,20 +1,20 @@
 import DateAndTimeForm from "@/components/form/FormHeader";
-import usePhotoLoader from "@/hooks/usePhotoloader.hook";
 import Sidebartutorial from "./PSA.comp";
 import SidebarGallery from "./SidebarGallery.comp";
+import { usePhotoLoader } from "@/context/PhotoLoaderContext";
 // type Props = {
 //   photos: Photo_Location_Client[];
 // };
 
 // <DateAndTimeForm />
 export default function MapSidebar() {
-  const { stateOfAction, tempHandlerOrWhatever, photos } = usePhotoLoader();
+  const { stateOfAction } = usePhotoLoader();
   return (
     <div className="w-full  flex-col bg-red-400 flex">
       <header className="w-full    pointer-events-auto bg-gray-800 sticky top-0 z-50 ">
         <DateAndTimeForm />
       </header>
-      <div onClick={() => tempHandlerOrWhatever()}>{stateOfAction}</div>
+      
       {stateOfAction === "loaded" ? (
         <SidebarGallery />
       ) : (

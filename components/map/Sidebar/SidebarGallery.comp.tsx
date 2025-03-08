@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useMapContext } from "@/context/MapContenxt";
-import usePhotoLoader from "@/hooks/usePhotoloader.hook";
+import { usePhotoLoader } from "@/context/PhotoLoaderContext";
 import Image from "next/image";
 const tempShit =
   "https://images.unsplash.com/photo-1485056981035-7a565c03c6aa?q=80&w=1473&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";

@@ -1,4 +1,4 @@
-import usePhotoLoader from "@/hooks/usePhotoloader.hook";
+import { usePhotoLoader } from "@/context/PhotoLoaderContext";
 import FomrHeaderDesktop from "./FormHeader.deskt.comp";
 import FormHeaderMob from "./FormHeaderMob.comp";
 
