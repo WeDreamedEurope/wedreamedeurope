@@ -6,7 +6,7 @@ import Image from "next/image";
 const tempShit =
   "https://images.unsplash.com/photo-1485056981035-7a565c03c6aa?q=80&w=1473&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
-const NoPhotosFound = () => {
+const NoPhotosFound = ({ onClick }: { onClick: () => void }) => {
   return (
     <div className="w-full h-full flex items-center justify-center flex-col">
       <div className=" text-gray-300 font-semibold gap-6  bg-red-500/20 flex flex-col items-center justify-center w-full rounded-md p-2 text-sm aspect-video">
@@ -18,7 +18,12 @@ const NoPhotosFound = () => {
         </div>
       </div>
       <div className="mt-4">
-        <Button size={"lg"} className="" variant={'secondary'}>
+        <Button
+          onClick={onClick}
+          size={"lg"}
+          className=""
+          variant={"secondary"}
+        >
           <MapIcon /> რუკის ჩვენება
         </Button>
       </div>
@@ -29,9 +34,9 @@ const NoPhotosFound = () => {
 const SidebarGallery = () => {
   const { setSelectedPointId } = useMapContext();
 
-  const { photos } = usePhotoLoader();
+  const { photos, setStateOfAction } = usePhotoLoader();
 
-  const renderGallery = () => {
+  const RenderGallery = () => {
     return (
       <>
         {photos.map((i, index) => (
@@ -58,7 +63,11 @@ const SidebarGallery = () => {
 
   return (
     <article className="w-full relative sm:grid sm:grid-flow-row sm:grid-cols-2 h-auto flex-grow  p-0  place-content-start gap-2 py-5 pointer-events-auto sm:pb-32 text-gray-900 bg-[#121212] space-y-3 px-2">
-      {photos.length > 0 ? renderGallery() : NoPhotosFound()}
+      {photos.length > 0 ? (
+        <RenderGallery />
+      ) : (
+        <NoPhotosFound onClick={() => setStateOfAction("idle")} />
+      )}
     </article>
   );
 };

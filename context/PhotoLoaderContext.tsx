@@ -20,6 +20,7 @@ type PhotoLoaderContextType = {
   readyForLoad: boolean;
   loadPhotos: () => Promise<void>;
   stateOfAction: "idle" | "loading" | "loaded" | "BOBO";
+  setStateOfAction:(state:"idle" | "loading" | "loaded" | "BOBO") => void
 };
 
 const PhotoLoaderContext = createContext<PhotoLoaderContextType | undefined>(
@@ -78,6 +79,7 @@ export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
     readyForLoad,
     loadPhotos,
     stateOfAction,
+    setStateOfAction
   };
 
   return (
