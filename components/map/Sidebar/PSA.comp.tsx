@@ -7,7 +7,7 @@ import {
 } from "@/lib/dummygisdata";
 import { Photo_Location_Client } from "@/server/gis_query";
 import { CollectPhotoMetaData } from "@/server/user.server";
-import { getDate, getHours, getMinutes, getMonth, getTime } from "date-fns";
+import { getDate, getHours, getMinutes, getMonth } from "date-fns";
 import { CalendarIcon, Clock, ImagePlayIcon, MapIcon } from "lucide-react";
 import { useState } from "react";
 // 41.718467362626356, 44.761303115927696

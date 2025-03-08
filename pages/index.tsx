@@ -1,11 +1,8 @@
 import {
   SearchCheck,
-  Upload,
-  UploadCloud,
-  UploadCloudIcon,
+  UploadCloudIcon
 } from "lucide-react";
 import { Noto_Sans_Georgian } from "next/font/google";
-import local from "next/font/local";
 import Link from "next/link";
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -22,9 +19,7 @@ const notoGeorgian = Noto_Sans_Georgian({
   subsets: ["georgian"],
 });
 
-const BPGDeJavuSans = local({
-  src: "./BPGDeJavuSans.woff2",
-});
+
 // linear-gradient(191deg, hsl(224 45% 15% / 1) 27%, transparent)
 export default function Home() {
   return (

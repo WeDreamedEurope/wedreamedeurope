@@ -5,13 +5,12 @@ import { MapProvider } from "@/context/MapContenxt";
 import { PhotoLoaderProvider } from "@/context/PhotoLoaderContext";
 
 import { Noto_Sans_Georgian } from "next/font/google";
-import { useState } from "react";
 const notoGeorgian = Noto_Sans_Georgian({
   variable: "--font-noto-georgian",
   subsets: ["georgian"],
 });
 const MapTest = () => {
-  const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
+  
 
   return (
     <MapProvider>
@@ -24,7 +23,7 @@ const MapTest = () => {
           <section className="w-full h-full mx-auto  flex ">
             <section className="w-full sm:w-[calc(100%-750px)] lg:w-[40%] h-full   relative bg-yellow-300 flex-shrink-0">
               <MapComponent
-                selectedPointID={selectedPointId}
+                selectedPointID={""}
                 points={[]}
                 defaultLocation={
                   [44.76129881033887, 41.718473154007896] as [number, number]

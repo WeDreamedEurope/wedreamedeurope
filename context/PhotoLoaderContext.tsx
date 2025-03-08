@@ -69,7 +69,6 @@ export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
         }))
         .sort((a, b) => a.distance - b.distance)
     );
-    console.log(`We Are Here?!`);
     setStateOfAction(() => "loaded");
     setPointsToDisplay(photos.map((i) => i.locationTakenAt));
   };

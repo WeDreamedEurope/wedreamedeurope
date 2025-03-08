@@ -307,7 +307,7 @@ export default function ImagePicker({ userId }: { userId: string }) {
 
         <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start mb-10    ">
           {localPreviewUrls.map(
-            ({ name, url, DateTaken, location, progress, status }, index) => (
+            ({ name, url, DateTaken,  progress  }, index) => (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{

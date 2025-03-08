@@ -186,7 +186,7 @@ export default function MapComponent({
 
       if (foundOne) {
         mapRef.current.flyTo({
-          // @ts-ignore
+          // @ts-expect-error
           center: foundOne.geometry.coordinates,
         });
       }

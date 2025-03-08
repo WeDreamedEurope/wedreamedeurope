@@ -13,9 +13,6 @@ const notoGeorgian = Noto_Sans_Georgian({
 function UploadThing() {
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  const [userStatus, setUserStatus] = useState<
-    "unauthenticated" | "authenticated" | null
-  >(null);
   useEffect(() => {
     if (status === "loading") {
       setIsLoading(true);
@@ -23,7 +20,6 @@ function UploadThing() {
 
     if (status === "unauthenticated" || status === "authenticated") {
       setIsLoading(false);
-      setUserStatus(status);
     }
   }, [status]);
 
@@ -37,13 +33,13 @@ function UploadThing() {
 
   return (
     <div className={`h-full flex flex-col ${notoGeorgian.className}   `}>
-        {status === "authenticated" ? (
-          <SimpleImageUploader userId={session?.user?.id} />
-        ) : (
-          <span className="translate-y-1/2 w-full px-4">
-            <SignInPSA />
-          </span>
-        )}
+      {status === "authenticated" ? (
+        <SimpleImageUploader userId={session?.user?.id} />
+      ) : (
+        <span className="translate-y-1/2 w-full px-4">
+          <SignInPSA />
+        </span>
+      )}
     </div>
   );
 }

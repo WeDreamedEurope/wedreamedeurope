@@ -1,17 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Photo_Location_Insert } from "@/server/gis_query";
+import { CollectPhotoMetaData } from "@/server/user.server";
 import { format } from "date-fns";
 import { ka } from "date-fns/locale";
 import exifr from "exifr";
-import { AnimatePresence, motion } from "framer-motion";
-import { CheckCircleIcon, Trash, Trash2Icon } from "lucide-react";
-import { ChangeEvent, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { CheckCircleIcon, Trash2Icon } from "lucide-react";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import { ClipLoader } from "react-spinners";
 import UploadPSA from "../form/UploadPSA.comp";
 import UploadForm from "./UploadForm.comp";
-import { useRouter } from "next/router";
-import { CollectPhotoMetaData } from "@/server/user.server";
-import { Photo_Location_Insert } from "@/server/gis_query";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
 // const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {
@@ -196,11 +196,11 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     }
   };
 
-  const handleDrop = (file: File) => {
-    const dataTransfer = new DataTransfer();
-    dataTransfer.items.add(file);
-    processFiles(dataTransfer.files);
-  };
+  // const handleDrop = (file: File) => {
+  //   const dataTransfer = new DataTransfer();
+  //   dataTransfer.items.add(file);
+  //   processFiles(dataTransfer.files);
+  // };
 
   return (
     <div className="w-full   max-w-2xl  sm:mx-auto    relative mx-0    h-auto flex-1       flex flex-col  ">
@@ -211,7 +211,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
         <UploadPSA shouldDisplay={localPreviewUrls.length === 0} />
         <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start     ">
           {localPreviewUrls.map(
-            ({ name, url, DateTaken, location, progress, status }, index) => (
+            ({ name, url, DateTaken,  status }, index) => (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{
