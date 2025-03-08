@@ -8,7 +8,10 @@ export type Photo_Location_Client = typeof photoLocations.$inferSelect & {
 };
 export type Photo_Location_Select = typeof photoLocations.$inferSelect;
 export type Photo_Location_Insert = typeof photoLocations.$inferInsert;
-
+export type Photo_Query = Pick<
+  Photo_Location_Select,
+  "dateTakenAt" | "locationTakenAt"
+> & { radius: number };
 export const InsertGeoInformation = async (
   photoInfo: Photo_Location_Insert[]
 ) => {
@@ -80,14 +83,16 @@ export async function getPhotosInRadiusAndTimeRangeRedux(
   const startTime = subMinutes(referenceTime, timeRangeInMinutes);
   const endTime = addMinutes(referenceTime, timeRangeInMinutes);
 
-  console.log(referenceTime);
-  console.log(startTime, endTime);
-
   return await database
     .select()
     .from(photoLocations)
     .where(
       sql`
+      ST_DWithin(
+        ${sql`ST_SetSRID(ST_MakePoint(${coordinates[0]}, ${coordinates[1]}), 4326)::geography`},
+        ST_SetSRID(location_taken_at::geometry, 4326)::geography,
+        ${radiusInMeters}
+      ) AND
       date_taken_at BETWEEN ${startTime} AND ${endTime}
     `
     );
@@ -103,7 +108,7 @@ export async function getAllPhotosClient(): Promise<Photo_Location_Client[]> {
 }
 
 export async function getPhotosInRadiusAndTimeRangeClient(
-  arg: Photo_Location_Select
+  arg: Photo_Query
 ): Promise<Photo_Location_Client[]> {
   const photos = await fetch("/api/photolibrary", {
     method: "POST",

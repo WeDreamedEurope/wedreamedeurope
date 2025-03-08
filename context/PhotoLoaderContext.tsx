@@ -49,31 +49,30 @@ export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
     const photos = await getPhotosInRadiusAndTimeRangeClient({
       locationTakenAt: selectedLocation!,
       dateTakenAt: selectedDate!.toISOString(),
-      photoId: "123",
-      id: 0,
-      userId: null,
+      radius: 100,
     });
 
     console.log(photos);
     setPhotos(
-      photos.map((p) => ({
-        ...p,
-        dateTakenAt: format(
-          toZonedTime(p.dateTakenAt!, "Asia/Tbilisi"),
-          "dd.MMM HH:mm",
-          { locale: ka }
-        ),
-        distance: calculateDistanceInMeters(
-          p.locationTakenAt,
-          selectedLocation!
-        ),
-      })).sort((a,b)=> a.distance - b.distance)
+      photos
+        .map((p) => ({
+          ...p,
+          dateTakenAt: format(
+            toZonedTime(p.dateTakenAt!, "Asia/Tbilisi"),
+            "dd.MMM HH:mm",
+            { locale: ka }
+          ),
+          distance: calculateDistanceInMeters(
+            p.locationTakenAt,
+            selectedLocation!
+          ),
+        }))
+        .sort((a, b) => a.distance - b.distance)
     );
     console.log(`We Are Here?!`);
     setStateOfAction(() => "loaded");
-    // setPointsToDisplay(photos.map((i) => i.locationTakenAt));
+    setPointsToDisplay(photos.map((i) => i.locationTakenAt));
   };
-
 
   const value = {
     photos,

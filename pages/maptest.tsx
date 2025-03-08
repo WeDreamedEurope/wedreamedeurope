@@ -1,10 +1,8 @@
-import DateAndTimeForm from "@/components/form/FormHeader";
 import MapComponent from "@/components/map";
 import MapSidebar from "@/components/map/Sidebar/Sidebar.comp";
 import { DateTimeProvider } from "@/context/DateTimeContext";
 import { MapProvider } from "@/context/MapContenxt";
 import { PhotoLoaderProvider } from "@/context/PhotoLoaderContext";
-import { Photo_Location_Client } from "@/server/gis_query";
 
 import { Noto_Sans_Georgian } from "next/font/google";
 import { useState } from "react";
@@ -13,7 +11,6 @@ const notoGeorgian = Noto_Sans_Georgian({
   subsets: ["georgian"],
 });
 const MapTest = () => {
-  const [loadedImages, setLoadedImages] = useState<Photo_Location_Client[]>([]);
   const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
 
   return (

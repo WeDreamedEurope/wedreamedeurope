@@ -1,9 +1,7 @@
 import {
-  getPhotosInRadiusAndTimeRange,
   getPhotosInRadiusAndTimeRangeRedux,
-  Photo_Location_Select,
+  Photo_Query
 } from "@/server/gis_query";
-import { isValid } from "date-fns";
 import { toDate } from "date-fns-tz";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -21,13 +19,13 @@ const getPhotosForLocAndRange = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
-  const { locationTakenAt, dateTakenAt, photoId } = JSON.parse(
+  const { locationTakenAt, dateTakenAt, radius } = JSON.parse(
     req.body
-  ) as Photo_Location_Select;
+  ) as Photo_Query;
 
   const timeShenangians = await getPhotosInRadiusAndTimeRangeRedux(
     locationTakenAt,
-    100,
+    radius,
     toDate(dateTakenAt!),
     10
   );
