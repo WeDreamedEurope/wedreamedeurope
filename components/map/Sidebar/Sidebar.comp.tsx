@@ -1,13 +1,8 @@
 import DateAndTimeForm from "@/components/form/FormHeader";
 import Sidebartutorial from "./PSA.comp";
-import SidebarGallery from "./SidebarGallery.comp";
+import SidebarGallery, { HugeTempElemet } from "./SidebarGallery.comp";
 import { usePhotoLoader } from "@/context/PhotoLoaderContext";
 import { AnimatePresence, motion } from "framer-motion";
-// type Props = {
-//   photos: Photo_Location_Client[];
-// };
-
-// <DateAndTimeForm />
 
 export default function MapSidebar() {
   const { stateOfAction } = usePhotoLoader();
@@ -19,6 +14,7 @@ export default function MapSidebar() {
 
       <AnimatePresence mode="wait">
         {stateOfAction === "loaded" ? (
+          // <HugeTempElemet />
           <SidebarGallery />
         ) : (
           <motion.div
