@@ -8,6 +8,7 @@ import {
 import { Photo_Location_Client } from "@/server/gis_query";
 import { CollectPhotoMetaData } from "@/server/user.server";
 import { getDate, getHours, getMinutes, getMonth } from "date-fns";
+import { motion } from "framer-motion";
 import { CalendarIcon, Clock, ImagePlayIcon, MapIcon } from "lucide-react";
 import { useState } from "react";
 // 41.718467362626356, 44.761303115927696
@@ -64,7 +65,7 @@ export default function Sidebartutorial() {
   const { selectedLocation } = useMapContext();
   const { isValidTime } = useDateTimeContext();
   return (
-    <div className="w-full h-full  flex-col  flex items-center justify-center text-gray-200 ">
+    <motion.div className="w-full h-full   flex-grow  flex-col  flex items-center justify-center text-gray-200 ">
       <div className="bg-red-[#31363F] p-6">
         <h1 className="font-semibold mb-4 text-xl">როგორ ვიპოვნოთ ფოტოები</h1>
 
@@ -98,6 +99,6 @@ export default function Sidebartutorial() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

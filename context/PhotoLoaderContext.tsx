@@ -20,7 +20,7 @@ type PhotoLoaderContextType = {
   readyForLoad: boolean;
   loadPhotos: () => Promise<void>;
   stateOfAction: "idle" | "loading" | "loaded" | "BOBO";
-  setStateOfAction:(state:"idle" | "loading" | "loaded" | "BOBO") => void
+  setStateOfAction: (state: "idle" | "loading" | "loaded" | "BOBO") => void;
 };
 
 const PhotoLoaderContext = createContext<PhotoLoaderContextType | undefined>(
@@ -34,7 +34,7 @@ export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
   const [readyForLoad, setReadyForLoad] = useState(false);
   const [stateOfAction, setStateOfAction] = useState<
     "idle" | "loading" | "loaded" | "BOBO"
-  >("BOBO");
+  >("idle");
 
   useEffect(() => {
     if (selectedLocation && isValidTime) {
@@ -79,7 +79,7 @@ export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
     readyForLoad,
     loadPhotos,
     stateOfAction,
-    setStateOfAction
+    setStateOfAction,
   };
 
   return (

@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 // };
 
 // <DateAndTimeForm />
+
 export default function MapSidebar() {
   const { stateOfAction } = usePhotoLoader();
   return (
@@ -32,7 +33,7 @@ export default function MapSidebar() {
               opacity: 0.24,
               transition: {
                 ease: "backIn",
-                duration:0.57
+                duration: 0.57,
               },
             }}
             key={"uniquekey1"}

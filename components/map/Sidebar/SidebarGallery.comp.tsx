@@ -123,7 +123,7 @@ function SidebarGallery() {
       }}
       className="w-full h-full "
     >
-      <NoPhotosFound onClick={() => setStateOfAction("BOBO")} />
+      <NoPhotosFound onClick={() => setStateOfAction("loading")} />
     </motion.div>
   );
 }
