@@ -33,7 +33,7 @@ const DebugActions = () => {
 
   const loadData = async () => {
     const response = await fetch("/api/photolibrary/getall");
-    const photos = await response.json() ;
+    const photos = await response.json();
     console.log(
       (photos as Photo_Location_Client[]).map((i) => ({
         month: getMonth(i.dateTakenAt!),
