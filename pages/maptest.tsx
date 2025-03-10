@@ -10,8 +10,6 @@ const notoGeorgian = Noto_Sans_Georgian({
   subsets: ["georgian"],
 });
 const MapTest = () => {
-  
-
   return (
     <MapProvider>
       <DateTimeProvider>
@@ -35,9 +33,7 @@ const MapTest = () => {
                 }}
               />
             </section>
-            <aside className="w-full flex absolute  z-50 h-full  pointer-events-none sm:pointer-events-auto   top-0    lg:w-[60%]  overflow-hidden sm:relative">
-             
-              {/* <MapSidebar photos={loadedImages} /> */}
+            <aside className="w-full flex absolute z-50 h-full  pointer-events-none sm:pointer-events-auto   top-0    lg:w-[60%]  overflow-hidden sm:relative">
               <PhotoLoaderProvider>
                 <MapSidebar />
               </PhotoLoaderProvider>

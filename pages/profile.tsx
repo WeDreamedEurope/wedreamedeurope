@@ -59,19 +59,19 @@ const Profile = () => {
             className="object-cover"
           />
         </div>
-        <div>
+        <div className="flex flex-col  items-center sm:items-start">
           <h1 className="text-2xl font-bold">Jane Doe</h1>
           <p className="text-muted-foreground">Photographer & Visual Artist</p>
         </div>
       </div>
-      <section className="flex flex-col bg-green-500/10 p-4 rounded-lg ">
+      <section className="flex flex-col  p-4 rounded-lg ">
         <section className="flex items-center justify-between mb-4 ">
-          <h1 className="text-xl font-semibold ">ბოლოს ატვირთული ფოტოები</h1>
-          <Button size={"sm"} variant={"destructive"}>
+          <h1 className="text-xl font-semibold ">ბოლოს ატვირთული </h1>
+          {/* <Button size={"sm"} variant={"destructive"}>
             ფოტოების წაშლა
-          </Button>
+          </Button> */}
         </section>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2  sm:grid-cols-4 gap-4">
           {uploadedFiles.map((file, index) => (
             <PhotoCard key={index} src={file} />
           ))}

@@ -9,8 +9,8 @@ const tempShit =
 
 const NoPhotosFound = ({ onClick }: { onClick: () => void }) => {
   return (
-    <div className="w-full h-full flex items-center justify-center flex-col text-gray-300 font-semibold">
-      <div className=" max-w-md gap-6  bg-red-500/20 flex flex-col items-center justify-center w-full rounded-md p-2 text-sm aspect-video">
+    <div className="w-full h-full pointer-events-auto flex items-center px-4 justify-center flex-col text-gray-300 font-semibold bg-gray-800 z-[200]">
+      <div className=" max-w-md gap-6  bg-yellow-800 flex flex-col items-center justify-center w-full rounded-md p-2 text-sm aspect-video">
         <div>
           <ImageMinusIcon size={64} className="text-red-200" />
         </div>
@@ -20,7 +20,10 @@ const NoPhotosFound = ({ onClick }: { onClick: () => void }) => {
       </div>
       <div className="mt-4">
         <Button
-          onClick={onClick}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick();
+          }}
           size={"lg"}
           className=""
           variant={"secondary"}
@@ -75,30 +78,29 @@ const NoPhotosFound = ({ onClick }: { onClick: () => void }) => {
 
 function SidebarGallery() {
   const { setSelectedPointId } = useMapContext();
-  const { photos } = usePhotoLoader();
+  const { photos, setStateOfAction } = usePhotoLoader();
   const RenderGallery = () => {
     return (
-      <>
-        {photos
-          .map((i, index) => (
-            <div
-              onClick={() => setSelectedPointId(index.toString())}
-              key={index}
-              className="min-w-full h-auto flex flex-col relative sm:border-gray-600 hover:cursor-pointer text-red-300 bg-[#202127] overflow-hidden rounded-md"
-            >
-              <div className="relative w-full aspect-video min-w-full">
-                <Image src={tempShit} fill alt="" className="object-cover" />
-              </div>
-              <div className="text-[#9494bf] font-semibold text-sm px-2 py-2 flex items-center justify-between">
-                <div>{i.dateTakenAt}</div>
-                <div>~ {i.distance.toFixed(2)}მ</div>
-                <div>
-                  <Button size={"sm"}>რუკაზე ნახვა</Button>
-                </div>
+      <div className="w-full relative sm:grid sm:grid-flow-row sm:grid-cols-2  flex-grow h-auto  p-0  place-content-start gap-2 py-5 pointer-events-auto  text-gray-900 bg-[#121212]  px-2 ">
+        {photos.map((i, index) => (
+          <div
+            onClick={() => setSelectedPointId(index.toString())}
+            key={index}
+            className="min-w-full h-auto flex flex-col relative sm:border-gray-600 hover:cursor-pointer text-red-300 bg-[#202127] overflow-hidden rounded-md"
+          >
+            <div className="relative w-full aspect-video min-w-full">
+              <Image src={tempShit} fill alt="" className="object-cover" />
+            </div>
+            <div className="text-[#9494bf] font-semibold text-sm px-2 py-2 flex items-center justify-between">
+              <div>{i.dateTakenAt}</div>
+              <div>~ {i.distance.toFixed(2)}მ</div>
+              <div>
+                <Button size={"sm"}>რუკაზე ნახვა</Button>
               </div>
             </div>
-          ))}
-      </>
+          </div>
+        ))}
+      </div>
     );
   };
   return (
@@ -113,52 +115,33 @@ function SidebarGallery() {
         opacity: 1,
       }}
       exit={{
-        y: 100,
+        y: 200,
         opacity: 0,
+        transition: {
+          y: {
+            duration: 0.37,
+            ease: "easeIn",
+          },
+          opacity: {
+            duration: 0.37,
+            delay: 0.35,
+            ease: "easeIn",
+          },
+        },
       }}
       transition={{
-        duration: 0.57,
+        duration: 0.47,
         ease: "easeIn",
       }}
       className="w-full h-full overflow-auto "
     >
-      <div className="w-full relative sm:grid sm:grid-flow-row sm:grid-cols-2  flex-grow h-auto  p-0  place-content-start gap-2 py-5 pointer-events-auto  text-gray-900 bg-[#121212]  px-2 ">
-        {Array(10)
-          .fill(null)
-          .map((e, index) => (
-            <motion.div
-              onClick={() => {}}
-              key={index}
-              className="min-w-full h-auto flex flex-col relative sm:border-gray-600 hover:cursor-pointer text-red-300 bg-[#202127] overflow-hidden rounded-md"
-            >
-              <div className="relative w-full aspect-video min-w-full">
-                <Image src={tempShit} fill alt="" className="object-cover" />
-              </div>
-              <div className="text-[#9494bf] font-semibold text-sm px-2 py-2 flex items-center justify-between">
-                {/* <div>{i.dateTakenAt}</div> */}
-                {/* <div>~ {i.distance.toFixed(2)}მ</div> */}
-                <div>23/11/2</div>
-                <div>~ 222მ</div>
-                <div>
-                  <Button size={"sm"}>რუკაზე ნახვა</Button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-      </div>
-
-      {/* <NoPhotosFound onClick={() => setStateOfAction("loading")} /> */}
+      {photos.length === 0 ? (
+        <NoPhotosFound onClick={() => setStateOfAction("idle")} />
+      ) : (
+        <RenderGallery />
+      )}
     </motion.div>
   );
 }
 
-
 export default SidebarGallery;
-
-/*  {Array(10)
-          .fill(null)
-          .map((e, index) => (
-            <motion.div className="bg-gray-400 w-full aspect-video" key={index}>
-              Hello!
-            </motion.div>
-          ))} */

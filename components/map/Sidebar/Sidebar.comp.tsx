@@ -7,14 +7,13 @@ import { AnimatePresence, motion } from "framer-motion";
 export default function MapSidebar() {
   const { stateOfAction } = usePhotoLoader();
   return (
-    <div className="w-full  flex-col -400 flex">
+    <div className="w-full  flex-col -400 flex ">
       <header className="w-full    pointer-events-auto bg-gray-800 sticky top-0 z-50 ">
         <DateAndTimeForm />
       </header>
 
       <AnimatePresence mode="wait">
         {stateOfAction === "loaded" ? (
-          // <HugeTempElemet />
           <SidebarGallery />
         ) : (
           <motion.div
@@ -33,7 +32,7 @@ export default function MapSidebar() {
               },
             }}
             key={"uniquekey1"}
-            className="hidden relative sm:flex w-full flex-1  bg-[#222831]"
+            className="hidden relative sm:flex w-full flex-1  bg-[#222831] pointer-events-auto"
           >
             <Sidebartutorial />
           </motion.div>
