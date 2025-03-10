@@ -1,6 +1,6 @@
 import DateAndTimeForm from "@/components/form/FormHeader";
 import Sidebartutorial from "./PSA.comp";
-import SidebarGallery, { HugeTempElemet } from "./SidebarGallery.comp";
+import SidebarGallery from "./SidebarGallery.comp";
 import { usePhotoLoader } from "@/context/PhotoLoaderContext";
 import { AnimatePresence, motion } from "framer-motion";
 
