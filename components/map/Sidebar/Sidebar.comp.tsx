@@ -1,41 +1,34 @@
 import DateAndTimeForm from "@/components/form/FormHeader";
-import Sidebartutorial from "./PSA.comp";
-import SidebarGallery from "./SidebarGallery.comp";
+import { useMapContext } from "@/context/MapContenxt";
 import { usePhotoLoader } from "@/context/PhotoLoaderContext";
 import { AnimatePresence, motion } from "framer-motion";
+import { TriangleAlertIcon } from "lucide-react";
+import SidebarGallery from "./SidebarGallery.comp";
+import SidebarTutorialMob from "./SidebarTuTMob.comp";
 
 export default function MapSidebar() {
   const { stateOfAction } = usePhotoLoader();
+  const { selectedLocation } = useMapContext();
   return (
-    <div className="w-full  flex-col -400 flex ">
+    <div className="w-full  flex-col  flex relative ">
       <header className="w-full    pointer-events-auto bg-gray-800 sticky top-0 z-50 ">
         <DateAndTimeForm />
       </header>
+
+      <footer className="w-full  flex justify-center absolute z-50 bottom-10 h-auto">
+        <button
+          disabled={true}
+          className="h-12 bg-black text-white  w-[calc(100%-40px)] flex items-center rounded-xl justify-center"
+        >
+          მოძებნე {stateOfAction}
+        </button>
+      </footer>
 
       <AnimatePresence mode="wait">
         {stateOfAction === "loaded" ? (
           <SidebarGallery />
         ) : (
-          <motion.div
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            exit={{
-              scale: 0.75,
-              opacity: 0.24,
-              transition: {
-                ease: "backIn",
-                duration: 0.57,
-              },
-            }}
-            key={"uniquekey1"}
-            className="hidden relative sm:flex w-full flex-1  bg-[#222831] pointer-events-auto"
-          >
-            <Sidebartutorial />
-          </motion.div>
+          // <SidebarTutorialMob key={'randomtutandshit'} />
         )}
       </AnimatePresence>
     </div>

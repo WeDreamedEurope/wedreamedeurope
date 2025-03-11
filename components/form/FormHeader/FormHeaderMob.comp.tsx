@@ -16,6 +16,9 @@ import { ka } from "date-fns/locale";
 import { Calendar1, FastForward, PlusIcon, Rewind } from "lucide-react";
 import { useState } from "react";
 import { FormHeaderProps } from ".";
+import { ClipLoader } from "react-spinners";
+import { usePhotoLoader } from "@/context/PhotoLoaderContext";
+import { useMapContext } from "@/context/MapContenxt";
 
 export default function FormHeaderMob({
   readyForLoad,
@@ -31,6 +34,9 @@ export default function FormHeaderMob({
     setMinute,
     minute,
   } = useDateTimeContext();
+
+  const { stateOfAction } = usePhotoLoader();
+  const { selectedLocation } = useMapContext();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const btnLabel = () => {
@@ -52,15 +58,21 @@ export default function FormHeaderMob({
 
   return (
     <div className="flex sm:hidden w-full h-20 items-center justify-center px-4 ">
+      <div className=" flex-grow" />
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
           <Button
+            disabled={!selectedLocation}
             variant={"outline"}
-            className={cn(" z-40", {
-              "border-yellow-400 animate-pulse": !isValidTime || !selectedDate,
-              "border-green-400 animate-none bg-green-900":
-                isValidTime && selectedDate,
-            })}
+            className={cn(
+              " flex-shrink-0 z-40 text-yellow-950 font-semibold border-2 ",
+              {
+                "bg-yellow-200 animate-pulse text-yellow-950 border-yellow-950":
+                  !isValidTime || !selectedDate,
+                "bg-green-200 animate-none border border-green-900   text-green-950":
+                  isValidTime && selectedDate,
+              }
+            )}
           >
             {btnLabel()}
           </Button>
@@ -157,6 +169,7 @@ export default function FormHeaderMob({
               disabled={!readyForLoad}
               onClick={() => {
                 setIsDialogOpen(false);
+                
                 doSearch();
               }}
               size={"lg"}
@@ -166,6 +179,11 @@ export default function FormHeaderMob({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <div className=" flex-grow bg-red-400 flex justify-end">
+        {stateOfAction == "loading" && (
+          <ClipLoader color ="yellow" speedMultiplier={0.34} size={24} />
+        )}
+      </div>
     </div>
   );
 }

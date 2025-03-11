@@ -47,16 +47,13 @@ export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
   }, [selectedLocation, isValidTime]);
 
   const loadPhotos = async () => {
-    console.log(selectedDate);
-    console.log(selectedDate?.toISOString());
-
+    setStateOfAction("loading");
     const photos = await getPhotosInRadiusAndTimeRangeClient({
       locationTakenAt: selectedLocation!,
       dateTakenAt: selectedDate!.toISOString(),
       radius: 100,
     });
 
-    console.log(photos);
     setPhotos(
       photos
         .map((p) => ({
