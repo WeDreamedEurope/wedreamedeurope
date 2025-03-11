@@ -14,7 +14,7 @@ export default function MapSidebar() {
       <header className="w-full    pointer-events-auto bg-gray-800 sticky top-0 z-50 ">
         <DateAndTimeForm />
       </header>
-      
+
       {stateOfAction === "loaded" ? (
         <SidebarGallery />
       ) : (
