@@ -22,7 +22,7 @@ export default function SidebarTutorialMob() {
         },
       }}
       key={"uniquekey1"}
-      className=" relative sm:flex w-full flex-grow-0 sm:flex-1 bg-transparent  sm:bg-[#222831] pointer-events-auto"
+      className=" relative sm:flex w-full flex-grow-0 sm:flex-1    sm:bg-[#222831] pointer-events-auto"
     >
       <motion.div
         layout
