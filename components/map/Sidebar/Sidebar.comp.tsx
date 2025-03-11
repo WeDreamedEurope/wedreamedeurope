@@ -28,7 +28,7 @@ export default function MapSidebar() {
         {stateOfAction === "loaded" ? (
           <SidebarGallery />
         ) : (
-          // <SidebarTutorialMob key={'randomtutandshit'} />
+          <SidebarTutorialMob key={'randomtutandshit'} />
         )}
       </AnimatePresence>
     </div>
