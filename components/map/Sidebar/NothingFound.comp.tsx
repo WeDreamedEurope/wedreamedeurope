@@ -29,7 +29,8 @@ const NothingFoundMobile = () => {
         y: 0,
       }}
       transition={{
-        duration: 0.75,
+        duration: 0.45,
+        ease:"easeIn"
       }}
       className="w-full flex sm:hidden relative px-4  py-2"
     >
