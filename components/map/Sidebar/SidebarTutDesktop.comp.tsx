@@ -105,8 +105,10 @@ function SidebarTutorialDesktop() {
 }
 
 export default function SidebarTutorial() {
-  return <>
-    <SidebarTutorialDesktop />
-    <SidebarTutorialMob />
-  </>;
+  return (
+    <>
+      <SidebarTutorialDesktop />
+      <SidebarTutorialMob />
+    </>
+  );
 }
