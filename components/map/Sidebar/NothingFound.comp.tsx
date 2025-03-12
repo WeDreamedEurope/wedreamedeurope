@@ -28,33 +28,21 @@ const NothingFoundMobile = () => {
         opacity: 1,
         y: 0,
       }}
+      transition={{
+        duration: 0.75,
+      }}
       className="w-full flex sm:hidden relative px-4  py-2"
     >
       <div className="bg-red-600 border-2 border-white shadow-lg rounded-lg overflow-hidden">
         <div className="p-4 flex items-center gap-3">
           <div className="bg-white rounded-full p-2 flex-shrink-0">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-yellow-600"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
+            <TriangleAlert size={24} className="text-red-600" />
           </div>
           <div className="flex-1">
             <h3 className="text-white font-bold text-lg">
               ფოტოები არ მოიძებნა
             </h3>
-            <p className="text-white text-opacity-90">
+            <p className="text-white text-opacity-90 text-sm">
               ცადეთ ახალი ლოკაცია, თარიღი ან დრო
             </p>
           </div>

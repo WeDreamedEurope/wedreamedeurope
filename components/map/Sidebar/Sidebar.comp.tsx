@@ -10,7 +10,7 @@ export default function MapSidebar() {
   const { stateOfAction, photos } = usePhotoLoader();
   return (
     <div className="w-full  flex-col  flex relative ">
-      <header className="w-full    pointer-events-auto bg-gray-800 sticky top-0 z-50 ">
+      <header className="w-full    pointer-events-auto bg-eu-primary sticky top-0 z-50 ">
         <DateAndTimeForm />
       </header>
 
@@ -20,7 +20,7 @@ export default function MapSidebar() {
         ) : stateOfAction === "loaded" && photos.length === 0 ? (
           <NothingFound />
         ) : (
-          <SidebarTutorial key={'sidebartutorialkeybro'} />
+          <SidebarTutorial key={"sidebartutorialkeybro"} />
         )}
       </AnimatePresence>
     </div>

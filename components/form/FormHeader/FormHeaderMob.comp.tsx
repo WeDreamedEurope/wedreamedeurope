@@ -50,7 +50,7 @@ export default function FormHeaderMob({
     } else {
       return (
         <>
-          <PlusIcon />  თარიღი და დრო
+          <PlusIcon /> თარიღი და დრო
         </>
       );
     }
@@ -168,12 +168,10 @@ export default function FormHeaderMob({
               disabled={!readyForLoad}
               onClick={() => {
                 setIsDialogOpen(false);
-
-                doSearch();
               }}
               size={"lg"}
             >
-              მოძებნე
+              დახურვა
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -186,6 +184,7 @@ export default function FormHeaderMob({
           </div>
         )}
         <Button
+          onClick={() => doSearch()}
           disabled={!readyForLoad || stateOfAction === "loading"}
           variant={"secondary"}
         >
