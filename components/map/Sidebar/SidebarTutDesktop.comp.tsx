@@ -11,6 +11,7 @@ import { getDate, getHours, getMinutes, getMonth } from "date-fns";
 import { motion } from "framer-motion";
 import { CalendarIcon, Clock, ImagePlayIcon, MapIcon } from "lucide-react";
 import { useState } from "react";
+import SidebarTutorialMob from "./SidebarTuTMob.comp";
 // 41.718467362626356, 44.761303115927696
 const DebugActions = () => {
   const [loading, setLoading] = useState(false);
@@ -61,11 +62,11 @@ const DebugActions = () => {
   );
 };
 
-export default function Sidebartutorial() {
+function SidebarTutorialDesktop() {
   const { selectedLocation } = useMapContext();
   const { isValidTime } = useDateTimeContext();
   return (
-    <motion.div className="w-full h-full   flex-grow  flex-col  flex items-center justify-center text-gray-200 ">
+    <motion.div className="w-full h-full hidden   flex-grow  flex-col  sm:flex items-center justify-center text-gray-200 ">
       <div className="bg-red-[#31363F] p-6">
         <h1 className="font-semibold mb-4 text-xl">როგორ ვიპოვნოთ ფოტოები</h1>
 
@@ -101,4 +102,11 @@ export default function Sidebartutorial() {
       </div>
     </motion.div>
   );
+}
+
+export default function SidebarTutorial() {
+  return <>
+    <SidebarTutorialDesktop />
+    <SidebarTutorialMob />
+  </>;
 }

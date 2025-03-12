@@ -50,7 +50,7 @@ export default function FormHeaderMob({
     } else {
       return (
         <>
-          <PlusIcon /> მონიშნე თარიღი და დრო
+          <PlusIcon />  თარიღი და დრო
         </>
       );
     }
