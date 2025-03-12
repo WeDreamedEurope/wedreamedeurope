@@ -35,6 +35,7 @@ export default function SidebarTutorialMob() {
               key={"wdwdwd"}
               exit={{
                 backgroundColor: "green",
+                color: "lightgreen",
                 x: 800,
                 transition: {
                   x: {
@@ -43,6 +44,10 @@ export default function SidebarTutorialMob() {
                     ease: "backInOut",
                   },
                   backgroundColor: {
+                    duration: 0.75,
+                    ease: "easeIn",
+                  },
+                  color: {
                     duration: 0.75,
                     ease: "easeIn",
                   },

@@ -38,11 +38,7 @@ export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (selectedLocation && isValidTime) {
-      if (readyForLoad === true) {
-        loadPhotos();
-      } else {
-        setReadyForLoad(true);
-      }
+      setReadyForLoad(true);
     }
   }, [selectedLocation, isValidTime]);
 

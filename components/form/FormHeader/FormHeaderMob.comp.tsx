@@ -16,7 +16,7 @@ import { ka } from "date-fns/locale";
 import { Calendar1, FastForward, PlusIcon, Rewind } from "lucide-react";
 import { useState } from "react";
 import { FormHeaderProps } from ".";
-import { ClipLoader } from "react-spinners";
+import { ClipLoader, BeatLoader, BarLoader, HashLoader } from "react-spinners";
 import { usePhotoLoader } from "@/context/PhotoLoaderContext";
 import { useMapContext } from "@/context/MapContenxt";
 
@@ -57,8 +57,7 @@ export default function FormHeaderMob({
   };
 
   return (
-    <div className="flex sm:hidden w-full h-20 items-center justify-center px-4 ">
-      <div className=" flex-grow" />
+    <div className="flex sm:hidden w-full h-20 items-center justify-evenly px-4 ">
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
           <Button
@@ -169,7 +168,7 @@ export default function FormHeaderMob({
               disabled={!readyForLoad}
               onClick={() => {
                 setIsDialogOpen(false);
-                
+
                 doSearch();
               }}
               size={"lg"}
@@ -179,10 +178,19 @@ export default function FormHeaderMob({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <div className=" flex-grow bg-red-400 flex justify-end">
-        {stateOfAction == "loading" && (
-          <ClipLoader color ="yellow" speedMultiplier={0.34} size={24} />
+
+      <div className="relative overflow-hidden">
+        {stateOfAction === "loading" && (
+          <div className="absolute top-0 left-0 w-full h-full  bg-gray-200/60 z-20 flex items-center justify-center overflow-hidden rounded-md">
+            <ClipLoader size={18} speedMultiplier={0.5} color="black" />
+          </div>
         )}
+        <Button
+          disabled={!readyForLoad || stateOfAction === "loading"}
+          variant={"secondary"}
+        >
+          მოძებნე
+        </Button>
       </div>
     </div>
   );
