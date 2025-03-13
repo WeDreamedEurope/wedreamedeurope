@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Slideshow.module.css";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface Slide {
   id: number;
@@ -13,10 +14,11 @@ interface Slide {
 interface SlideshowProps {
   slides: Slide[];
   onDismiss: () => void;
+  startingIndex?:number
 }
 
-const Slideshow: React.FC<SlideshowProps> = ({ slides, onDismiss }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+const Slideshow: React.FC<SlideshowProps> = ({ slides, onDismiss, startingIndex = 0 }) => {
+  const [currentIndex, setCurrentIndex] = useState(startingIndex);
   const slidesContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -44,13 +46,13 @@ const Slideshow: React.FC<SlideshowProps> = ({ slides, onDismiss }) => {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     switch (e.key) {
-      case 'ArrowLeft':
+      case "ArrowLeft":
         handlePrevSlide();
         break;
-      case 'ArrowRight':
+      case "ArrowRight":
         handleNextSlide();
         break;
-      case 'Escape':
+      case "Escape":
         onDismiss();
         break;
       default:
@@ -87,7 +89,7 @@ const Slideshow: React.FC<SlideshowProps> = ({ slides, onDismiss }) => {
       setCurrentIndex(newIndex);
     }
   };
-  
+
   useEffect(() => {
     const container = slidesContainerRef.current;
     if (container) {
@@ -101,7 +103,21 @@ const Slideshow: React.FC<SlideshowProps> = ({ slides, onDismiss }) => {
   }, []);
 
   return (
-    <div className={styles.container}>
+    <motion.div
+      initial={{
+        opacity: 0,
+      }}
+      animate={{
+        opacity: 1,
+      }}
+      transition={{
+        duration: 0.6,
+      }}
+      exit={{
+        y:100
+      }}
+      className={styles.container}
+    >
       <div
         tabIndex={0}
         onKeyDown={handleKeyDown}
@@ -140,18 +156,17 @@ const Slideshow: React.FC<SlideshowProps> = ({ slides, onDismiss }) => {
         disabled={currentIndex === 0}
         className={`${styles.navigationButton} ${styles.prevButton}`}
       >
-        ←
+        <ChevronLeftIcon />
       </button>
       <button
         onClick={handleNextSlide}
         disabled={currentIndex === slides.length - 1}
         className={`${styles.navigationButton} ${styles.nextButton}`}
       >
-        →
+        <ChevronRightIcon />
       </button>
-    </div>
+    </motion.div>
   );
 };
 
 export default Slideshow;
-

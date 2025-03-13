@@ -1,4 +1,5 @@
 import Slideshow from "@/components/Slideshow";
+import { AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
 
 export default function Test() {
@@ -25,9 +26,13 @@ export default function Test() {
         Show Slideshow
       </button>
       {showSlideshow && (
-        <div className="w-full h-full inset-0 absolute bg-red-600">
-          <Slideshow slides={tempSlides.current} onDismiss={() => setShowSlideshow(false)} />
-        </div>
+        <AnimatePresence>
+          <Slideshow
+            key={"dwdwdwd"}
+            slides={tempSlides.current}
+            onDismiss={() => setShowSlideshow(false)}
+          />
+        </AnimatePresence>
       )}
     </div>
   );
