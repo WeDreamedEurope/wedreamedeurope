@@ -161,12 +161,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
       .map((res) => extractMetaData(res.value!));
 
     // console.log(metaData);
-    const afterSave = await CollectPhotoMetaData(metaData);
-    console.log(afterSave);
-    localStorage.setItem(
-      "uploadedFiles",
-      JSON.stringify(afterSave.map((file) => file.photoId))
-    );
+     await CollectPhotoMetaData(metaData);
     setInternalState("success");
     router.push("/profile");
   };

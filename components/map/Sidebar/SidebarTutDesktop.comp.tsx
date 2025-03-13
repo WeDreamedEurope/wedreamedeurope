@@ -72,24 +72,29 @@ function SidebarTutorialDesktop() {
 
         <article className="flex flex-col gap-4 text-sm transition-colors ">
           <div
-            className={`flex items-center gap-2 bg-gray-700 p-4 rounded-lg text-base ${
-              selectedLocation ? "text-green-200" : "text-yellow-200"
+            // #4ade8042
+            className={`flex items-center gap-2 bg-[#facc153d] p-4 rounded-lg text-base ${
+              selectedLocation
+                ? "text-green-200 bg-[#4ade8042]"
+                : "text-yellow-200 bg-[#facc153d]"
             } `}
           >
             <MapIcon size={24} />
             რუკაზე ორჯერ დაკლიკებით მონიშნეთ სასურველი ლოკაცია
           </div>
           <div
-            className={`flex items-center gap-2 bg-gray-700 p-4 rounded-lg text-base ${
-              isValidTime ? "text-green-200" : "text-yellow-200"
+            className={`flex items-center gap-2 bg-[#facc153d] p-4 rounded-lg text-base ${
+              isValidTime
+                ? "text-green-200 bg-[#4ade8042]"
+                : "text-yellow-200 bg-[#facc153d]"
             } `}
           >
             <CalendarIcon size={18} />
             აირჩიეთ თვის სასურველი რიცხვი და დრო
           </div>
         </article>
-        <DebugActions />
-        <div className="flex flex-col gap-4 mt-6 text-xs bg-gray-800   opacity-60 rounded-lg  font-semibold text-gray-400">
+        {/* <DebugActions /> */}
+        <div className="flex flex-col gap-4 mt-6 text-xs bg-[#3f4933]   opacity-60 rounded-lg  font-semibold text-[#e8e9e2] p-2">
           <div className="flex gap-2 items-center">
             <ImagePlayIcon size={16} />
             ფოტოები ნაჩვენები იქნება მონიშნული ლოკაციის 10 მეტრიან რადიუსში

@@ -19,7 +19,7 @@ const MapTest = () => {
           {/* <DateAndTimeForm /> */}
 
           <section className="w-full h-full mx-auto  flex ">
-            <section className="w-full sm:w-[calc(100%-750px)] lg:w-[40%] h-full   relative bg-yellow-300 flex-shrink-0">
+            <section className="w-full sm:w-[calc(100%-750px)] lg:w-[40%] h-full   relative  flex-shrink-0">
               <MapComponent
                 selectedPointID={""}
                 points={[]}

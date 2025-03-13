@@ -5,14 +5,14 @@ import { useEffect } from "react";
 
 const NothingFoundDesktop = () => {
   return (
-    <div className=" hidden sm:flex w-full h-full pointer-events-auto  items-center px-4   flex-col text-red-800 font-semibold bg-gray-800 z-[200]">
+    <div className=" hidden sm:flex w-full h-full pointer-events-auto  items-center px-4   flex-col text-red-800 font-semibold z-[200]">
       <div className=" translate-y-1/2 max-w-md gap-6  bg-red-300 flex flex-col items-center justify-center w-full rounded-md p-2 text-sm aspect-video">
         <div>
           <TriangleAlert size={64} className="text-red-800" />
         </div>
         <div className="text-center flex flex-col gap-2">
           <h2 className="text-lg font-bold">ფოტოები არ მოიძებნა</h2>
-          მოცემული დროით მოცემულ ლოკაციაზე ფოტოები არ მოიძებნა
+          აირჩიეთ ახალი ლოკაცია, თარიღი ან დრო
         </div>
       </div>
       <div className="mt-4"></div>
@@ -30,7 +30,7 @@ const NothingFoundMobile = () => {
       }}
       transition={{
         duration: 0.45,
-        ease:"easeIn"
+        ease: "easeIn",
       }}
       className="w-full flex sm:hidden relative px-4  py-2"
     >

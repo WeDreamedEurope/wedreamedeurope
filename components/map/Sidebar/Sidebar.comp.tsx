@@ -1,17 +1,10 @@
 import DateAndTimeForm from "@/components/form/FormHeader";
 import { usePhotoLoader } from "@/context/PhotoLoaderContext";
 import { AnimatePresence } from "framer-motion";
-import SidebarGallery from "./SidebarGallery.comp";
-import SidebarTutorialMob from "./SidebarTuTMob.comp";
+import { HashLoader } from "react-spinners";
 import NothingFound from "./NothingFound.comp";
+import SidebarGallery from "./SidebarGallery.comp";
 import SidebarTutorial from "./SidebarTutDesktop.comp";
-import {
-  HashLoader,
-  BeatLoader,
-  BarLoader,
-  RiseLoader,
-  ClockLoader,
-} from "react-spinners";
 export default function MapSidebar() {
   const { stateOfAction, photos } = usePhotoLoader();
   const LoaderThing = () => {
@@ -22,7 +15,7 @@ export default function MapSidebar() {
     );
   };
   return (
-    <div className="w-full  flex-col  flex relative ">
+    <div className="w-full  flex-col  flex relative sm:bg-eu-primary bg-transparent  ">
       <header className="w-full    pointer-events-auto bg-eu-primary sticky top-0 z-50 ">
         <DateAndTimeForm />
       </header>

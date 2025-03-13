@@ -8,17 +8,16 @@ export default {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-	
     extend: {
       height: {
         "header-height": "var(--header-height)",
         "content-area-height": "var(--content-area-height)",
       },
-	  
+
       colors: {
-		eu:{
-			primary:'#181c14'
-		},
+        eu: {
+          primary: "#181c14",
+        },
 
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
