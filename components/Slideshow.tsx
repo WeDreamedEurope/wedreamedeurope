@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import styles from "./Slideshow.module.css";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { motion } from "framer-motion";
+import { Photo_Location_Select_With_URL } from "@/API_CALLS/gis_query";
 
 interface Slide {
   id: number;
@@ -12,12 +13,16 @@ interface Slide {
 }
 
 interface SlideshowProps {
-  slides: Slide[];
+  slides: Photo_Location_Select_With_URL[];
   onDismiss: () => void;
-  startingIndex?:number
+  startingIndex?: number;
 }
 
-const Slideshow: React.FC<SlideshowProps> = ({ slides, onDismiss, startingIndex = 0 }) => {
+const Slideshow: React.FC<SlideshowProps> = ({
+  slides,
+  onDismiss,
+  startingIndex = 0,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(startingIndex);
   const slidesContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -114,7 +119,7 @@ const Slideshow: React.FC<SlideshowProps> = ({ slides, onDismiss, startingIndex 
         duration: 0.6,
       }}
       exit={{
-        y:100
+        y: 100,
       }}
       className={styles.container}
     >
@@ -131,20 +136,16 @@ const Slideshow: React.FC<SlideshowProps> = ({ slides, onDismiss, startingIndex 
         {slides.map((slide) => (
           <div key={slide.id} className={styles.slideWrapper}>
             <img
-              src={slide.imageUrl}
-              alt={slide.title}
+              src={slide.url}
+              alt={slide.photoId}
               className={styles.slideImage}
             />
             <div className={styles.slideInfo}>
               <div className="flex flex-col gap-2">
-                <p className="text-xl text-white">{slide.date}</p>
-                <h2 className="">{slide.title}</h2>
+                <p className="text-xl text-white">{slide.dateTakenAt}</p>
+                <h2 className="">{slide.photoId}</h2>
               </div>
-              <a
-                href={slide.downloadUrl}
-                download
-                className={styles.downloadButton}
-              >
+              <a href={slide.url} download className={styles.downloadButton}>
                 Download
               </a>
             </div>
