@@ -5,8 +5,8 @@ import {
   calculateDistanceInMeters,
   generateRandomData,
 } from "@/lib/dummygisdata";
-import { Photo_Location_Client } from "@/server/gis_query";
-import { CollectPhotoMetaData } from "@/server/user.server";
+import { Photo_Location_Client } from "@/API_CALLS/gis_query";
+import { CollectPhotoMetaData } from "@/API_CALLS/user/user.server";
 import { getDate, getHours, getMinutes, getMonth } from "date-fns";
 import { motion } from "framer-motion";
 import { CalendarIcon, Clock, ImagePlayIcon, MapIcon } from "lucide-react";

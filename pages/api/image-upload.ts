@@ -1,4 +1,4 @@
-import { handleUploadRequest } from "@/server/imageUploader";
+import { handleUploadRequest } from "@/API_CALLS/imageUploader";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./auth/[...nextauth]";

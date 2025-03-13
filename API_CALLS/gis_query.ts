@@ -8,6 +8,9 @@ export type Photo_Location_Client = typeof photoLocations.$inferSelect & {
 };
 export type Photo_Location_Select = typeof photoLocations.$inferSelect;
 export type Photo_Location_Insert = typeof photoLocations.$inferInsert;
+export type Photo_Location_Select_With_URL = Photo_Location_Select & {
+  url: string;
+};
 export type Photo_Query = Pick<
   Photo_Location_Select,
   "dateTakenAt" | "locationTakenAt"

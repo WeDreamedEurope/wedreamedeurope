@@ -1,7 +1,7 @@
 import {
   getPhotosInRadius,
   insertPhotoLocations
-} from "@/server/gis_query";
+} from "@/API_CALLS/gis_query";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

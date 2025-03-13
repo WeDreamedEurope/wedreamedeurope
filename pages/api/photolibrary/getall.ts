@@ -1,5 +1,5 @@
 import { NextApiResponse } from "next";
-import { getAllPhotos } from "@/server/gis_query";
+import { getAllPhotos } from "@/API_CALLS/gis_query";
 import { NextApiRequest } from "next";
 
 

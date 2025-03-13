@@ -4,7 +4,7 @@ import { calculateDistanceInMeters } from "@/lib/dummygisdata";
 import {
   getPhotosInRadiusAndTimeRangeClient,
   Photo_Location_Client,
-} from "@/server/gis_query";
+} from "@/API_CALLS/gis_query";
 import { format, toZonedTime } from "date-fns-tz";
 import { ka } from "date-fns/locale";
 import {

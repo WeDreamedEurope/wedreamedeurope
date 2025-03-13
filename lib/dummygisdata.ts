@@ -1,4 +1,4 @@
-import { Photo_Location_Insert } from "@/server/gis_query";
+import { Photo_Location_Insert } from "@/API_CALLS/gis_query";
 export function generateRandomData(
   count = 10,
   hourFrom = 19,
