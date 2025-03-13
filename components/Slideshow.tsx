@@ -12,9 +12,10 @@ interface Slide {
 
 interface SlideshowProps {
   slides: Slide[];
+  onDismiss: () => void;
 }
 
-const Slideshow: React.FC<SlideshowProps> = ({ slides }) => {
+const Slideshow: React.FC<SlideshowProps> = ({ slides, onDismiss }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slidesContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -32,12 +33,7 @@ const Slideshow: React.FC<SlideshowProps> = ({ slides }) => {
   };
 
   const handleNextSlide = () => {
-    console.log("next slide");
-    console.log(currentIndex);
-    console.log(slides.length);
     if (currentIndex < slides.length - 1) {
-      console.log(`We Should Slide!`)
-      console.log((currentIndex + 1) * window.innerWidth)
       setCurrentIndex(currentIndex + 1);
       slidesContainerRef.current?.scrollTo({
         left: (currentIndex + 1) * window.innerWidth,
@@ -46,21 +42,37 @@ const Slideshow: React.FC<SlideshowProps> = ({ slides }) => {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case 'ArrowLeft':
+        handlePrevSlide();
+        break;
+      case 'ArrowRight':
+        handleNextSlide();
+        break;
+      case 'Escape':
+        onDismiss();
+        break;
+      default:
+        break;
+    }
+  };
+
   const handleMouseDown = (e: React.MouseEvent) => {
-    // if (e.button !== 0) return;
-    // setIsDragging(true);
-    // setStartX(e.pageX - (slidesContainerRef.current?.offsetLeft || 0));
-    // setScrollLeft(slidesContainerRef.current?.scrollLeft || 0);
+    if (e.button !== 0) return;
+    setIsDragging(true);
+    setStartX(e.pageX - (slidesContainerRef.current?.offsetLeft || 0));
+    setScrollLeft(slidesContainerRef.current?.scrollLeft || 0);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    // if (!isDragging) return;
-    // e.preventDefault();
-    // const x = e.pageX - (slidesContainerRef.current?.offsetLeft || 0);
-    // const walk = (x - startX) * 2;
-    // if (slidesContainerRef.current) {
-    //   slidesContainerRef.current.scrollLeft = scrollLeft - walk;
-    // }
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - (slidesContainerRef.current?.offsetLeft || 0);
+    const walk = (x - startX) * 2;
+    if (slidesContainerRef.current) {
+      slidesContainerRef.current.scrollLeft = scrollLeft - walk;
+    }
   };
 
   const handleMouseUp = () => {
@@ -75,47 +87,24 @@ const Slideshow: React.FC<SlideshowProps> = ({ slides }) => {
       setCurrentIndex(newIndex);
     }
   };
-
+  
   useEffect(() => {
     const container = slidesContainerRef.current;
     if (container) {
       container.addEventListener("scroll", handleScroll);
-      return () => container.removeEventListener("scroll", handleScroll);
+      // Focus the container when component mounts
+      container.focus();
+      return () => {
+        container.removeEventListener("scroll", handleScroll);
+      };
     }
   }, []);
 
   return (
-    // <section
-    //   ref={slidesContainerRef}
-    //   onMouseDown={handleMouseDown}
-    //   onMouseMove={handleMouseMove}
-    //   onMouseUp={handleMouseUp}
-    //   onMouseLeave={handleMouseUp}
-    //   className="w-full h-full relative border bg-orange-300  snap-x snap-mandatory scroll-smooth "
-    // >
-    //   {slides.map((slide) => (
-    //     <div key={slide.id} className="w-full h-full snap-start relative flex items-center justify-center">
-    //       <img
-    //         src={slide.imageUrl}
-    //         alt={slide.title}
-    //         className="w-full h-full object-cover"
-    //       />
-    //     </div>
-    //   ))}
-    //   <button className="bg-blue-500 absolute  top-1/2 -translate-y-1/2 left-1 w-12 h-12 rounded-full flex items-center justify-center">
-    //     <ChevronLeftIcon className="w-6 h-6" />
-    //   </button>
-    //   <button
-    //     onClick={handleNextSlide}
-    //     className="bg-blue-500 absolute  top-1/2 -translate-y-1/2 right-1 w-12 h-12 rounded-full flex items-center justify-center"
-    //   >
-    //     <ChevronRightIcon className="w-6 h-6" />
-    //   </button>
-    //   <footer className="w-full h-12 bg-red-500 absolute bottom-0 left-0 right-0"></footer>
-    // </section>
-
     <div className={styles.container}>
       <div
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
         className={styles.slidesContainer}
         ref={slidesContainerRef}
         onMouseDown={handleMouseDown}
@@ -131,8 +120,10 @@ const Slideshow: React.FC<SlideshowProps> = ({ slides }) => {
               className={styles.slideImage}
             />
             <div className={styles.slideInfo}>
-              <h2 className={styles.slideTitle}>{slide.title}</h2>
-              <p className={styles.slideDate}>{slide.date}</p>
+              <div className="flex flex-col gap-2">
+                <p className="text-xl text-white">{slide.date}</p>
+                <h2 className="">{slide.title}</h2>
+              </div>
               <a
                 href={slide.downloadUrl}
                 download
@@ -163,3 +154,4 @@ const Slideshow: React.FC<SlideshowProps> = ({ slides }) => {
 };
 
 export default Slideshow;
+

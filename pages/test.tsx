@@ -26,7 +26,7 @@ export default function Test() {
       </button>
       {showSlideshow && (
         <div className="w-full h-full inset-0 absolute bg-red-600">
-          <Slideshow slides={tempSlides.current} />
+          <Slideshow slides={tempSlides.current} onDismiss={() => setShowSlideshow(false)} />
         </div>
       )}
     </div>
