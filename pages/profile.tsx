@@ -70,6 +70,7 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
     <div className="flex flex-col   mt-8     w-full max-w-6xl mx-auto  relative">
       {startSlideShow && (
         <Slideshow
+          isOpen={startSlideShow}
           startingIndex={selectedPhotoIndex ?? undefined}
           slides={uploadedFiles.current}
           onDismiss={() => setStartSlideShow(false)}
