@@ -17,6 +17,7 @@
     "@radix-ui/react-popover": "^1.1.6",
     "@radix-ui/react-slider": "^1.2.3",
     "@radix-ui/react-slot": "^1.1.2",
+    "@radix-ui/react-visually-hidden": "^1.1.2",
     "@types/mapbox-gl": "^3.4.1",
     "bufferutil": "^4.0.9",
     "busboy": "^1.6.0",

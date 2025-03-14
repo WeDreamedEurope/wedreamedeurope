@@ -145,7 +145,11 @@ const Slideshow: React.FC<SlideshowProps> = ({
                 <p className="text-xl text-white">{slide.dateTakenAt}</p>
                 <h2 className="">{slide.photoId}</h2>
               </div>
-              <a href={slide.url} download className={styles.downloadButton}>
+              <a
+                href={slide.url}
+                download
+                className={styles.downloadButton}
+              >
                 Download
               </a>
             </div>

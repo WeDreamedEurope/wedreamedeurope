@@ -11,15 +11,26 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Slideshow from "@/components/Slideshow";
-
+import SlideShowRedux from "@/components/SlideShowRedux.comp";
 // const publicURL = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_URL!;
 // const bucketName = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_BUCKET!;
 // const url = `${publicURL}/${bucketName}/${session.user.id}/`;
 // const mappedURLS = filesFromLocalStorage.map((file) => `${url}${file}`);
 
-const PhotoCard = ({ src, onClick }: { src: string, onClick: () => void }) => {
+const PhotoCard = ({
+  src,
+  id,
+  onClick,
+}: {
+  src: string;
+  id: number;
+  onClick: (arg: number) => void;
+}) => {
   return (
-    <div className="group relative overflow-hidden rounded-md hover:cursor-pointer" onClick={onClick}>
+    <div
+      onClick={() => onClick(id)}
+      className="group relative overflow-hidden rounded-md hover:cursor-pointer"
+    >
       <Image
         src={src}
         alt="test"
@@ -45,16 +56,25 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
   // const [uploadedFiles] = useState<Photo_Location_Select_With_URL[]>(photos);
   const uploadedFiles = useRef<Photo_Location_Select_With_URL[]>(photos);
   const { data: session } = useSession();
-  const [showSlideshow, setShowSlideshow] = useState(false);
+  const [startSlideShow, setStartSlideShow] = useState(false);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
+    null
+  );
 
-
-
+  const handlePhotoClick = (index: number) => {
+    console.log(index);
+    setSelectedPhotoIndex(index);
+    setStartSlideShow(true);
+  };
 
   return (
-  
-  
-  <div className="flex flex-col   mt-8     w-full max-w-6xl mx-auto ">
-      {showSlideshow && <Slideshow slides={uploadedFiles.current} onDismiss={() => setShowSlideshow(false)} />}
+    <div className="flex flex-col   mt-8     w-full max-w-6xl mx-auto  relative">
+      {startSlideShow && (
+       
+       <Slideshow isOpen={startSlideShow} onDismiss={() => setStartSlideShow(false)} slides={uploadedFiles.current}  />
+      //  <SlideShowRedux isOpen={startSlideShow} onDismiss={() => setStartSlideShow(false)} photos={uploadedFiles.current} />
+       
+      )}
       {/* Profile Header */}
       <article className="flex flex-col items-center space-y-4 sm:flex-row sm:space-x-6 sm:space-y-0">
         <div className="relative h-24 w-24 overflow-hidden rounded-full">
@@ -86,7 +106,12 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
           className="grid grid-cols-2  sm:grid-cols-4 gap-4"
         >
           {uploadedFiles.current.map((file, index) => (
-            <PhotoCard key={index} src={file.url} onClick={() => setShowSlideshow(true)} />
+            <PhotoCard
+              key={index}
+              src={file.url}
+              id={file.id}
+              onClick={handlePhotoClick}
+            />
           ))}
         </motion.div>
       </section>
