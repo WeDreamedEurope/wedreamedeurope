@@ -1,32 +1,29 @@
-import React, { useState, useRef, useEffect, FC } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./Slideshow.module.css";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { Photo_Location_Select_With_URL } from "@/API_CALLS/gis_query";
-import {
-  Root,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogOverlay,
-  DialogTitle,
-} from "@radix-ui/react-dialog";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+
+interface Slide {
+  id: number;
+  imageUrl: string;
+  title: string;
+  date: string;
+  downloadUrl: string;
+}
 
 interface SlideshowProps {
   slides: Photo_Location_Select_With_URL[];
-  isOpen: boolean;
   onDismiss: () => void;
   startingIndex?: number;
 }
 
-const Slideshow: FC<SlideshowProps> = ({
+const Slideshow: React.FC<SlideshowProps> = ({
   slides,
   onDismiss,
-  isOpen,
   startingIndex = 0,
 }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(startingIndex);
   const slidesContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -111,29 +108,6 @@ const Slideshow: FC<SlideshowProps> = ({
   }, []);
 
   return (
-    // <Dialog open={isOpen} onOpenChange={onDismiss}>
-    //   <DialogOverlay className="fixed inset-0 bg-purple-900 z-40 animate-in fade-in data-[state=open]:animate-in data-[state=open]:fade-in-15 data-[state=closed]:animate-out data-[state=closed]:fade-out duration-1000 " />
-    //   <DialogContent
-    //     onEscapeKeyDown={onDismiss}
-    //     onPointerDownOutside={(e) => {
-    //       e.preventDefault();
-    //     }}
-    //     className="min-w-full min-h-full bg-red-300  z-40 fixed inset-0 flex items-center justify-center px-4 "
-    //   >
-    //     <article className="flex flex-col gap-4 text-white w-full h-full  bg-green-500 " >
-    //       <VisuallyHidden>
-    //         <DialogTitle asChild>
-    //           <h1>Slideshow</h1>
-    //         </DialogTitle>
-    //         <DialogDescription>I Am Description</DialogDescription>
-    //       </VisuallyHidden>
-          
-    //         <img src={slides[currentIndex].url} alt={slides[currentIndex].photoId} className="w-full h-full object-cover" />
-          
-    //     </article>
-    //   </DialogContent>
-    // </Dialog>
-
     <motion.div
       initial={{
         opacity: 0,
@@ -171,7 +145,11 @@ const Slideshow: FC<SlideshowProps> = ({
                 <p className="text-xl text-white">{slide.dateTakenAt}</p>
                 <h2 className="">{slide.photoId}</h2>
               </div>
-              <a href={slide.url} download className={styles.downloadButton}>
+              <a
+                href={slide.url}
+                download
+                className={styles.downloadButton}
+              >
                 Download
               </a>
             </div>

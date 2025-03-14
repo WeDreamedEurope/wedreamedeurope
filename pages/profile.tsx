@@ -11,6 +11,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Slideshow from "@/components/Slideshow";
+import SlideShowRedux from "@/components/SlideShowRedux.comp";
 // const publicURL = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_URL!;
 // const bucketName = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_BUCKET!;
 // const url = `${publicURL}/${bucketName}/${session.user.id}/`;
@@ -69,12 +70,10 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
   return (
     <div className="flex flex-col   mt-8     w-full max-w-6xl mx-auto  relative">
       {startSlideShow && (
-        <Slideshow
-          isOpen={startSlideShow}
-          startingIndex={selectedPhotoIndex ?? undefined}
-          slides={uploadedFiles.current}
-          onDismiss={() => setStartSlideShow(false)}
-        />
+       
+       <Slideshow isOpen={startSlideShow} onDismiss={() => setStartSlideShow(false)} slides={uploadedFiles.current}  />
+      //  <SlideShowRedux isOpen={startSlideShow} onDismiss={() => setStartSlideShow(false)} photos={uploadedFiles.current} />
+       
       )}
       {/* Profile Header */}
       <article className="flex flex-col items-center space-y-4 sm:flex-row sm:space-x-6 sm:space-y-0">
