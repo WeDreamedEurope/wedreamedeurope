@@ -1,7 +1,7 @@
 import {
   getPhotosInRadiusAndTimeRangeRedux,
   Photo_Query
-} from "@/server/gis_query";
+} from "@/API_CALLS/gis_query";
 import { toDate } from "date-fns-tz";
 import { NextApiRequest, NextApiResponse } from "next";
 

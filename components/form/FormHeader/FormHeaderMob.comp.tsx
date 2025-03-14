@@ -16,8 +16,14 @@ import { ka } from "date-fns/locale";
 import { Calendar1, FastForward, PlusIcon, Rewind } from "lucide-react";
 import { useState } from "react";
 import { FormHeaderProps } from ".";
+import { ClipLoader, BeatLoader, BarLoader, HashLoader } from "react-spinners";
+import { usePhotoLoader } from "@/context/PhotoLoaderContext";
+import { useMapContext } from "@/context/MapContenxt";
 
-export default function FormHeaderMob({readyForLoad, doSearch}:FormHeaderProps) {
+export default function FormHeaderMob({
+  readyForLoad,
+  doSearch,
+}: FormHeaderProps) {
   const {
     selectedDate,
     setCurrentDate,
@@ -28,6 +34,9 @@ export default function FormHeaderMob({readyForLoad, doSearch}:FormHeaderProps) 
     setMinute,
     minute,
   } = useDateTimeContext();
+
+  const { stateOfAction } = usePhotoLoader();
+  const { selectedLocation } = useMapContext();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const btnLabel = () => {
@@ -41,23 +50,28 @@ export default function FormHeaderMob({readyForLoad, doSearch}:FormHeaderProps) 
     } else {
       return (
         <>
-          <PlusIcon /> მონიშნე თარიღი და დრო
+          <PlusIcon /> თარიღი და დრო
         </>
       );
     }
   };
 
   return (
-    <div className="flex sm:hidden w-full h-20 items-center justify-center px-4 ">
+    <div className="flex sm:hidden w-full h-20 items-center justify-evenly px-4 ">
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
           <Button
+            disabled={!selectedLocation}
             variant={"outline"}
-            className={cn(" z-40", {
-              "border-yellow-400 animate-pulse": !isValidTime || !selectedDate,
-              "border-green-400 animate-none bg-green-900":
-                isValidTime && selectedDate,
-            })}
+            className={cn(
+              " flex-shrink-0 z-40 text-yellow-950 font-semibold border-2 ",
+              {
+                "bg-yellow-200 animate-pulse text-yellow-950 border-yellow-950":
+                  !isValidTime || !selectedDate,
+                "bg-green-200 animate-none border border-green-900   text-green-950":
+                  isValidTime && selectedDate,
+              }
+            )}
           >
             {btnLabel()}
           </Button>
@@ -140,12 +154,6 @@ export default function FormHeaderMob({readyForLoad, doSearch}:FormHeaderProps) 
                 className="text-white disabled:opacity-40"
                 variant={"ghost"}
                 size={"icon"}
-                // onClick={(e) => {
-                //   e.preventDefault();
-                //   e.stopPropagation();
-                //   changeTime(true);
-                //   console.log(`Change Of Time`)
-                // }}
                 onTouchStart={(e) => {
                   e.preventDefault();
                   changeTime(true);
@@ -160,15 +168,29 @@ export default function FormHeaderMob({readyForLoad, doSearch}:FormHeaderProps) 
               disabled={!readyForLoad}
               onClick={() => {
                 setIsDialogOpen(false);
-                doSearch()
               }}
               size={"lg"}
             >
-              მოძებნე
+              დახურვა
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <div className="relative overflow-hidden">
+        {stateOfAction === "loading" && (
+          <div className="absolute top-0 left-0 w-full h-full  bg-gray-200/60 z-20 flex items-center justify-center overflow-hidden rounded-md">
+            <ClipLoader size={18} speedMultiplier={0.5} color="black" />
+          </div>
+        )}
+        <Button
+          onClick={() => doSearch()}
+          disabled={!readyForLoad || stateOfAction === "loading"}
+          variant={"secondary"}
+        >
+          მოძებნე
+        </Button>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Photo_Location_Insert } from "@/server/gis_query";
-import { CollectPhotoMetaData } from "@/server/user.server";
+import { Photo_Location_Insert } from "@/API_CALLS/gis_query";
+import { CollectPhotoMetaData } from "@/API_CALLS/user/user.server";
 import { format } from "date-fns";
 import { ka } from "date-fns/locale";
 import exifr from "exifr";
@@ -160,12 +160,10 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
       .filter((res) => res.status == "fulfilled")
       .map((res) => extractMetaData(res.value!));
 
-    console.log(metaData);
-    const afterSave = await CollectPhotoMetaData(metaData);
-    console.log(afterSave);
-
+    // console.log(metaData);
+     await CollectPhotoMetaData(metaData);
     setInternalState("success");
-    // router.push("/profile");
+    router.push("/profile");
   };
 
   const extractMetaData = (fileName: string): Photo_Location_Insert => {
@@ -210,42 +208,40 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
       <section className="flex-grow ">
         <UploadPSA shouldDisplay={localPreviewUrls.length === 0} />
         <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start     ">
-          {localPreviewUrls.map(
-            ({ name, url, DateTaken,  status }, index) => (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: 1,
-                  transition: {
-                    duration: 1.2,
-                  },
-                }}
-                key={index}
-                className="  relative min-w-full     flex    items-center gap-2     overflow-hidden  border border-gray-800 "
-              >
-                <img
-                  src={url}
-                  alt={name}
-                  className="object-cover  aspect-square w-[20%]  flex-shrink"
-                />
+          {localPreviewUrls.map(({ name, url, DateTaken, status }, index) => (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: 1,
+                transition: {
+                  duration: 1.2,
+                },
+              }}
+              key={index}
+              className="  relative min-w-full     flex    items-center gap-2     overflow-hidden  border border-gray-800 "
+            >
+              <img
+                src={url}
+                alt={name}
+                className="object-cover  aspect-square w-[20%]  flex-shrink"
+              />
 
-                <div className="flex-grow text-gray-300  flex items-center  ">
-                  <div className="space-y-2">
-                    <div className="text-xs line-clamp-1">{name}</div>
-                    <div className="flex gap-4 items-center">
-                      <div className="flex text-[10px]">
-                        {format(DateTaken!, "d MMM, HH:mm", { locale: ka })}
-                      </div>
-                      <div className="text-[10px] font-semibold text-blue-400">
-                        {status}
-                      </div>
+              <div className="flex-grow text-gray-300  flex items-center  ">
+                <div className="space-y-2">
+                  <div className="text-xs line-clamp-1">{name}</div>
+                  <div className="flex gap-4 items-center">
+                    <div className="flex text-[10px]">
+                      {format(DateTaken!, "d MMM, HH:mm", { locale: ka })}
+                    </div>
+                    <div className="text-[10px] font-semibold text-blue-400">
+                      {status}
                     </div>
                   </div>
                 </div>
-                <button className="mr-4">{getIcon(index)}</button>
-              </motion.div>
-            )
-          )}
+              </div>
+              <button className="mr-4">{getIcon(index)}</button>
+            </motion.div>
+          ))}
         </div>
       </section>
 

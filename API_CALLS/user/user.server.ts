@@ -1,6 +1,6 @@
 import database from "@/db/db";
 import { photoLocations } from "@/drizzle/schema";
-import { Photo_Location_Insert, Photo_Location_Select } from "@/API_CALLS/gis_query";
+import { Photo_Location_Insert, Photo_Location_Select } from "../gis_query";
 import { sql, eq } from "drizzle-orm";
 
 export async function insertPhotoLocations(locations: Photo_Location_Insert[]) {
@@ -39,7 +39,9 @@ export const CollectPhotoMetaData = async (
   return await response.json();
 };
 
-export const GetUserPhotos = async (userId: string) => {
+export const GetUserPhotosFromDB = async (
+  userId: string
+): Promise<Photo_Location_Select[]> => {
   const photos = await database
     .select()
     .from(photoLocations)

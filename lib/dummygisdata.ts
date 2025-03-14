@@ -1,4 +1,4 @@
-import { Photo_Location_Insert } from "@/server/gis_query";
+import { Photo_Location_Insert } from "@/API_CALLS/gis_query";
 export function generateRandomData(
   count = 10,
   hourFrom = 19,
@@ -91,49 +91,6 @@ function randomTimestamp(
 
 
 
-  // function randomTimestamp(
-  //   fromHour: number,
-  //   fromMinute: number,
-  //   toHour: number,
-  //   toMinute: number,
-  //   timezone: string = "Asia/Tbilisi"
-  // ): string {
-  //   // Convert hours and minutes to total minutes
-  //   const startMinutes = fromHour * 60 + fromMinute;
-  //   const endMinutes = toHour * 60 + toMinute;
-
-  //   // Generate random minutes within the range
-  //   const randomTotalMinutes =
-  //     Math.floor(Math.random() * (endMinutes - startMinutes + 1)) +
-  //     startMinutes;
-
-  //   // Convert back to hours and minutes
-  //   const randomHour = Math.floor(randomTotalMinutes / 60);
-  //   const randomMinute = randomTotalMinutes % 60;
-  //   const randomSecond = Math.floor(Math.random() * 60);
-
-  //   // Create a date object for February 18, 2024 with the random time
-  //   const localDate = new Date(
-  //     2024,
-  //     2,
-  //     8,  
-  //     randomHour,
-  //     randomMinute,
-  //     randomSecond
-  //   );
-
-  //   // Create a proper zoned time in the specified timezone
-  //   // This handles DST and other timezone complexities correctly
-  //   const zonedDate = toZonedTime(localDate, timezone);
-
-  //   // Format the date in ISO 8601 format with the timezone information
-  //   // This format is compatible with PostgreSQL timestamptz
-  //   return format(zonedDate, "yyyy-MM-dd'T'HH:mm:ssXXX", {
-  //     timeZone: timezone,
-  //   });
-  // }
-
-  // Helper function to generate a random string
   function randomString(length = 10) {
     const chars =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

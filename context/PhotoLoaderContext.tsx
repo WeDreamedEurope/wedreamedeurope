@@ -4,7 +4,7 @@ import { calculateDistanceInMeters } from "@/lib/dummygisdata";
 import {
   getPhotosInRadiusAndTimeRangeClient,
   Photo_Location_Client,
-} from "@/server/gis_query";
+} from "@/API_CALLS/gis_query";
 import { format, toZonedTime } from "date-fns-tz";
 import { ka } from "date-fns/locale";
 import {
@@ -20,6 +20,7 @@ type PhotoLoaderContextType = {
   readyForLoad: boolean;
   loadPhotos: () => Promise<void>;
   stateOfAction: "idle" | "loading" | "loaded" | "BOBO";
+  setStateOfAction: (state: "idle" | "loading" | "loaded" | "BOBO") => void;
 };
 
 const PhotoLoaderContext = createContext<PhotoLoaderContextType | undefined>(
@@ -33,26 +34,22 @@ export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
   const [readyForLoad, setReadyForLoad] = useState(false);
   const [stateOfAction, setStateOfAction] = useState<
     "idle" | "loading" | "loaded" | "BOBO"
-  >("BOBO");
+  >("idle");
 
   useEffect(() => {
     if (selectedLocation && isValidTime) {
-      console.log(`I Am Ready To Load The Photos!`);
       setReadyForLoad(true);
     }
   }, [selectedLocation, isValidTime]);
 
   const loadPhotos = async () => {
-    console.log(selectedDate);
-    console.log(selectedDate?.toISOString());
-
+    setStateOfAction("loading");
     const photos = await getPhotosInRadiusAndTimeRangeClient({
       locationTakenAt: selectedLocation!,
       dateTakenAt: selectedDate!.toISOString(),
       radius: 100,
     });
 
-    console.log(photos);
     setPhotos(
       photos
         .map((p) => ({
@@ -78,6 +75,7 @@ export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
     readyForLoad,
     loadPhotos,
     stateOfAction,
+    setStateOfAction,
   };
 
   return (

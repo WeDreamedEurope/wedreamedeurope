@@ -1,13 +1,36 @@
+import { Photo_Location_Select_With_URL } from "@/API_CALLS/gis_query";
+import { GetUserPhotosFromDB } from "@/API_CALLS/user/user.server";
 import { Button } from "@/components/ui/button";
 import { withAuth } from "@/components/WithAuth.com";
+import { motion } from "framer-motion";
 import { Trash } from "lucide-react";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { authOptions } from "./api/auth/[...nextauth]";
+import Slideshow from "@/components/Slideshow";
+import SlideShowRedux from "@/components/SlideShowRedux.comp";
+// const publicURL = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_URL!;
+// const bucketName = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_BUCKET!;
+// const url = `${publicURL}/${bucketName}/${session.user.id}/`;
+// const mappedURLS = filesFromLocalStorage.map((file) => `${url}${file}`);
 
-const PhotoCard = ({ src }: { src: string }) => {
+const PhotoCard = ({
+  src,
+  id,
+  onClick,
+}: {
+  src: string;
+  id: number;
+  onClick: (arg: number) => void;
+}) => {
   return (
-    <div className="group relative overflow-hidden rounded-md hover:cursor-pointer">
+    <div
+      onClick={() => onClick(id)}
+      className="group relative overflow-hidden rounded-md hover:cursor-pointer"
+    >
       <Image
         src={src}
         alt="test"
@@ -29,27 +52,31 @@ const PhotoCard = ({ src }: { src: string }) => {
   );
 };
 
-const Profile = () => {
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
-
+const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
+  // const [uploadedFiles] = useState<Photo_Location_Select_With_URL[]>(photos);
+  const uploadedFiles = useRef<Photo_Location_Select_With_URL[]>(photos);
   const { data: session } = useSession();
+  const [startSlideShow, setStartSlideShow] = useState(false);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
+    null
+  );
 
-  useEffect(() => {
-    const filesFromLocalStorage = JSON.parse(
-      localStorage.getItem("uploadedFiles") || "[]"
-    );
-    if (session?.user && Array.isArray(filesFromLocalStorage)) {
-      const publicURL = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_URL!;
-      const bucketName = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_BUCKET!;
-      const url = `${publicURL}/${bucketName}/${session.user.id}/`;
-      const mappedURLS = filesFromLocalStorage.map((file) => `${url}${file}`);
-      setUploadedFiles(mappedURLS);
-    }
-  }, [session]);
+  const handlePhotoClick = (index: number) => {
+    console.log(index);
+    setSelectedPhotoIndex(index);
+    setStartSlideShow(true);
+  };
 
   return (
-    <div className="flex flex-col   mt-8   sm:mx-auto max-w-6xl space-y-8">
-      <div className="flex flex-col items-center space-y-4 sm:flex-row sm:space-x-6 sm:space-y-0">
+    <div className="flex flex-col   mt-8     w-full max-w-6xl mx-auto  relative">
+      {startSlideShow && (
+       
+       <Slideshow isOpen={startSlideShow} onDismiss={() => setStartSlideShow(false)} slides={uploadedFiles.current}  />
+      //  <SlideShowRedux isOpen={startSlideShow} onDismiss={() => setStartSlideShow(false)} photos={uploadedFiles.current} />
+       
+      )}
+      {/* Profile Header */}
+      <article className="flex flex-col items-center space-y-4 sm:flex-row sm:space-x-6 sm:space-y-0">
         <div className="relative h-24 w-24 overflow-hidden rounded-full">
           <Image
             src={session?.user?.image || "/placeholder.svg?height=96&width=96"}
@@ -59,26 +86,68 @@ const Profile = () => {
             className="object-cover"
           />
         </div>
-        <div>
+        <div className="flex flex-col  items-center sm:items-start">
           <h1 className="text-2xl font-bold">Jane Doe</h1>
           <p className="text-muted-foreground">Photographer & Visual Artist</p>
         </div>
-      </div>
-      <section className="flex flex-col bg-green-500/10 p-4 rounded-lg ">
+      </article>
+      {/* Photos Section */}
+      <section className="flex flex-col  p-4 rounded-lg mt-5 ">
         <section className="flex items-center justify-between mb-4 ">
-          <h1 className="text-xl font-semibold ">ბოლოს ატვირთული ფოტოები</h1>
-          <Button size={"sm"} variant={"destructive"}>
+          <h1 className="text-xl font-semibold ">ბოლოს ატვირთული </h1>
+          {/* <Button size={"sm"} variant={"destructive"}>
             ფოტოების წაშლა
-          </Button>
+          </Button> */}
         </section>
-        <div className="grid grid-cols-4 gap-4">
-          {uploadedFiles.map((file, index) => (
-            <PhotoCard key={index} src={file} />
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="grid grid-cols-2  sm:grid-cols-4 gap-4"
+        >
+          {uploadedFiles.current.map((file, index) => (
+            <PhotoCard
+              key={index}
+              src={file.url}
+              id={file.id}
+              onClick={handlePhotoClick}
+            />
           ))}
-        </div>
+        </motion.div>
       </section>
     </div>
   );
 };
 
 export default withAuth(Profile);
+
+export const getServerSideProps = (async (
+  context: GetServerSidePropsContext
+) => {
+  // Fetch data from external API
+  const session = await getServerSession(context.req, context.res, authOptions);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/api/auth/signin",
+        permanent: false,
+      },
+    };
+  }
+
+  let photos: Photo_Location_Select_With_URL[] = [];
+  const response = await GetUserPhotosFromDB(session?.user.id as string);
+
+  if (photos.length === 0) {
+    const publicURL = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_URL!;
+    const bucketName = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_BUCKET!;
+    const url = `${publicURL}/${bucketName}/${session.user.id}/`;
+    const mappedURLS = response.map<Photo_Location_Select_With_URL>((file) => ({
+      ...file,
+      url: `${url}${file.photoId}`,
+    }));
+    photos = mappedURLS;
+  }
+
+  return { props: { photos } };
+}) satisfies GetServerSideProps<{ photos: Photo_Location_Select_With_URL[] }>;

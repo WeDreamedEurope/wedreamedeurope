@@ -22,15 +22,14 @@ export default function Home() {
     <div
       className={` h-auto w-full  flex flex-col ${notoGeorgian.className} max-w-7xl mx-auto  pb-20 sm:pb-0 overflow-auto`}
     >
-      <section className="sm:p-16 p-6 flex flex-col items-center  mt-20 mb-12">
-        <h2 className="text-5xl font-bold text text-center">
+      <section className="sm:p-16 p-6 flex flex-col sm:items-center  mt-20 mb-12">
+        <h2 className="sm:text-5xl font-bold  sm:text-center text-2xl text-left">
           We Dreamed Europe
         </h2>
-        <div className="max-w-2xl mt-4 text-base text-gray-300 leading-relaxed space-y-2 text-center">
-          ეს პლატფორმა შეიქმნა, რომ დავეხმაროთ ერთმანეთს უსამართლო ჯარიმების
-          გასაჩივრებაში. თუ თვლი, რომ უსაფუძვლოდ დაგაჯარიმეს, აქ შეგიძლია მოიძიო
-          ფოტო და ვიდეო მტკიცებულებები, რომლებიც დაადასტურებენ შენს
-          უდანაშაულობას.
+        <div className="max-w-2xl mt-4 sm:text-base text-sm text-gray-300 leading-relaxed space-y-2 sm:text-center">
+          ეს პლატფორმა დაგეხმარებათ უსამართლო ჯარიმების გასაჩივრებაში. თუ თვლი,
+          რომ უსაფუძვლოდ დაგაჯარიმეს, აქ შეგიძლია მოიძიო ფოტო და ვიდეო
+          მტკიცებულებები, რომლებიც დაადასტურებენ შენს უდანაშაულობას.
         </div>
       </section>
       <div className=" max-w-5xl mx-auto  text-gray-200 flex gap-6 flex-col sm:flex-row  px-4 sm:p-0  ">
@@ -46,7 +45,9 @@ export default function Home() {
         >
           <div className="flex flex-col items-center gap-2 text-yellow-200">
             <SearchCheck size={64} />
-            <h2 className=" text-xl sm:text-2xl font-semibold">მოიძიე ფოტო-ვიდეო მასალა</h2>
+            <h2 className=" text-xl sm:text-2xl font-semibold text-center">
+              მოიძიე ფოტო-ვიდეო მასალა
+            </h2>
           </div>
           <div className="text-sm text-center mt-2 space-y-1 leading-relaxed text-[#e6e7e0] font-medium">
             <p>
@@ -55,7 +56,6 @@ export default function Home() {
             </p>
           </div>
           <div className="flex-grow" />
-         
         </Link>
         <Link
           href={"/upload"}
@@ -67,7 +67,9 @@ export default function Home() {
         >
           <div className="flex flex-col items-center gap-2 text-blue-200">
             <UploadCloudIcon size={64} />
-            <h2 className=" text-xl sm:text-2xl font-semibold">ატვირთე მასალა</h2>
+            <h2 className=" text-xl sm:text-2xl font-semibold">
+              ატვირთე მასალა
+            </h2>
           </div>
           <div className="text-sm mt-2 space-y-1 leading-relaxed text-[#B3B4AC] font-semibold text-center">
             <p>
