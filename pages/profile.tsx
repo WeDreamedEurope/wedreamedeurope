@@ -103,7 +103,7 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="grid grid-cols-2  sm:grid-cols-4 gap-4"
+          className="grid grid-flow-row  sm:grid-cols-4 gap-4"
         >
           {uploadedFiles.current.map((file, index) => (
             <PhotoCard
@@ -119,7 +119,7 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
   );
 };
 
-export default withAuth(Profile);
+export default withAuth(Profile); 
 
 export const getServerSideProps = (async (
   context: GetServerSidePropsContext
@@ -148,6 +148,6 @@ export const getServerSideProps = (async (
     }));
     photos = mappedURLS;
   }
-
+ 
   return { props: { photos } };
 }) satisfies GetServerSideProps<{ photos: Photo_Location_Select_With_URL[] }>;

@@ -135,11 +135,11 @@ const Slideshow: React.FC<SlideshowProps> = ({
                 className={styles.slideImage}
               />
               <div className={styles.slideInfo}>
-                <div className="flex flex-col gap-2">
-                  <p className="text-xl text-white">{slide.dateTakenAt}</p>
-                  <h2 className="">{slide.photoId}</h2>
+                <div className="flex flex-col gap-2  flex-1">
+                  <p className="sm:text-xl  text-lg ">{slide.dateTakenAt}</p>
+                  <h2 className="text-sm text-gray-400">{slide.photoId}</h2>
                 </div>
-                <a href={slide.url} download className={styles.downloadButton}>
+                <a href={slide.url}  download className={styles.downloadButton}>
                   Download
                 </a>
               </div>

@@ -71,6 +71,7 @@ export default function UploadForm({
           id="file-input"
           className="hidden"
           multiple
+          accept=".jpg,.jpeg,.heic"
           onChange={handleFileSelect}
         />
         <label 

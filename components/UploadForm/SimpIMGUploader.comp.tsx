@@ -161,7 +161,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
       .map((res) => extractMetaData(res.value!));
 
     // console.log(metaData);
-     await CollectPhotoMetaData(metaData);
+    await CollectPhotoMetaData(metaData);
     setInternalState("success");
     router.push("/profile");
   };
@@ -207,7 +207,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
 
       <section className="flex-grow ">
         <UploadPSA shouldDisplay={localPreviewUrls.length === 0} />
-        <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start     ">
+        <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start px-3     ">
           {localPreviewUrls.map(({ name, url, DateTaken, status }, index) => (
             <motion.div
               initial={{ opacity: 0 }}
@@ -233,9 +233,9 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
                     <div className="flex text-[10px]">
                       {format(DateTaken!, "d MMM, HH:mm", { locale: ka })}
                     </div>
-                    <div className="text-[10px] font-semibold text-blue-400">
+                    {/* <div className="text-[10px] font-semibold text-blue-400">
                       {status}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
