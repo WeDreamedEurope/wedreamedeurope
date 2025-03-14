@@ -201,7 +201,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
   // };
 
   return (
-    <div className="w-full   max-w-2xl  sm:mx-auto    relative mx-0    h-auto flex-1       flex flex-col  ">
+    <div className="w-full   max-w-2xl  sm:mx-auto    relative mx-0    h-auto flex-1       flex flex-col px-2  ">
       <DissmisedFilesPSA shouldDisplay={dismissedFiles.length > 0} />
       <UploadForm onFileDropped={processFiles} processFiles={processFiles} />
 

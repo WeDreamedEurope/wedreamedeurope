@@ -13,7 +13,7 @@ export default function UploadForm({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (event: ChangeEvent) => {
-    console.log(`Yo Yooooooo!`)
+    console.log(`Yo Yooooooo!`);
     const filez = (event.target as HTMLInputElement).files;
     if (!filez) return;
     processFiles(filez);
@@ -50,10 +50,10 @@ export default function UploadForm({
 
   return (
     <div
-      className={`sm:border-2 sm:border-dashed  rounded-lg p-8 text-center mb-6  transition-colors duration-300 sticky top-0 bg-[#181c14] z-40
+      className={`border-2 border-dashed  rounded-lg p-8 text-center mb-6 mt-10  transition-colors duration-300 sticky top-0 border-[#2b3123] z-40
       ${
         isDragging
-          ? "border-blue-500 bg-blue-500 bg-opacity-10"
+          ? "border-blue-500 bg-[#677455] bg-opacity-10"
           : "border-gray-600 hover:border-gray-500"
       } 
       
@@ -64,7 +64,7 @@ export default function UploadForm({
       onDrop={handleDragDrop}
     >
       <>
-        <Upload className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+        <Upload className="h-16 w-16 mx-auto mb-4 text-[#e8e9e2]" />
         <input
           ref={fileInputRef}
           type="file"
@@ -74,13 +74,14 @@ export default function UploadForm({
           accept=".jpg,.jpeg,.heic"
           onChange={handleFileSelect}
         />
-        <label 
-        onClick={(e)=>{
-              e.preventDefault()
-              e.stopPropagation()
-              fileInputRef.current?.click()
-        }}
-        className="cursor-pointer">
+        <label
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            fileInputRef.current?.click();
+          }}
+          className="cursor-pointer"
+        >
           <span className="bg-blue-600 hover:bg-blue-700 transition px-4 py-2 rounded inline-block mb-4">
             აირჩიეთ ფაილი
           </span>
