@@ -14,7 +14,7 @@ const MapTest = () => {
     <MapProvider>
       <DateTimeProvider>
         <div
-          className={`w-full h-full ${notoGeorgian.className} flex flex-col overflow-hidden bg-black `}
+          className={`w-full h-full ${notoGeorgian.className} flex flex-col overflow-hidden bg-eu-primary `}
         >
           {/* <DateAndTimeForm /> */}
 
