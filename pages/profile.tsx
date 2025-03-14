@@ -70,10 +70,12 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
   return (
     <div className="flex flex-col   mt-8     w-full max-w-6xl mx-auto  relative">
       {startSlideShow && (
-       
-       <Slideshow isOpen={startSlideShow} onDismiss={() => setStartSlideShow(false)} slides={uploadedFiles.current}  />
-      //  <SlideShowRedux isOpen={startSlideShow} onDismiss={() => setStartSlideShow(false)} photos={uploadedFiles.current} />
-       
+        <Slideshow
+          isOpen={startSlideShow}
+          onDismiss={() => setStartSlideShow(false)}
+          slides={uploadedFiles.current}
+        />
+        //  <SlideShowRedux isOpen={startSlideShow} onDismiss={() => setStartSlideShow(false)} photos={uploadedFiles.current} />
       )}
       {/* Profile Header */}
       <article className="flex flex-col items-center space-y-4 sm:flex-row sm:space-x-6 sm:space-y-0">
@@ -119,7 +121,7 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
   );
 };
 
-export default withAuth(Profile); 
+export default withAuth(Profile);
 
 export const getServerSideProps = (async (
   context: GetServerSidePropsContext
@@ -148,6 +150,6 @@ export const getServerSideProps = (async (
     }));
     photos = mappedURLS;
   }
- 
+
   return { props: { photos } };
 }) satisfies GetServerSideProps<{ photos: Photo_Location_Select_With_URL[] }>;
