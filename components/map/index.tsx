@@ -11,9 +11,7 @@ interface MapComponentProps {
   points?: [number, number][];
   selectedPointID: string | null;
 }
-
-const AT_PARLIAMENT: coord = [44.79855398381976, 41.69672049439785];
-
+const AT_PARLIAMENT: coord = [44.799186155911414, 41.69702822055032];
 export default function MapComponent({
   defaultLocation,
   isInteractive,
@@ -87,15 +85,15 @@ export default function MapComponent({
     });
 
     mapMarker.current = new mapboxgl.Marker({
-      draggable: true,
+      draggable: false,
     })
       .setLngLat(initialLocation)
       .addTo(mapRef.current);
 
-    mapRef.current.on("mousedown", (e) => {
-      console.log(`REMOVE IN PRODUCTION`);
-      setSelectedLocation([44.7932, 41.70129]);
-    });
+    // mapRef.current.on("mousedown", (e) => {
+    //   console.log(`REMOVE IN PRODUCTION`);
+    //   setSelectedLocation([44.7932, 41.70129]);
+    // });
     mapRef.current.on("dblclick", (e) => {
       console.log(`Click Fucking Clack`);
       // console.log(`Double Clicked!`);

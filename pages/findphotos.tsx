@@ -23,14 +23,9 @@ const MapTest = () => {
               <MapComponent
                 selectedPointID={""}
                 points={[]}
-                defaultLocation={
-                  [44.76129881033887, 41.718473154007896] as [number, number]
-                }
+                defaultLocation={null}
                 isInteractive={true}
-                onNewCoordinates={(arg) => {
-                  console.log(`We Are Setting Location Baby!`);
-                  console.log(arg);
-                }}
+                onNewCoordinates={() => {}}
               />
             </section>
             <aside className="w-full flex absolute z-50 h-full  pointer-events-none sm:pointer-events-auto   top-0    lg:w-[60%]  overflow-hidden sm:relative">
