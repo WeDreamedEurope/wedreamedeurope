@@ -26,7 +26,7 @@ type ImageMeta = {
 const DissmisedFilesPSA = ({ shouldDisplay }: { shouldDisplay: boolean }) => {
   return (
     shouldDisplay && (
-      <article className=" bg-red-300 text-red-800 rounded-xl p-2 text-xs font-semibold">
+      <article className= " animate-in absolute slide-in-from-top-7 bg-red-300 text-red-800 rounded-xl p-2 text-xs font-semibold">
         ფაილი უარყოფილია EXIF მონაცემების არ არსებობის გამო
       </article>
     )

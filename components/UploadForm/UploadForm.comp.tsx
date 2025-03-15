@@ -13,7 +13,6 @@ export default function UploadForm({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (event: ChangeEvent) => {
-    console.log(`Yo Yooooooo!`);
     const filez = (event.target as HTMLInputElement).files;
     if (!filez) return;
     processFiles(filez);
@@ -50,10 +49,10 @@ export default function UploadForm({
 
   return (
     <div
-      className={`border-2 border-dashed  rounded-lg p-8 text-center mb-6 mt-10  transition-colors duration-300 sticky top-0 border-[#2b3123] z-40
+      className={`border-2 border-dashed mt-12 focus:border-transparent active  :border-red-300  rounded-lg p-8 text-center mb-6  transition-colors duration-300 sticky top-0 border-[#2b3123] z-40
       ${
         isDragging
-          ? "border-blue-500 bg-[#677455] bg-opacity-10"
+          ? "border-[#b9c2af] bg-[blue-500] bg-opacity-10"
           : "border-gray-600 hover:border-gray-500"
       } 
       
@@ -86,9 +85,8 @@ export default function UploadForm({
             აირჩიეთ ფაილი
           </span>
         </label>
-        <p className="text-gray-400">
-          ან ჩააგდეთ ფაილი აქ {isDragging ? "Yes" : "NO"}
-        </p>
+        <p className="text-gray-400">ან ჩააგდეთ ფაილი აქ</p>
+        <p className="text-xs mt-2 text-gray-300">JPEG, JPG, HEIF</p>
       </>
     </div>
   );
