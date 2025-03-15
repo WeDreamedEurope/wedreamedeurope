@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 const NothingFoundDesktop = () => {
   return (
-    <div className=" hidden sm:flex w-full h-full pointer-events-auto  items-center px-4   flex-col text-red-800 font-semibold z-[200]">
+    <div className=" animate-in zoom-in-95 hidden sm:flex w-full h-full pointer-events-auto  items-center px-4   flex-col text-red-800 font-semibold z-[200]">
       <div className=" translate-y-1/2 max-w-md gap-6  bg-red-300 flex flex-col items-center justify-center w-full rounded-md p-2 text-sm aspect-video">
         <div>
           <TriangleAlert size={64} className="text-red-800" />
