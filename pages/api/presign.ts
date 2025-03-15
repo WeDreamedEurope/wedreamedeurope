@@ -8,6 +8,9 @@ export default async function handler(
 ) {
   const { fileName, fileType, userID } = JSON.parse(req.body);
 
+
+
+  console.log(`We Are Looking For Presign For ${fileName}`)
   if (fileName && fileName && userID) {
     try {
       const presignedUrl = await generateSignedUrl(
@@ -17,7 +20,7 @@ export default async function handler(
       res.status(200).json(presignedUrl);
     } catch (error) {
       console.error(error);
-      
+
       res.status(500).json({ error: "Failed to generate presigned URL" });
     }
   }
