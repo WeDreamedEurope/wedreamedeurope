@@ -82,45 +82,14 @@ export default function MapComponent({
       });
     });
 
-    mapMarker.current = new mapboxgl.Marker({
-      draggable: false,
-    })
-      .setLngLat(initialLocation)
-      .addTo(mapRef.current);
+    updateMarketLocation(initialLocation);
 
     // mapRef.current.on("mousedown", (e) => {
     //   console.log(`REMOVE IN PRODUCTION`);
     //   setSelectedLocation([44.7932, 41.70129]);
     // });
-    mapRef.current.on("dblclick", (e) => {
-      console.log(`Click Fucking Clack`);
-      // console.log(`Double Clicked!`);
-      // mapRef.current?.doubleClickZoom.disable();
-      const coordinates = [e.lngLat.lng, e.lngLat.lat] as [number, number];
-      const circleFeatures = createGeoJSONCircle(coordinates, 0.02);
-      const source = mapRef.current?.getSource(
-        "circle-source"
-      ) as GeoJSONSource;
-      if (source) {
-        source.setData({
-          type: "FeatureCollection",
-          features: [circleFeatures],
-        });
 
-        const bounds = calculateCircleBounds(coordinates, 0.02);
-        mapRef.current!.fitBounds(bounds, {
-          padding: 25,
-          maxZoom: 20,
-          duration: 1000,
-        });
-        mapRef.current?.once("moveend", () => {
-          setSelectedLocation(coordinates);
-          // mapRef.current?.doubleClickZoom.enable();
-        });
-      } else {
-        console.log(`There Is No Source!`);
-      }
-    });
+    mapRef.current.on("dblclick",handleMapClick);
 
     mapRef.current.on("click", "points-layer", (e) => {
       e.originalEvent.stopPropagation();
@@ -270,6 +239,88 @@ export default function MapComponent({
   };
   const getInitialCoordinates = (): [number, number] => {
     return defaultLocation ? defaultLocation : AT_PARLIAMENT;
+  };
+
+  const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
+    const coordinates = [e.lngLat.lng, e.lngLat.lat] as [number, number];
+    const circleFeatures = createGeoJSONCircle(coordinates, 0.02);
+    const source = mapRef.current?.getSource(
+      "circle-source"
+    ) as GeoJSONSource;
+    if (source) {
+      source.setData({
+        type: "FeatureCollection",
+        features: [circleFeatures],
+      });
+
+      const bounds = calculateCircleBounds(coordinates, 0.02);
+      mapRef.current!.fitBounds(bounds, {
+        padding: 25,
+        maxZoom: 20,
+        duration: 1000,
+      });
+      mapRef.current?.once("moveend", () => {
+        setSelectedLocation(coordinates);
+        updateMarketLocation(coordinates);
+        // mapRef.current?.doubleClickZoom.enable();
+      });
+    } else {
+      console.log(`There Is No Source!`);
+    }
+  };
+
+  const updateMarketLocation = (coordinates: [number, number]) => {
+    if (mapMarker.current) {
+      mapMarker.current.remove();
+    }
+
+    mapMarker.current = new mapboxgl.Marker({
+      draggable: false,
+    })
+      .setLngLat(coordinates)
+      .addTo(mapRef.current!);
+  };
+
+
+
+  const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
+    const coordinates = [e.lngLat.lng, e.lngLat.lat] as [number, number];
+    const circleFeatures = createGeoJSONCircle(coordinates, 0.02);
+    const source = mapRef.current?.getSource(
+      "circle-source"
+    ) as GeoJSONSource;
+    if (source) {
+      source.setData({
+        type: "FeatureCollection",
+        features: [circleFeatures],
+      });
+
+      const bounds = calculateCircleBounds(coordinates, 0.02);
+      mapRef.current!.fitBounds(bounds, {
+        padding: 25,
+        maxZoom: 20,
+        duration: 1000,
+      });
+      mapRef.current?.once("moveend", () => {
+        setSelectedLocation(coordinates);
+        updateMarketLocation(coordinates);
+        // mapRef.current?.doubleClickZoom.enable();
+      });
+    } else {
+      console.log(`There Is No Source!`);
+    }
+  };
+
+  const updateMarketLocation = (coordinates: [number, number]) => {
+    if (mapMarker.current) {
+      mapMarker.current.remove();
+    }
+
+    mapMarker.current = new mapboxgl.Marker({
+      draggable: false,
+    })
+      .setLngLat(coordinates)
+      .addTo(mapRef.current!);
   };
 
   return (
