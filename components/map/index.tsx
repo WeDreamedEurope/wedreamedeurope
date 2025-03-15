@@ -7,7 +7,6 @@ type coord = [number, number];
 interface MapComponentProps {
   defaultLocation: [number, number] | null;
   isInteractive: boolean;
-  onNewCoordinates: (coordinates: [number, number]) => void;
   points?: [number, number][];
   selectedPointID: string | null;
 }
@@ -15,7 +14,6 @@ const AT_PARLIAMENT: coord = [44.799186155911414, 41.69702822055032];
 export default function MapComponent({
   defaultLocation,
   isInteractive,
-  onNewCoordinates,
 }: MapComponentProps) {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -116,7 +114,6 @@ export default function MapComponent({
           duration: 1000,
         });
         mapRef.current?.once("moveend", () => {
-          onNewCoordinates(coordinates);
           setSelectedLocation(coordinates);
           // mapRef.current?.doubleClickZoom.enable();
         });

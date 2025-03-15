@@ -25,7 +25,6 @@ const MapTest = () => {
                 points={[]}
                 defaultLocation={null}
                 isInteractive={true}
-                onNewCoordinates={() => {}}
               />
             </section>
             <aside className="w-full flex absolute z-50 h-full  pointer-events-none sm:pointer-events-auto   top-0    lg:w-[60%]  overflow-hidden sm:relative">
