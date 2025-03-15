@@ -26,7 +26,7 @@ type ImageMeta = {
 const DissmisedFilesPSA = ({ shouldDisplay }: { shouldDisplay: boolean }) => {
   return (
     shouldDisplay && (
-      <article className=" bg-red-300 text-red-800 rounded-xl p-2 text-xs font-semibold">
+      <article className= " animate-in absolute slide-in-from-top-7 bg-red-300 text-red-800 rounded-xl p-2 text-xs font-semibold">
         ფაილი უარყოფილია EXIF მონაცემების არ არსებობის გამო
       </article>
     )
@@ -161,7 +161,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
       .map((res) => extractMetaData(res.value!));
 
     // console.log(metaData);
-     await CollectPhotoMetaData(metaData);
+    await CollectPhotoMetaData(metaData);
     setInternalState("success");
     router.push("/profile");
   };
@@ -201,13 +201,13 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
   // };
 
   return (
-    <div className="w-full   max-w-2xl  sm:mx-auto    relative mx-0    h-auto flex-1       flex flex-col  ">
+    <div className="w-full   max-w-2xl  sm:mx-auto    relative mx-0    h-auto flex-1       flex flex-col px-2  ">
       <DissmisedFilesPSA shouldDisplay={dismissedFiles.length > 0} />
       <UploadForm onFileDropped={processFiles} processFiles={processFiles} />
 
       <section className="flex-grow ">
         <UploadPSA shouldDisplay={localPreviewUrls.length === 0} />
-        <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start     ">
+        <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start px-3     ">
           {localPreviewUrls.map(({ name, url, DateTaken, status }, index) => (
             <motion.div
               initial={{ opacity: 0 }}
@@ -233,9 +233,9 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
                     <div className="flex text-[10px]">
                       {format(DateTaken!, "d MMM, HH:mm", { locale: ka })}
                     </div>
-                    <div className="text-[10px] font-semibold text-blue-400">
+                    {/* <div className="text-[10px] font-semibold text-blue-400">
                       {status}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>

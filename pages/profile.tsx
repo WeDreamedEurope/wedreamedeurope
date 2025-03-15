@@ -70,10 +70,12 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
   return (
     <div className="flex flex-col   mt-8     w-full max-w-6xl mx-auto  relative">
       {startSlideShow && (
-       
-       <Slideshow isOpen={startSlideShow} onDismiss={() => setStartSlideShow(false)} slides={uploadedFiles.current}  />
-      //  <SlideShowRedux isOpen={startSlideShow} onDismiss={() => setStartSlideShow(false)} photos={uploadedFiles.current} />
-       
+        <Slideshow
+          isOpen={startSlideShow}
+          onDismiss={() => setStartSlideShow(false)}
+          slides={uploadedFiles.current}
+        />
+        //  <SlideShowRedux isOpen={startSlideShow} onDismiss={() => setStartSlideShow(false)} photos={uploadedFiles.current} />
       )}
       {/* Profile Header */}
       <article className="flex flex-col items-center space-y-4 sm:flex-row sm:space-x-6 sm:space-y-0">
@@ -103,7 +105,7 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="grid grid-cols-2  sm:grid-cols-4 gap-4"
+          className="grid grid-flow-row  sm:grid-cols-4 gap-4"
         >
           {uploadedFiles.current.map((file, index) => (
             <PhotoCard

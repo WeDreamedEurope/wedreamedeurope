@@ -1,26 +1,28 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Slideshow.module.css";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { motion } from "framer-motion";
-import { Photo_Location_Select_With_URL } from "@/API_CALLS/gis_query";
 
-interface Slide {
-  id: number;
-  imageUrl: string;
-  title: string;
-  date: string;
-  downloadUrl: string;
-}
+import { Photo_Location_Select_With_URL } from "@/API_CALLS/gis_query";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogOverlay,
+  DialogTitle,
+} from "@radix-ui/react-dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface SlideshowProps {
   slides: Photo_Location_Select_With_URL[];
   onDismiss: () => void;
   startingIndex?: number;
+  isOpen: boolean;
 }
 
 const Slideshow: React.FC<SlideshowProps> = ({
   slides,
   onDismiss,
+  isOpen,
   startingIndex = 0,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(startingIndex);
@@ -108,69 +110,58 @@ const Slideshow: React.FC<SlideshowProps> = ({
   }, []);
 
   return (
-    <motion.div
-      initial={{
-        opacity: 0,
-      }}
-      animate={{
-        opacity: 1,
-      }}
-      transition={{
-        duration: 0.6,
-      }}
-      exit={{
-        y: 100,
-      }}
-      className={styles.container}
-    >
-      <div
-        tabIndex={0}
-        onKeyDown={handleKeyDown}
-        className={styles.slidesContainer}
-        ref={slidesContainerRef}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-      >
-        {slides.map((slide) => (
-          <div key={slide.id} className={styles.slideWrapper}>
-            <img
-              src={slide.url}
-              alt={slide.photoId}
-              className={styles.slideImage}
-            />
-            <div className={styles.slideInfo}>
-              <div className="flex flex-col gap-2">
-                <p className="text-xl text-white">{slide.dateTakenAt}</p>
-                <h2 className="">{slide.photoId}</h2>
+    <Dialog open={isOpen} onOpenChange={onDismiss}>
+      <DialogOverlay className="bg-eu-primary fixed inset-0 z-30" />
+      <DialogContent className="w-full h-full  flex fixed inset-0 z-40">
+        <VisuallyHidden>
+          <DialogTitle>Slideshow</DialogTitle>
+          <DialogDescription>Some Description</DialogDescription>
+        </VisuallyHidden>
+        <div
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
+          className={styles.slidesContainer}
+          ref={slidesContainerRef}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
+          {slides.map((slide) => (
+            <div key={slide.id} className={styles.slideWrapper}>
+              <img
+                src={slide.url}
+                alt={slide.photoId}
+                className={styles.slideImage}
+              />
+              <div className={styles.slideInfo}>
+                <div className="flex flex-col gap-2  flex-1">
+                  <p className="sm:text-xl  text-lg ">{slide.dateTakenAt}</p>
+                  <h2 className="text-sm text-gray-400">{slide.photoId}</h2>
+                </div>
+                <a href={slide.url}  download className={styles.downloadButton}>
+                  Download
+                </a>
               </div>
-              <a
-                href={slide.url}
-                download
-                className={styles.downloadButton}
-              >
-                Download
-              </a>
             </div>
-          </div>
-        ))}
-      </div>
-      <button
-        onClick={handlePrevSlide}
-        disabled={currentIndex === 0}
-        className={`${styles.navigationButton} ${styles.prevButton}`}
-      >
-        <ChevronLeftIcon />
-      </button>
-      <button
-        onClick={handleNextSlide}
-        disabled={currentIndex === slides.length - 1}
-        className={`${styles.navigationButton} ${styles.nextButton}`}
-      >
-        <ChevronRightIcon />
-      </button>
-    </motion.div>
+          ))}
+        </div>
+        <button
+          onClick={handlePrevSlide}
+          disabled={currentIndex === 0}
+          className={`${styles.navigationButton} ${styles.prevButton}`}
+        >
+          <ChevronLeftIcon />
+        </button>
+        <button
+          onClick={handleNextSlide}
+          disabled={currentIndex === slides.length - 1}
+          className={`${styles.navigationButton} ${styles.nextButton}`}
+        >
+          <ChevronRightIcon />
+        </button>
+      </DialogContent>
+    </Dialog>
   );
 };
 

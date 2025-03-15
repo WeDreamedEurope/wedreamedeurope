@@ -92,12 +92,12 @@ export default function MapComponent({
       .setLngLat(initialLocation)
       .addTo(mapRef.current);
 
-    mapRef.current.on("mousedown", e=> {
-      console.log(`REMOVE IN PRODUCTION`)
-      setSelectedLocation([44.79320, 41.70129])
-    })  
+    mapRef.current.on("mousedown", (e) => {
+      console.log(`REMOVE IN PRODUCTION`);
+      setSelectedLocation([44.7932, 41.70129]);
+    });
     mapRef.current.on("dblclick", (e) => {
-      console.log(`Click Fucking Clack`)
+      console.log(`Click Fucking Clack`);
       // console.log(`Double Clicked!`);
       // mapRef.current?.doubleClickZoom.disable();
       const coordinates = [e.lngLat.lng, e.lngLat.lat] as [number, number];
@@ -279,7 +279,7 @@ export default function MapComponent({
 
   return (
     <div className="w-full h-full  flex items-center justify-center ">
-      <div ref={mapContainerRef} className="w-full h-full border"></div>
+      <div ref={mapContainerRef} className="w-full h-full "></div>
     </div>
   );
 }
