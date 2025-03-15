@@ -178,9 +178,7 @@ export function ImagePreviewCard({
             selectedPointID={null}
             isInteractive={location ? false : true}
             defaultLocation={location ? location : null}
-            onNewCoordinates={(coordinates) =>
-              setPhotoLocation([...coordinates])
-            }
+            
           />
           <footer className="w-full mt-4 flex justify-center">
             <Button onClick={() => setModalIsOpen(false)}>Save</Button>
