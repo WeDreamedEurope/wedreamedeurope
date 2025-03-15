@@ -1,15 +1,6 @@
 import { SearchCheck, UploadCloudIcon } from "lucide-react";
 import { Noto_Sans_Georgian } from "next/font/google";
 import Link from "next/link";
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
 
 const notoGeorgian = Noto_Sans_Georgian({
   variable: "--font-noto-georgian",
@@ -34,7 +25,7 @@ export default function Home() {
       </section>
       <div className=" max-w-5xl mx-auto  text-gray-200 flex gap-6 flex-col sm:flex-row  px-4 sm:p-0  ">
         <Link
-          href={"/maptest"}
+          href={"/searchmaterial"}
           // light yellow - #fecf8a
           // default yellow - #a16207
           style={{
