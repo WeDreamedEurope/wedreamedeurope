@@ -283,46 +283,8 @@ export default function MapComponent({
 
 
 
-  const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
-    const coordinates = [e.lngLat.lng, e.lngLat.lat] as [number, number];
-    const circleFeatures = createGeoJSONCircle(coordinates, 0.02);
-    const source = mapRef.current?.getSource(
-      "circle-source"
-    ) as GeoJSONSource;
-    if (source) {
-      source.setData({
-        type: "FeatureCollection",
-        features: [circleFeatures],
-      });
 
-      const bounds = calculateCircleBounds(coordinates, 0.02);
-      mapRef.current!.fitBounds(bounds, {
-        padding: 25,
-        maxZoom: 20,
-        duration: 1000,
-      });
-      mapRef.current?.once("moveend", () => {
-        setSelectedLocation(coordinates);
-        updateMarketLocation(coordinates);
-        // mapRef.current?.doubleClickZoom.enable();
-      });
-    } else {
-      console.log(`There Is No Source!`);
-    }
-  };
-
-  const updateMarketLocation = (coordinates: [number, number]) => {
-    if (mapMarker.current) {
-      mapMarker.current.remove();
-    }
-
-    mapMarker.current = new mapboxgl.Marker({
-      draggable: false,
-    })
-      .setLngLat(coordinates)
-      .addTo(mapRef.current!);
-  };
-
+ 
   return (
     <div className="w-full h-full  flex items-center justify-center ">
       <div ref={mapContainerRef} className="w-full h-full "></div>
