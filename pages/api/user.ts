@@ -27,6 +27,10 @@ export default async function handler(
           })
         );
 
+        if (photoLocationsFromPayload.length === 0) {
+          res.status(200).json({ message: "No photos to save" });
+          return;
+        }
         const savedPhotoLocations = await insertPhotoLocations(
           photoLocationsFromPayload
         );
@@ -55,5 +59,3 @@ const getUserPhotos = async (req: NextApiRequest, res: NextApiResponse) => {
   const photos = await GetUserPhotosFromDB(session?.user.id as string);
   res.status(200).json(photos);
 };
-
-

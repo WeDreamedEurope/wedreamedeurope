@@ -12,6 +12,7 @@ import { useState } from "react";
 import { ClipLoader } from "react-spinners";
 import UploadPSA from "../form/UploadPSA.comp";
 import UploadForm from "./UploadForm.comp";
+import UploadConfirmModal from "./UploadConfirmModal.comp";
 // const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
 // const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {
@@ -37,6 +38,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [dismissedFiles, setDismissedFiles] = useState<File[]>([]);
   const [localPreviewUrls, setLocalPreviewUrls] = useState<ImageMeta[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
   const [internalState, setInternalState] = useState<
     "idle" | "selected" | "uploading" | "success" | "error"
   >("idle");
@@ -44,7 +46,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
   const router = useRouter();
 
   const processFiles = async (files: FileList) => {
-    console.log("processing file");
+    
     const newPreviewUrls = new Array<ImageMeta>();
     const okayFiles = new Array<File>();
     const wrongFiles = new Array<File>();
@@ -63,7 +65,6 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
           EXIFData.longitude &&
           EXIFData.DateTimeOriginal
         ) {
-          console.log(EXIFData);
           const {
             DateTimeOriginal,
             GPSLatitude,
@@ -97,7 +98,6 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
   };
 
   const handleRemoveFile = (index: number) => {
-    console.log(`We Should Remove From Index ${index}`);
     setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
     URL.revokeObjectURL(localPreviewUrls[index].url);
     setLocalPreviewUrls((prev) => prev.filter((_, i) => i !== index));
@@ -139,7 +139,6 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
 
       if (uploadResponse.ok && uploadResponse.status == 200) {
         updateStatus(index, "success");
-        console.log(`Uploaded File ${file.name}`);
         return Promise.resolve(file.name.replace(/\s+/g, "_"));
       } else {
         updateStatus(index, "error");
@@ -160,7 +159,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
       .filter((res) => res.status == "fulfilled")
       .map((res) => extractMetaData(res.value!));
 
-    // console.log(metaData);
+    
     await CollectPhotoMetaData(metaData);
     setInternalState("success");
     router.push("/profile");
@@ -204,7 +203,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     <div className="w-full   max-w-2xl  sm:mx-auto    relative mx-0    h-auto flex-1       flex flex-col px-2  ">
       <DissmisedFilesPSA shouldDisplay={dismissedFiles.length > 0} />
       <UploadForm onFileDropped={processFiles} processFiles={processFiles} />
-
+      <UploadConfirmModal isOpen={isOpen} setIsOpen={setIsOpen} />
       <section className="flex-grow ">
         <UploadPSA shouldDisplay={localPreviewUrls.length === 0} />
         <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start px-3     ">
@@ -245,9 +244,12 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
         </div>
       </section>
 
-      <footer className="sticky bottom-0 left-0 max-w-2xl  w-full px-4 py-2 flex justify-center z-50  items-center bg-[#181c14] ">
+      <footer className="sticky bottom-0 left-0 max-w-2xl  w-full px-4 py-2 flex justify-center z-30  items-center bg-[#181c14] ">
         <Button
-          onClick={() => betterUpload()}
+          onClick={() => {
+            setIsOpen(true);
+            // betterUpload()
+          }}
           disabled={selectedFiles.length === 0 || internalState === "uploading"}
           variant={"default"}
           size={"lg"}
