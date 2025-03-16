@@ -27,7 +27,7 @@ type ImageMeta = {
 const DissmisedFilesPSA = ({ shouldDisplay }: { shouldDisplay: boolean }) => {
   return (
     shouldDisplay && (
-      <article className= " w-full animate-in absolute slide-in-from-top-7 bg-red-300 text-red-800 rounded-xl p-2 text-xs font-semibold">
+      <article className=" w-full animate-in absolute slide-in-from-top-7 bg-red-300 text-red-800 rounded-xl p-2 text-xs font-semibold">
         ფაილი უარყოფილია EXIF მონაცემების არ არსებობის გამო
       </article>
     )
@@ -46,7 +46,6 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
   const router = useRouter();
 
   const processFiles = async (files: FileList) => {
-    
     const newPreviewUrls = new Array<ImageMeta>();
     const okayFiles = new Array<File>();
     const wrongFiles = new Array<File>();
@@ -159,10 +158,9 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
       .filter((res) => res.status == "fulfilled")
       .map((res) => extractMetaData(res.value!));
 
-    
     await CollectPhotoMetaData(metaData);
     setInternalState("success");
-    router.push("/profile");
+    setIsOpen(true);
   };
 
   const extractMetaData = (fileName: string): Photo_Location_Insert => {
@@ -193,17 +191,31 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     }
   };
 
-  // const handleDrop = (file: File) => {
-  //   const dataTransfer = new DataTransfer();
-  //   dataTransfer.items.add(file);
-  //   processFiles(dataTransfer.files);
-  // };
 
+  const handleModalClose = (arg: "new" | "profile") => {
+    if (arg == "new") {
+      localPreviewUrls.forEach((file) => {
+        URL.revokeObjectURL(file.url);
+      });
+      
+      setInternalState("idle");
+      setSelectedFiles([]);
+      setLocalPreviewUrls([]);
+      setDismissedFiles([]);
+      setIsOpen(false);
+    } else if (arg == "profile") {
+      router.push("/profile");
+    }
+  };
   return (
     <div className="w-full   max-w-2xl  sm:mx-auto    relative mx-0    h-auto flex-1       flex flex-col px-2  ">
       <DissmisedFilesPSA shouldDisplay={dismissedFiles.length > 0} />
       <UploadForm onFileDropped={processFiles} processFiles={processFiles} />
-      <UploadConfirmModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <UploadConfirmModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        onClose={handleModalClose}
+      />
       <section className="flex-grow ">
         <UploadPSA shouldDisplay={localPreviewUrls.length === 0} />
         <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start px-3     ">
@@ -247,8 +259,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
       <footer className="sticky bottom-0 left-0 max-w-2xl  w-full px-4 py-2 flex justify-center z-30  items-center bg-[#181c14] ">
         <Button
           onClick={() => {
-            setIsOpen(true);
-            // betterUpload()
+            betterUpload();
           }}
           disabled={selectedFiles.length === 0 || internalState === "uploading"}
           variant={"default"}

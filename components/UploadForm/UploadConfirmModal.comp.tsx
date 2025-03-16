@@ -11,14 +11,19 @@ import { UploadCloudIcon } from "lucide-react";
 export default function UploadConfirmModal({
   isOpen,
   setIsOpen,
+  onClose,
 }: {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  onClose: (arg: "new" | "profile") => void;
 }) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogOverlay className=" animate-in fade-in-0 duration-200 bg-eu-primary fixed inset-0 z-[40] w-full h-full " />
-      <DialogContent className="w-full h-full  flex fixed inset-0 z-40 items-center justify-center">
+      <DialogOverlay className=" animate-in fade-in-20  duration-200 bg-eu-primary fixed inset-0 z-[40] w-full h-full " />
+      <DialogContent
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        className="w-full h-full  flex fixed inset-0 z-40 items-center justify-center px-4 "
+      >
         <VisuallyHidden>
           <DialogTitle>Slideshow</DialogTitle>
           <DialogDescription>Some Description</DialogDescription>
@@ -31,7 +36,7 @@ export default function UploadConfirmModal({
           <footer className="flex flex-col gap-2 mt-6">
             <button
               onClick={() => {
-                setIsOpen(false);
+                onClose("new");
               }}
               className=" text-white px-4 py-2 rounded-lg border border-[#889275]"
             >
@@ -39,7 +44,7 @@ export default function UploadConfirmModal({
             </button>
             <button
               onClick={() => {
-                setIsOpen(false);
+                onClose("profile");
               }}
               className=" text-white px-4 py-2 rounded-lg bg-black"
             >
