@@ -8,9 +8,7 @@ export default async function handler(
 ) {
   const { fileName, fileType, userID } = JSON.parse(req.body);
 
-
-
-  console.log(`We Are Looking For Presign For ${fileName}`)
+  console.log(`We Are Looking For Presign For ${fileName}`);
   if (fileName && fileName && userID) {
     try {
       const presignedUrl = await generateSignedUrl(
@@ -52,5 +50,6 @@ const CreatePutCommand = (bucket: string, key: string, contentType: string) => {
     Bucket: bucket,
     Key: key,
     ContentType: contentType,
+    ContentDisposition: `inline; filename="${key}"`,
   });
 };
