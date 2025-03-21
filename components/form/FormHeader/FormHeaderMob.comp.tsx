@@ -189,7 +189,7 @@ export default function FormHeaderMob({
           variant={"secondary"}
         >
 
-          მოძებნე {stateOfAction}
+          მოძებნე 
         </Button>
       </div>
     </div>
