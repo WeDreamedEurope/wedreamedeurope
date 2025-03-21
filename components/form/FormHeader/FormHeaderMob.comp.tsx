@@ -10,15 +10,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useDateTimeContext } from "@/context/DateTimeContext";
+import { useMapContext } from "@/context/MapContenxt";
+import { usePhotoLoader } from "@/context/PhotoLoaderContext";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ka } from "date-fns/locale";
 import { Calendar1, FastForward, PlusIcon, Rewind } from "lucide-react";
 import { useState } from "react";
+import { ClipLoader } from "react-spinners";
 import { FormHeaderProps } from ".";
-import { ClipLoader, BeatLoader, BarLoader, HashLoader } from "react-spinners";
-import { usePhotoLoader } from "@/context/PhotoLoaderContext";
-import { useMapContext } from "@/context/MapContenxt";
 
 export default function FormHeaderMob({
   readyForLoad,
@@ -188,8 +188,7 @@ export default function FormHeaderMob({
           disabled={!readyForLoad || stateOfAction === "loading"}
           variant={"secondary"}
         >
-
-          მოძებნე 
+          მოძებნე
         </Button>
       </div>
     </div>
