@@ -19,8 +19,8 @@ type PhotoLoaderContextType = {
   photos: Photo_Location_Client[];
   readyForLoad: boolean;
   loadPhotos: () => Promise<void>;
-  stateOfAction: "idle" | "loading" | "loaded" | "BOBO";
-  setStateOfAction: (state: "idle" | "loading" | "loaded" | "BOBO") => void;
+  stateOfAction: "idle" | "loading" | "loaded";
+  setStateOfAction: (state: "idle" | "loading" | "loaded") => void;
 };
 
 const PhotoLoaderContext = createContext<PhotoLoaderContextType | undefined>(
@@ -33,7 +33,7 @@ export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
   const { isValidTime, selectedDate } = useDateTimeContext();
   const [readyForLoad, setReadyForLoad] = useState(false);
   const [stateOfAction, setStateOfAction] = useState<
-    "idle" | "loading" | "loaded" | "BOBO"
+    "idle" | "loading" | "loaded"
   >("idle");
 
   useEffect(() => {
@@ -44,11 +44,13 @@ export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
 
   const loadPhotos = async () => {
     setStateOfAction("loading");
-    const photos = await getPhotosInRadiusAndTimeRangeClient({
-      locationTakenAt: selectedLocation!,
-      dateTakenAt: selectedDate!.toISOString(),
-      radius: 100,
-    });
+    const response = await fetch('api/photolibrary/getall', {method:"GET"})
+    const photos = await response.json() as Photo_Location_Client[];
+    // const photos = await getPhotosInRadiusAndTimeRangeClient({
+    //   locationTakenAt: selectedLocation!,
+    //   dateTakenAt: selectedDate!.toISOString(),
+    //   radius: 100,
+    // });
 
     setPhotos(
       photos

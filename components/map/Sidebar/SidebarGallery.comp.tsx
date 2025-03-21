@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button";
 import { useMapContext } from "@/context/MapContenxt";
 import { usePhotoLoader } from "@/context/PhotoLoaderContext";
 import { motion } from "framer-motion";
-import { ImageMinusIcon, MapIcon } from "lucide-react";
+import { ImageMinusIcon, MapIcon, MapPin } from "lucide-react";
 import Image from "next/image";
+
 const tempShit =
   "https://images.unsplash.com/photo-1485056981035-7a565c03c6aa?q=80&w=1473&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
@@ -35,58 +36,49 @@ const NoPhotosFound = ({ onClick }: { onClick: () => void }) => {
   );
 };
 
-// const SidebarGallery = () => {
-//   const { setSelectedPointId } = useMapContext();
-
-//   const { photos, setStateOfAction } = usePhotoLoader();
-
-//   const RenderGallery = () => {
-//     return (
-//       <>
-//         {photos.map((i, index) => (
-//           <div
-//             onClick={() => setSelectedPointId(index.toString())}
-//             key={index}
-//             className="min-w-full h-auto flex flex-col relative sm:border-gray-600 hover:cursor-pointer text-red-300 bg-[#202127] overflow-hidden rounded-md"
-//           >
-//             <div className="relative w-full aspect-video min-w-full">
-//               <Image src={tempShit} fill alt="" className="object-cover" />
-//             </div>
-//             <div className="text-[#9494bf] font-semibold text-sm px-2 py-2 flex items-center justify-between">
-//               <div>{i.dateTakenAt}</div>
-//               <div>~ {i.distance.toFixed(2)}მ</div>
-//               <div>
-//                 <Button size={"sm"}>რუკაზე ნახვა</Button>
-//               </div>
-//             </div>
-//           </div>
-//         ))}
-//       </>
-//     );
-//   };
-
-//   return (
-//     <article className="w-full relative sm:grid sm:grid-flow-row sm:grid-cols-2 h-auto flex-grow  p-0  place-content-start gap-2 py-5 pointer-events-auto sm:pb-32 text-gray-900 bg-[#121212] space-y-3 px-2">
-//       {photos.length > 0 ? (
-//         <RenderGallery />
-//       ) : (
-//         <NoPhotosFound onClick={() => setStateOfAction("idle")} />
-//       )}
-//     </article>
-//   );
-// };
+// Define the variants outside the component
+const sidebarVariants = {
+  hidden: {
+    y: 100,
+    opacity: 0,
+  },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.47,
+      ease: "easeIn",
+    },
+  },
+  exit: {
+    y: 200,
+    opacity: 0,
+    transition: {
+      y: {
+        duration: 0.37,
+        ease: "easeIn",
+      },
+      opacity: {
+        duration: 0.37,
+        delay: 0.35,
+        ease: "easeIn",
+      },
+    },
+  },
+};
 
 function SidebarGallery() {
   const { setSelectedPointId } = useMapContext();
   const { photos, setStateOfAction } = usePhotoLoader();
+
   const RenderGallery = () => {
     return (
-      <div className="w-full relative sm:grid sm:grid-flow-row sm:grid-cols-2  flex-grow h-auto  p-0  place-content-start gap-2 py-5 pointer-events-auto  text-gray-900 bg-[#121212]  px-2 ">
+      <div className="w-full pb-10 relative sm:grid grid grid-flow-row  sm:grid-cols-2  flex-grow h-auto  p-0  sm:place-content-start gap-2 py-5 pointer-events-auto  text-gray-900   px-2 ">
         {photos.map((i, index) => (
           <div
             onClick={() => setSelectedPointId(index.toString())}
             key={index}
-            className="min-w-full h-auto flex flex-col relative sm:border-gray-600 hover:cursor-pointer text-red-300 bg-[#202127] overflow-hidden rounded-md"
+            className="min-w-full  w-full h-auto flex flex-col relative sm:border-gray-600 hover:cursor-pointer text-red-300 bg-[#202127] overflow-hidden rounded-md"
           >
             <div className="relative w-full aspect-video min-w-full">
               <Image src={tempShit} fill alt="" className="object-cover" />
@@ -103,46 +95,30 @@ function SidebarGallery() {
       </div>
     );
   };
+
   return (
     <motion.div
-      key={"uniqueKey111111"}
-      initial={{
-        y: 100,
-        opacity: 0,
-      }}
-      animate={{
-        y: 0,
-        opacity: 1,
-      }}
-      exit={{
-        y: 200,
-        opacity: 0,
-        transition: {
-          y: {
-            duration: 0.37,
-            ease: "easeIn",
-          },
-          opacity: {
-            duration: 0.37,
-            delay: 0.35,
-            ease: "easeIn",
-          },
-        },
-      }}
-      transition={{
-        duration: 0.47,
-        ease: "easeIn",
-      }}
-      className="w-full h-full overflow-auto "
+      key={"sidebarGallery"}
+      variants={sidebarVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      id="galleryWrapper"
+      className="w-full h-full bg-eu-primary overflow-auto  max-w-full overflow-x-hidden relative pointer-events-auto " // Added pb-12
     >
-      {photos.length === 0 ? (
-        <NoPhotosFound onClick={() => setStateOfAction("idle")} />
-      ) : (
-        <RenderGallery />
-      )}
+      <RenderGallery />
+
+      <button
+        onClick={() => {
+          setStateOfAction("idle");
+        }}
+        className="sticky bottom-4 left-1/2 bg-blue-600 px-6 h-12 items-center py-2 rounded-full -translate-x-1/2 flex gap-2 z-50"
+      >
+        <MapPin size={22} />
+        რუკის ნახვა
+      </button>
     </motion.div>
   );
 }
 
 export default SidebarGallery;
-    

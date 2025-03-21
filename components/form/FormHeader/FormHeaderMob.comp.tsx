@@ -188,7 +188,8 @@ export default function FormHeaderMob({
           disabled={!readyForLoad || stateOfAction === "loading"}
           variant={"secondary"}
         >
-          მოძებნე
+
+          მოძებნე {stateOfAction}
         </Button>
       </div>
     </div>

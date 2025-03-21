@@ -23,6 +23,17 @@ export default function MapSidebar() {
       <AnimatePresence mode="wait">
         {stateOfAction === "loading" ? (
           <LoaderThing />
+        ) : stateOfAction === "loaded" && photos.length > 0 ? (
+          <SidebarGallery />
+        ) : stateOfAction === "loaded" && photos.length === 0 ? (
+          <NothingFound />
+        ) : stateOfAction === "idle" ? (
+          <SidebarTutorial />
+        ) : null}
+      </AnimatePresence>
+      {/* <AnimatePresence mode="wait">
+        {stateOfAction === "loading" ? (
+          <LoaderThing />
         ) : // LoaderThing()
         stateOfAction === "loaded" && photos.length > 0 ? (
           <SidebarGallery />
@@ -31,7 +42,7 @@ export default function MapSidebar() {
         ) : (
           <SidebarTutorial key={"sidebartutorialkeybro"} />
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
     </div>
   );
 }

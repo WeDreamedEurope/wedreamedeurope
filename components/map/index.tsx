@@ -89,7 +89,7 @@ export default function MapComponent({
     //   setSelectedLocation([44.7932, 41.70129]);
     // });
 
-    mapRef.current.on("dblclick",handleMapClick);
+    mapRef.current.on("click",handleMapClick);
 
     mapRef.current.on("click", "points-layer", (e) => {
       e.originalEvent.stopPropagation();
