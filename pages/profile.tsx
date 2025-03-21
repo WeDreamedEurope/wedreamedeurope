@@ -8,10 +8,9 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Slideshow from "@/components/Slideshow";
-import SlideShowRedux from "@/components/SlideShowRedux.comp";
 // const publicURL = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_URL!;
 // const bucketName = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_BUCKET!;
 // const url = `${publicURL}/${bucketName}/${session.user.id}/`;
@@ -57,6 +56,7 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
   const uploadedFiles = useRef<Photo_Location_Select_With_URL[]>(photos);
   const { data: session } = useSession();
   const [startSlideShow, setStartSlideShow] = useState(false);
+  //@ts-ignore We will come back to this
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
     null
   );

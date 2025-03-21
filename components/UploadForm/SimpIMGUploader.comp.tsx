@@ -219,7 +219,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
       <section className="flex-grow ">
         <UploadPSA shouldDisplay={localPreviewUrls.length === 0} />
         <div className="grid grid-flow-row-dense  gap-4 mt-4 items-start justify-start px-3     ">
-          {localPreviewUrls.map(({ name, url, DateTaken, status }, index) => (
+          {localPreviewUrls.map(({ name, url, DateTaken }, index) => (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{
