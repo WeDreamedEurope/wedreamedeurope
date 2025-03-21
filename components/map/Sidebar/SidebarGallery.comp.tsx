@@ -36,7 +36,6 @@ const NoPhotosFound = ({ onClick }: { onClick: () => void }) => {
   );
 };
 
-// Define the variants outside the component
 const sidebarVariants = {
   hidden: {
     y: 100,
