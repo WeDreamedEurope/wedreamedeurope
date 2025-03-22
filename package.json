@@ -46,6 +46,7 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@types/aws-sdk": "^0.0.42",
     "@types/busboy": "^1.5.4",
     "@types/formidable": "^3.4.5",
     "@types/fs-extra": "^11.0.4",

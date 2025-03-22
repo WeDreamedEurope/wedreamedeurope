@@ -46,10 +46,10 @@ const createS3Client = () => {
 };
 
 const CreatePutCommand = (bucket: string, key: string, contentType: string) => {
+  console.log(`Key We Will Be Setting ` , key)
   return new PutObjectCommand({
     Bucket: bucket,
     Key: key,
     ContentType: contentType,
-    ContentDisposition: `inline; filename="${key}"`,
   });
 };

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useMapContext } from "@/context/MapContenxt";
 import { usePhotoLoader } from "@/context/PhotoLoaderContext";
 import { motion } from "framer-motion";
-import { ImageMinusIcon, MapIcon, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import Image from "next/image";
 
 const tempShit =

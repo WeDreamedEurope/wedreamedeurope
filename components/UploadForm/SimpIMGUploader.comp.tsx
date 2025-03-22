@@ -127,12 +127,17 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
 
     const signedUrl = await urlResponse.json();
 
+    console.log(`Key We Will Be Sending`,file.name.replace(/\s+/g, "_"))
+
     if (signedUrl && typeof signedUrl === "string") {
       const uploadResponse = await fetch(signedUrl, {
         method: "PUT",
         body: file,
         headers: {
           "Content-Type": file.type,
+          "Origin": window.location.origin,
+          "Content-Disposition": `inline; filename="${file.name.replace(/\s+/g, "_")}"`,
+
         },
       });
 
