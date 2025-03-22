@@ -1,5 +1,5 @@
 import { Photo_Location_Select_With_URL } from "@/API_CALLS/gis_query";
-import { GetUserPhotosFromDB } from "@/API_CALLS/user/user.server";
+import userServer from "@/API_CALLS/user/user.server";
 import { Button } from "@/components/ui/button";
 import { withAuth } from "@/components/WithAuth.com";
 import { motion } from "framer-motion";
@@ -11,23 +11,25 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Slideshow from "@/components/Slideshow";
+import UserClient from "@/API_CALLS/user/user.client";
+import userClient from "@/API_CALLS/user/user.client";
 // const publicURL = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_URL!;
 // const bucketName = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_BUCKET!;
 // const url = `${publicURL}/${bucketName}/${session.user.id}/`;
 // const mappedURLS = filesFromLocalStorage.map((file) => `${url}${file}`);
 
-const PhotoCard = ({
-  src,
-  id,
-  onClick,
-}: {
+type PhotoCardProps = {
   src: string;
-  id: number;
+  id: string;
   onClick: (arg: number) => void;
-}) => {
+  onDelete: (arg: string) => void;
+  index: number;
+};
+
+const PhotoCard = ({ src, id, index, onClick, onDelete }: PhotoCardProps) => {
   return (
     <div
-      onClick={() => onClick(id)}
+      onClick={() => onClick(index)}
       className="group relative overflow-hidden rounded-md hover:cursor-pointer"
     >
       <Image
@@ -42,7 +44,10 @@ const PhotoCard = ({
           variant="destructive"
           size="icon"
           className="h-8 w-8 rounded-full"
-          onClick={() => alert(`We Are Deleting!`)}
+          onClick={(e) => {
+            e.stopPropagation()
+            onDelete(id)
+          }}
         >
           <Trash className="h-4 w-4" />
         </Button>
@@ -56,15 +61,21 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
   const uploadedFiles = useRef<Photo_Location_Select_With_URL[]>(photos);
   const { data: session } = useSession();
   const [startSlideShow, setStartSlideShow] = useState(false);
-  const [, setSelectedPhotoIndex] = useState<number | null>(
-    null
-  );
+  const [, setSelectedPhotoIndex] = useState<number | null>(null);
 
   const handlePhotoClick = (index: number) => {
     console.log(index);
     setSelectedPhotoIndex(index);
     setStartSlideShow(true);
   };
+
+  async function handleDeletePhoto(photoID: string) {
+    const deleteResponse = await userClient.DeletePhotos(
+      photoID,
+      session?.user.id as string
+    );
+    console.log(deleteResponse);
+  }
 
   return (
     <div className="flex flex-col   mt-8     w-full max-w-6xl mx-auto  relative">
@@ -110,8 +121,10 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
             <PhotoCard
               key={index}
               src={file.url}
-              id={file.id}
+              id={file.photoId}
               onClick={handlePhotoClick}
+              onDelete={handleDeletePhoto}
+              index={index}
             />
           ))}
         </motion.div>
@@ -137,7 +150,7 @@ export const getServerSideProps = (async (
   }
 
   let photos: Photo_Location_Select_With_URL[] = [];
-  const response = await GetUserPhotosFromDB(session?.user.id as string);
+  const response = await userServer.GetUserPhotosFromDB(session?.user.id as string);
 
   if (photos.length === 0) {
     const publicURL = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_URL!;

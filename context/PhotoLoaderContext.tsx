@@ -44,13 +44,13 @@ export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
 
   const loadPhotos = async () => {
     setStateOfAction("loading");
-    const response = await fetch('api/photolibrary/getall', {method:"GET"})
-    const photos = await response.json() as Photo_Location_Client[];
-    // const photos = await getPhotosInRadiusAndTimeRangeClient({
-    //   locationTakenAt: selectedLocation!,
-    //   dateTakenAt: selectedDate!.toISOString(),
-    //   radius: 100,
-    // });
+    // const response = await fetch('api/photolibrary/getall', {method:"GET"})
+    // const photos = await response.json() as Photo_Location_Client[];
+    const photos = await getPhotosInRadiusAndTimeRangeClient({
+      locationTakenAt: selectedLocation!,
+      dateTakenAt: selectedDate!.toISOString(),
+      radius: 100,
+    });
 
     setPhotos(
       photos

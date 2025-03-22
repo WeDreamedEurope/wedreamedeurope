@@ -96,7 +96,8 @@ export async function getPhotosInRadiusAndTimeRangeRedux(
         ST_SetSRID(location_taken_at::geometry, 4326)::geography,
         ${radiusInMeters}
       ) AND
-      date_taken_at BETWEEN ${startTime} AND ${endTime}
+      date_taken_at BETWEEN ${startTime} AND ${endTime} AND
+      isDeleted = false
     `
     );
 }

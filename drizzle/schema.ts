@@ -84,7 +84,8 @@ export const photoLocations = pgTable("photo_locations", {
 	locationTakenAt: point("location_taken_at").notNull(),
 	photoId: text("photo_id").notNull(),
 	dateTakenAt: timestamp("date_taken_at", { withTimezone: true, mode: 'string' }),
-	userId: text("user_id"),
+	userId: text("user_id").notNull(),
+	isDeleted: boolean().default(false),
 }, (table) => [
 	foreignKey({
 			columns: [table.userId],

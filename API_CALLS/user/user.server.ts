@@ -1,9 +1,9 @@
 import database from "@/db/db";
 import { photoLocations } from "@/drizzle/schema";
 import { Photo_Location_Insert, Photo_Location_Select } from "../gis_query";
-import { sql, eq } from "drizzle-orm";
+import { sql, eq, and } from "drizzle-orm";
 
-export async function insertPhotoLocations(locations: Photo_Location_Insert[]) {
+async function insertPhotoLocations(locations: Photo_Location_Insert[]) {
   return await database.insert(photoLocations).values(
     locations.map((location) => ({
       ...location,
@@ -28,7 +28,7 @@ export async function insertPhotoLocations(locations: Photo_Location_Insert[]) {
  * @returns Promise that resolves to the saved photo location data from the server
  */
 
-export const CollectPhotoMetaData = async (
+const CollectPhotoMetaData = async (
   photoMetaData: Photo_Location_Insert[]
 ): Promise<Photo_Location_Select[]> => {
   const response = await fetch("/api/user", {
@@ -39,12 +39,32 @@ export const CollectPhotoMetaData = async (
   return await response.json();
 };
 
-export const GetUserPhotosFromDB = async (
+const GetUserPhotosFromDB = async (
   userId: string
 ): Promise<Photo_Location_Select[]> => {
   const photos = await database
     .select()
     .from(photoLocations)
-    .where(eq(photoLocations.userId, userId));
+    .where(
+      and(
+        eq(photoLocations.userId, userId),
+        eq(photoLocations.isDeleted, false)
+      )
+    );
   return photos;
+};
+
+const DeletePhotoFromDB = async (photoId: string, userId: string) => {
+  return await database
+    .update(photoLocations)
+    .set({ isDeleted: true })
+    .where(eq(photoLocations.photoId, photoId))
+    .returning();
+};
+
+export default {
+  insertPhotoLocations,
+  CollectPhotoMetaData,
+  GetUserPhotosFromDB,
+  DeletePhotoFromDB,
 };
