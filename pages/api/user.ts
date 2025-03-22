@@ -58,7 +58,7 @@ export default async function handler(
       userId as string
     );
     console.log(deleted);
-    res.status(200).json({ message: `We Are Deleting The Photo by id ` });
+    res.status(200).json(deleted);
   }
 }
 

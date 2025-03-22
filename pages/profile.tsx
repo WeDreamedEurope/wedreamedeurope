@@ -45,8 +45,8 @@ const PhotoCard = ({ src, id, index, onClick, onDelete }: PhotoCardProps) => {
           size="icon"
           className="h-8 w-8 rounded-full"
           onClick={(e) => {
-            e.stopPropagation()
-            onDelete(id)
+            e.stopPropagation();
+            onDelete(id);
           }}
         >
           <Trash className="h-4 w-4" />
@@ -57,8 +57,8 @@ const PhotoCard = ({ src, id, index, onClick, onDelete }: PhotoCardProps) => {
 };
 
 const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
-  // const [uploadedFiles] = useState<Photo_Location_Select_With_URL[]>(photos);
-  const uploadedFiles = useRef<Photo_Location_Select_With_URL[]>(photos);
+  const [userUploadedPhotos, setUploadedPhotos] =
+    useState<Photo_Location_Select_With_URL[]>(photos);
   const { data: session } = useSession();
   const [startSlideShow, setStartSlideShow] = useState(false);
   const [, setSelectedPhotoIndex] = useState<number | null>(null);
@@ -70,11 +70,14 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
   };
 
   async function handleDeletePhoto(photoID: string) {
-    const deleteResponse = await userClient.DeletePhotos(
+    const deleteResponse = (await userClient.DeletePhotos(
       photoID,
       session?.user.id as string
+    )) as Photo_Location_Select_With_URL[];
+
+    setUploadedPhotos((photos) =>
+      photos.filter((photo) => photo.photoId !== photoID)
     );
-    console.log(deleteResponse);
   }
 
   return (
@@ -83,9 +86,8 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
         <Slideshow
           isOpen={startSlideShow}
           onDismiss={() => setStartSlideShow(false)}
-          slides={uploadedFiles.current}
+          slides={userUploadedPhotos}
         />
-        //  <SlideShowRedux isOpen={startSlideShow} onDismiss={() => setStartSlideShow(false)} photos={uploadedFiles.current} />
       )}
       {/* Profile Header */}
       <article className="flex flex-col items-center space-y-4 sm:flex-row sm:space-x-6 sm:space-y-0">
@@ -117,7 +119,7 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
           transition={{ duration: 0.5 }}
           className="grid grid-flow-row  sm:grid-cols-4 gap-4"
         >
-          {uploadedFiles.current.map((file, index) => (
+          {userUploadedPhotos.map((file, index) => (
             <PhotoCard
               key={index}
               src={file.url}
@@ -150,7 +152,9 @@ export const getServerSideProps = (async (
   }
 
   let photos: Photo_Location_Select_With_URL[] = [];
-  const response = await userServer.GetUserPhotosFromDB(session?.user.id as string);
+  const response = await userServer.GetUserPhotosFromDB(
+    session?.user.id as string
+  );
 
   if (photos.length === 0) {
     const publicURL = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_URL!;
