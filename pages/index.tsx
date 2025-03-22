@@ -11,7 +11,7 @@ const notoGeorgian = Noto_Sans_Georgian({
 export default function Home() {
   return (
     <div
-      className={` h-auto w-full  flex flex-col ${notoGeorgian.className} max-w-7xl mx-auto  pb-20 sm:pb-0 overflow-auto`}
+      className={` h-auto w-full  flex flex-col ${notoGeorgian.className} max-w-7xl mx-auto overflow-auto`}
     >
       <section className="sm:p-16 p-6 flex flex-col sm:items-center  mt-20 mb-12">
         <h2 className="sm:text-5xl font-bold  sm:text-center text-2xl text-left">
