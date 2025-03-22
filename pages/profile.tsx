@@ -1,5 +1,7 @@
 import { Photo_Location_Select_With_URL } from "@/API_CALLS/gis_query";
+import userClient from "@/API_CALLS/user/user.client";
 import userServer from "@/API_CALLS/user/user.server";
+import Slideshow from "@/components/Slideshow";
 import { Button } from "@/components/ui/button";
 import { withAuth } from "@/components/WithAuth.com";
 import { motion } from "framer-motion";
@@ -8,29 +10,32 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { authOptions } from "./api/auth/[...nextauth]";
-import Slideshow from "@/components/Slideshow";
-import UserClient from "@/API_CALLS/user/user.client";
-import userClient from "@/API_CALLS/user/user.client";
-// const publicURL = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_URL!;
-// const bucketName = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_BUCKET!;
-// const url = `${publicURL}/${bucketName}/${session.user.id}/`;
-// const mappedURLS = filesFromLocalStorage.map((file) => `${url}${file}`);
 
 type PhotoCardProps = {
   src: string;
   id: string;
+  isDeleting: boolean;
   onClick: (arg: number) => void;
   onDelete: (arg: string) => void;
   index: number;
 };
 
-const PhotoCard = ({ src, id, index, onClick, onDelete }: PhotoCardProps) => {
+const PhotoCard = ({
+  src,
+  id,
+  index,
+  isDeleting,
+  onClick,
+  onDelete,
+}: PhotoCardProps) => {
   return (
     <div
       onClick={() => onClick(index)}
-      className="group relative overflow-hidden rounded-md hover:cursor-pointer"
+      className={`group relative overflow-hidden rounded-md hover:cursor-pointer ${
+        isDeleting && "opacity-30"
+      } transition-opacity`}
     >
       <Image
         src={src}
@@ -57,12 +62,12 @@ const PhotoCard = ({ src, id, index, onClick, onDelete }: PhotoCardProps) => {
 };
 
 const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
-  const [userUploadedPhotos, setUploadedPhotos] =
+  const [uploadedPhotos, setUploadedPhotos] =
     useState<Photo_Location_Select_With_URL[]>(photos);
   const { data: session } = useSession();
   const [startSlideShow, setStartSlideShow] = useState(false);
   const [, setSelectedPhotoIndex] = useState<number | null>(null);
-
+  const [toBeDeleted, setToBeDeleted] = useState<string[]>([])
   const handlePhotoClick = (index: number) => {
     console.log(index);
     setSelectedPhotoIndex(index);
@@ -70,6 +75,7 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
   };
 
   async function handleDeletePhoto(photoID: string) {
+    setToBeDeleted((prev) => [...prev, photoID]);
     const deleteResponse = (await userClient.DeletePhotos(
       photoID,
       session?.user.id as string
@@ -86,7 +92,7 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
         <Slideshow
           isOpen={startSlideShow}
           onDismiss={() => setStartSlideShow(false)}
-          slides={userUploadedPhotos}
+          slides={uploadedPhotos}
         />
       )}
       {/* Profile Header */}
@@ -119,7 +125,7 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
           transition={{ duration: 0.5 }}
           className="grid grid-flow-row  sm:grid-cols-4 gap-4"
         >
-          {userUploadedPhotos.map((file, index) => (
+          {uploadedPhotos.map((file, index) => (
             <PhotoCard
               key={index}
               src={file.url}
@@ -127,6 +133,7 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
               onClick={handlePhotoClick}
               onDelete={handleDeletePhoto}
               index={index}
+              isDeleting={toBeDeleted.includes(file.photoId)}
             />
           ))}
         </motion.div>
