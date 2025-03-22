@@ -8,33 +8,33 @@ import Image from "next/image";
 const tempShit =
   "https://images.unsplash.com/photo-1485056981035-7a565c03c6aa?q=80&w=1473&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
-const NoPhotosFound = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <div className="w-full h-full pointer-events-auto flex items-center px-4 justify-center flex-col text-gray-300 font-semibold bg-gray-800 z-[200]">
-      <div className=" max-w-md gap-6  bg-yellow-800 flex flex-col items-center justify-center w-full rounded-md p-2 text-sm aspect-video">
-        <div>
-          <ImageMinusIcon size={64} className="text-red-200" />
-        </div>
-        <div className="text-center">
-          მოცემული დროით მოცემულ ლოკაციაზე ფოტოები არ მოიძებნა
-        </div>
-      </div>
-      <div className="mt-4">
-        <Button
-          onClick={(e) => {
-            e.stopPropagation();
-            onClick();
-          }}
-          size={"lg"}
-          className=""
-          variant={"secondary"}
-        >
-          <MapIcon /> რუკის ჩვენება
-        </Button>
-      </div>
-    </div>
-  );
-};
+// const NoPhotosFound = ({ onClick }: { onClick: () => void }) => {
+//   return (
+//     <div className="w-full h-full pointer-events-auto flex items-center px-4 justify-center flex-col text-gray-300 font-semibold bg-gray-800 z-[200]">
+//       <div className=" max-w-md gap-6  bg-yellow-800 flex flex-col items-center justify-center w-full rounded-md p-2 text-sm aspect-video">
+//         <div>
+//           <ImageMinusIcon size={64} className="text-red-200" />
+//         </div>
+//         <div className="text-center">
+//           მოცემული დროით მოცემულ ლოკაციაზე ფოტოები არ მოიძებნა
+//         </div>
+//       </div>
+//       <div className="mt-4">
+//         <Button
+//           onClick={(e) => {
+//             e.stopPropagation();
+//             onClick();
+//           }}
+//           size={"lg"}
+//           className=""
+//           variant={"secondary"}
+//         >
+//           <MapIcon /> რუკის ჩვენება
+//         </Button>
+//       </div>
+//     </div>
+//   );
+// };
 
 const sidebarVariants = {
   hidden: {

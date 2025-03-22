@@ -56,8 +56,7 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
   const uploadedFiles = useRef<Photo_Location_Select_With_URL[]>(photos);
   const { data: session } = useSession();
   const [startSlideShow, setStartSlideShow] = useState(false);
-  //@ts-ignore We will come back to this
-  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
+  const [, setSelectedPhotoIndex] = useState<number | null>(
     null
   );
 

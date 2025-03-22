@@ -155,7 +155,7 @@ export default function MapComponent({
 
       if (foundOne) {
         mapRef.current.flyTo({
-          // @ts-expect-error
+          // @ts-expect-error because typings are fucked
           center: foundOne.geometry.coordinates,
         });
       }

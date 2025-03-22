@@ -1,7 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ImageMinusIcon, MapIcon, TriangleAlert } from "lucide-react";
-import { useEffect } from "react";
+import { TriangleAlert } from "lucide-react";
 
 const NothingFoundDesktop = () => {
   return (
