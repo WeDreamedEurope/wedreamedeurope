@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Photo_Location_Insert } from "@/API_CALLS/gis_query";
-import { CollectPhotoMetaData } from "@/API_CALLS/user/user.server";
+import UserServer from "@/API_CALLS/user/user.server";
 import { format } from "date-fns";
 import { ka } from "date-fns/locale";
 import exifr from "exifr";
@@ -13,7 +13,8 @@ import { ClipLoader } from "react-spinners";
 import UploadPSA from "../form/UploadPSA.comp";
 import UploadForm from "./UploadForm.comp";
 import UploadConfirmModal from "./UploadConfirmModal.comp";
-// const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per file
+import userServer from "@/API_CALLS/user/user.server";
+const MAX_FILE_SIZE = 20 * 1024 * 1024; // 4MB per file
 // const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {
   url: string;
@@ -51,6 +52,11 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     const wrongFiles = new Array<File>();
 
     for (const file of files) {
+      if (file.size > MAX_FILE_SIZE) {
+        wrongFiles.push(file);
+        continue;
+      }
+
       try {
         const EXIFData = await exifr.parse(file, [
           "DateTimeOriginal",
@@ -127,7 +133,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
 
     const signedUrl = await urlResponse.json();
 
-    console.log(`Key We Will Be Sending`,file.name.replace(/\s+/g, "_"))
+    console.log(`Key We Will Be Sending`, file.name.replace(/\s+/g, "_"));
 
     if (signedUrl && typeof signedUrl === "string") {
       const uploadResponse = await fetch(signedUrl, {
@@ -135,9 +141,11 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
         body: file,
         headers: {
           "Content-Type": file.type,
-          "Origin": window.location.origin,
-          "Content-Disposition": `inline; filename="${file.name.replace(/\s+/g, "_")}"`,
-
+          Origin: window.location.origin,
+          "Content-Disposition": `inline; filename="${file.name.replace(
+            /\s+/g,
+            "_"
+          )}"`,
         },
       });
 
@@ -163,7 +171,7 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
       .filter((res) => res.status == "fulfilled")
       .map((res) => extractMetaData(res.value!));
 
-    await CollectPhotoMetaData(metaData);
+    await userServer.CollectPhotoMetaData(metaData);
     setInternalState("success");
     setIsOpen(true);
   };
@@ -196,13 +204,12 @@ export default function SimpleImageUploader({ userId }: { userId: string }) {
     }
   };
 
-
   const handleModalClose = (arg: "new" | "profile") => {
     if (arg == "new") {
       localPreviewUrls.forEach((file) => {
         URL.revokeObjectURL(file.url);
       });
-      
+
       setInternalState("idle");
       setSelectedFiles([]);
       setLocalPreviewUrls([]);
