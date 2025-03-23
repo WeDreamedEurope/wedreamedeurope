@@ -1,7 +1,7 @@
+import { Photo_Location_Insert } from "@/API_CALLS/gis_query";
+import userServer from "@/API_CALLS/user/user.server";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Photo_Location_Insert } from "@/API_CALLS/gis_query";
-import UserServer from "@/API_CALLS/user/user.server";
 import { format } from "date-fns";
 import { ka } from "date-fns/locale";
 import exifr from "exifr";
@@ -11,9 +11,8 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { ClipLoader } from "react-spinners";
 import UploadPSA from "../form/UploadPSA.comp";
-import UploadForm from "./UploadForm.comp";
 import UploadConfirmModal from "./UploadConfirmModal.comp";
-import userServer from "@/API_CALLS/user/user.server";
+import UploadForm from "./UploadForm.comp";
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 4MB per file
 // const CHUNK_SIZE = 750 * 1024; // 750KB chunks
 type ImageMeta = {

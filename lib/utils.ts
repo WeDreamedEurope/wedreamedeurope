@@ -19,7 +19,6 @@ export const formatDateWithTimezone = (dateInput: Date | string): string => {
   // Detect user's timezone (this is a browser-specific method)
   const { timeZone: userTimezone } = Intl.DateTimeFormat().resolvedOptions();
 
-  console.log(Intl.DateTimeFormat().resolvedOptions().locale);
   // Format the date using the detected timezone
   const formattedDate = format(
     toZonedTime(date, userTimezone),
