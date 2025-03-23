@@ -179,7 +179,7 @@ export const getServerSideProps = (async (
         ...file,
         url: urlBuilder(file.photoId, session.user.id),
         distance: 0,
-        dateTakenAt:formatDateWithTimezone(file.dateTakenAt!)
+        dateTakenAt: formatDateWithTimezone(file.dateTakenAt!),
       })
     );
     photos = mappedURLS;
