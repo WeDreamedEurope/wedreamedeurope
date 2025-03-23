@@ -108,6 +108,7 @@ function randomTimestamp(
     const randomPhotoId = randomString();
 
     records.push({
+      userId:"",
       locationTakenAt: randomLocation,
       dateTakenAt: randomDate,
       photoId: randomPhotoId,

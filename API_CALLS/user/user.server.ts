@@ -54,11 +54,11 @@ const GetUserPhotosFromDB = async (
   return photos;
 };
 
-const DeletePhotoFromDB = async (photoId: string, userId: string) => {
+const DeletePhotoFromDB = async (photoRecordId: number, userId: string) => {
   return await database
     .update(photoLocations)
     .set({ isDeleted: true })
-    .where(eq(photoLocations.photoId, photoId))
+    .where(eq(photoLocations.id, photoRecordId))
     .returning();
 };
 

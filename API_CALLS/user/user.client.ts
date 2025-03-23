@@ -9,7 +9,7 @@ export const GetUserPhotos = async () => {
   return photos;
 };
 
-export const DeletePhotos = async (photoId: string, userId: string) => {
+export const DeletePhotos = async (photoId: number, userId: string) => {
   const response = await fetch(`/api/user?photoId=${photoId}&userId=${userId}`, {
     method: "DELETE",
   });

@@ -18,10 +18,10 @@ import { formatDateWithTimezone, urlBuilder } from "@/lib/utils";
 
 type PhotoCardProps = {
   src: string;
-  id: string;
+  id: number;
   isDeleting: boolean;
   onClick: (arg: number) => void;
-  onDelete: (arg: string) => void;
+  onDelete: (arg: number) => void;
   index: number;
 };
 
@@ -70,22 +70,22 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
   const { data: session } = useSession();
   const [startSlideShow, setStartSlideShow] = useState(false);
   const [, setSelectedPhotoIndex] = useState<number | null>(null);
-  const [toBeDeleted, setToBeDeleted] = useState<string[]>([]);
+  const [toBeDeleted, setToBeDeleted] = useState<number[]>([]);
   const handlePhotoClick = (index: number) => {
     console.log(index);
     setSelectedPhotoIndex(index);
     setStartSlideShow(true);
   };
 
-  async function handleDeletePhoto(photoID: string) {
-    setToBeDeleted((prev) => [...prev, photoID]);
+  async function handleDeletePhoto(photoRecordId: number) {
+    setToBeDeleted((prev) => [...prev, photoRecordId]);
     (await userClient.DeletePhotos(
-      photoID,
+      photoRecordId,
       session?.user.id as string
     )) as Photo_Location_Select_With_URL[];
 
     setUploadedPhotos((photos) =>
-      photos.filter((photo) => photo.photoId !== photoID)
+      photos.filter((photo) => photo.id !== photoRecordId)
     );
   }
 
@@ -132,11 +132,11 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
             <PhotoCard
               key={index}
               src={file.url}
-              id={file.photoId}
+              id={file.id}
               onClick={handlePhotoClick}
               onDelete={handleDeletePhoto}
               index={index}
-              isDeleting={toBeDeleted.includes(file.photoId)}
+              isDeleting={toBeDeleted.includes(file.id)}
             />
           ))}
         </motion.div>

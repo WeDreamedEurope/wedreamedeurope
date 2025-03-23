@@ -7,7 +7,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./auth/[...nextauth]";
 
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -53,8 +52,16 @@ export default async function handler(
   if (method === "DELETE") {
     const { photoId, userId } = req.query;
 
+    if (!photoId || !userId) {
+      res.status(400).json({ message: "Missing photoId or userId" });
+    }
+
+    if (isNaN(Number(photoId))) {
+      res.status(400).json({ message: "Invalid photoId" });
+    }
+
     const deleted = await userServer.DeletePhotoFromDB(
-      photoId as string,
+      Number(photoId),
       userId as string
     );
     console.log(deleted);
