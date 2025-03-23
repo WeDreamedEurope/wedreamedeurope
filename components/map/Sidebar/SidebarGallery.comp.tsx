@@ -7,8 +7,8 @@ import { MapPin } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
-const tempShit =
-  "https://images.unsplash.com/photo-1485056981035-7a565c03c6aa?q=80&w=1473&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+// const tempShit =
+//   "https://images.unsplash.com/photo-1485056981035-7a565c03c6aa?q=80&w=1473&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
 // const NoPhotosFound = ({ onClick }: { onClick: () => void }) => {
 //   return (
@@ -89,7 +89,12 @@ function SidebarGallery() {
               <div>{i.dateTakenAt}</div>
               <div>~ {i.distance.toFixed(2)}მ</div>
               <div>
-                <Button size={"sm"}>რუკაზე ნახვა</Button>
+                <Button 
+                onClick={(e)=>{
+                  e.preventDefault()
+                  setSelectedPointId(index.toString())
+                }}
+                size={"sm"}>რუკაზე ნახვა</Button>
               </div>
             </div>
           </div>

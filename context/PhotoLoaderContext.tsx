@@ -1,13 +1,11 @@
+import {
+  getPhotosInRadiusAndTimeRangeClient,
+  Photo_Location_Select_With_URL
+} from "@/API_CALLS/gis_query";
 import { useDateTimeContext } from "@/context/DateTimeContext";
 import { useMapContext } from "@/context/MapContenxt";
 import { calculateDistanceInMeters } from "@/lib/dummygisdata";
-import {
-  getPhotosInRadiusAndTimeRangeClient,
-  Photo_Location_Select,
-  Photo_Location_Select_With_URL,
-} from "@/API_CALLS/gis_query";
-import { format, toZonedTime } from "date-fns-tz";
-import { ka } from "date-fns/locale";
+import { formatDateWithTimezone } from "@/lib/utils";
 import {
   createContext,
   ReactNode,
@@ -15,7 +13,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import { formatDateWithTimezone } from "@/lib/utils";
 
 type PhotoLoaderContextType = {
   photos: Photo_Location_Select_With_URL[];

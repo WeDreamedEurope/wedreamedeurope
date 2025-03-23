@@ -17,15 +17,14 @@ export const formatDateWithTimezone = (dateInput: Date | string): string => {
   const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
 
   // Detect user's timezone (this is a browser-specific method)
-  const {timeZone:userTimezone, locale} = Intl.DateTimeFormat().resolvedOptions();
+  const { timeZone: userTimezone } = Intl.DateTimeFormat().resolvedOptions();
 
-  console.log(Intl.DateTimeFormat().resolvedOptions().locale)
+  console.log(Intl.DateTimeFormat().resolvedOptions().locale);
   // Format the date using the detected timezone
   const formattedDate = format(
     toZonedTime(date, userTimezone),
     "dd MMM yyyy. HH:mm",
     {
-      
       timeZone: userTimezone,
     }
   );
