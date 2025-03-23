@@ -110,8 +110,8 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
           />
         </div>
         <div className="flex flex-col  items-center sm:items-start">
-          <h1 className="text-2xl font-bold">Jane Doe</h1>
-          <p className="text-muted-foreground">Photographer & Visual Artist</p>
+          <h1 className="text-2xl font-bold">{session?.user.name}</h1>
+          <p className="text-muted-foreground">კონტრიბუტორი </p>
         </div>
       </article>
       {/* Photos Section */}
