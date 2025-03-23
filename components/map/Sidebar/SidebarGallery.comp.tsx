@@ -1,9 +1,11 @@
+import Slideshow from "@/components/Slideshow";
 import { Button } from "@/components/ui/button";
 import { useMapContext } from "@/context/MapContenxt";
 import { usePhotoLoader } from "@/context/PhotoLoaderContext";
 import { motion } from "framer-motion";
 import { MapPin } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 const tempShit =
   "https://images.unsplash.com/photo-1485056981035-7a565c03c6aa?q=80&w=1473&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
@@ -69,18 +71,19 @@ const sidebarVariants = {
 function SidebarGallery() {
   const { setSelectedPointId } = useMapContext();
   const { photos, setStateOfAction } = usePhotoLoader();
-
+  const [viewAsSlideShot, setViewAsSlideshow] = useState(false);
   const RenderGallery = () => {
     return (
       <div className="w-full pb-10 relative sm:grid grid grid-flow-row  sm:grid-cols-2  flex-grow h-auto  p-0  sm:place-content-start gap-2 py-5 pointer-events-auto  text-gray-900   px-2 ">
         {photos.map((i, index) => (
           <div
-            onClick={() => setSelectedPointId(index.toString())}
+            // onClick={() => setSelectedPointId(index.toString())}
+            onClick={() => setViewAsSlideshow(true)}
             key={index}
             className="min-w-full  w-full h-auto flex flex-col relative sm:border-gray-600 hover:cursor-pointer text-red-300 bg-[#202127] overflow-hidden rounded-md"
           >
             <div className="relative w-full aspect-video min-w-full">
-              <Image src={tempShit} fill alt="" className="object-cover" />
+              <Image src={i.url} fill alt="" className="object-cover" />
             </div>
             <div className="text-[#9494bf] font-semibold text-sm px-2 py-2 flex items-center justify-between">
               <div>{i.dateTakenAt}</div>
@@ -105,13 +108,20 @@ function SidebarGallery() {
       id="galleryWrapper"
       className="w-full h-full bg-eu-primary overflow-auto  max-w-full overflow-x-hidden relative pointer-events-auto " // Added pb-12
     >
+      {viewAsSlideShot && (
+        <Slideshow
+          slides={photos}
+          isOpen={viewAsSlideShot}
+          onDismiss={() => setViewAsSlideshow(false)}
+        />
+      )}
       <RenderGallery />
 
       <button
         onClick={() => {
           setStateOfAction("idle");
         }}
-        className="sticky bottom-4 left-1/2 bg-blue-600 px-6 h-12 items-center py-2 rounded-full -translate-x-1/2 flex gap-2 z-50"
+        className=" sm:hidden sticky bottom-4 left-1/2 bg-blue-600 px-6 h-12 items-center py-2 rounded-full -translate-x-1/2 flex gap-2 z-50"
       >
         <MapPin size={22} />
         რუკის ნახვა

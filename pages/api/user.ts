@@ -6,7 +6,7 @@ import userServer from "@/API_CALLS/user/user.server";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./auth/[...nextauth]";
-import userClient from "@/API_CALLS/user/user.client";
+
 
 export default async function handler(
   req: NextApiRequest,

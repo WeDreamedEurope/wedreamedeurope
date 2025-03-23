@@ -3,7 +3,8 @@ import { useMapContext } from "@/context/MapContenxt";
 import { calculateDistanceInMeters } from "@/lib/dummygisdata";
 import {
   getPhotosInRadiusAndTimeRangeClient,
-  Photo_Location_Client,
+  Photo_Location_Select,
+  Photo_Location_Select_With_URL,
 } from "@/API_CALLS/gis_query";
 import { format, toZonedTime } from "date-fns-tz";
 import { ka } from "date-fns/locale";
@@ -14,9 +15,10 @@ import {
   useEffect,
   useState,
 } from "react";
+import { formatDateWithTimezone } from "@/lib/utils";
 
 type PhotoLoaderContextType = {
-  photos: Photo_Location_Client[];
+  photos: Photo_Location_Select_With_URL[];
   readyForLoad: boolean;
   loadPhotos: () => Promise<void>;
   stateOfAction: "idle" | "loading" | "loaded";
@@ -28,7 +30,7 @@ const PhotoLoaderContext = createContext<PhotoLoaderContextType | undefined>(
 );
 
 export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
-  const [photos, setPhotos] = useState<Photo_Location_Client[]>([]);
+  const [photos, setPhotos] = useState<Photo_Location_Select_With_URL[]>([]);
   const { selectedLocation, setPointsToDisplay } = useMapContext();
   const { isValidTime, selectedDate } = useDateTimeContext();
   const [readyForLoad, setReadyForLoad] = useState(false);
@@ -44,8 +46,6 @@ export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
 
   const loadPhotos = async () => {
     setStateOfAction("loading");
-    // const response = await fetch('api/photolibrary/getall', {method:"GET"})
-    // const photos = await response.json() as Photo_Location_Client[];
     const photos = await getPhotosInRadiusAndTimeRangeClient({
       locationTakenAt: selectedLocation!,
       dateTakenAt: selectedDate!.toISOString(),
@@ -56,14 +56,10 @@ export function PhotoLoaderProvider({ children }: { children: ReactNode }) {
       photos
         .map((p) => ({
           ...p,
-          dateTakenAt: format(
-            toZonedTime(p.dateTakenAt!, "Asia/Tbilisi"),
-            "dd.MMM HH:mm",
-            { locale: ka }
-          ),
+          dateTakenAt: formatDateWithTimezone(p.dateTakenAt!),
           distance: calculateDistanceInMeters(
-            p.locationTakenAt,
-            selectedLocation!
+            selectedLocation!,
+            p.locationTakenAt
           ),
         }))
         .sort((a, b) => a.distance - b.distance)

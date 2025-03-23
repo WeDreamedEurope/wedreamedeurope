@@ -1,9 +1,11 @@
 import { Photo_Location_Select_With_URL } from "@/API_CALLS/gis_query";
 import userClient from "@/API_CALLS/user/user.client";
-import userServer from "@/API_CALLS/user/user.server";
 import Slideshow from "@/components/Slideshow";
 import { Button } from "@/components/ui/button";
 import { withAuth } from "@/components/WithAuth.com";
+import database from "@/db/db";
+import { photoLocations } from "@/drizzle/schema";
+import { and, eq } from "drizzle-orm";
 import { motion } from "framer-motion";
 import { Trash } from "lucide-react";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
@@ -12,6 +14,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
 import { authOptions } from "./api/auth/[...nextauth]";
+import { formatDateWithTimezone, urlBuilder } from "@/lib/utils";
 
 type PhotoCardProps = {
   src: string;
@@ -67,7 +70,7 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
   const { data: session } = useSession();
   const [startSlideShow, setStartSlideShow] = useState(false);
   const [, setSelectedPhotoIndex] = useState<number | null>(null);
-  const [toBeDeleted, setToBeDeleted] = useState<string[]>([])
+  const [toBeDeleted, setToBeDeleted] = useState<string[]>([]);
   const handlePhotoClick = (index: number) => {
     console.log(index);
     setSelectedPhotoIndex(index);
@@ -76,7 +79,7 @@ const Profile = ({ photos }: { photos: Photo_Location_Select_With_URL[] }) => {
 
   async function handleDeletePhoto(photoID: string) {
     setToBeDeleted((prev) => [...prev, photoID]);
-    const deleteResponse = (await userClient.DeletePhotos(
+    (await userClient.DeletePhotos(
       photoID,
       session?.user.id as string
     )) as Photo_Location_Select_With_URL[];
@@ -159,18 +162,26 @@ export const getServerSideProps = (async (
   }
 
   let photos: Photo_Location_Select_With_URL[] = [];
-  const response = await userServer.GetUserPhotosFromDB(
-    session?.user.id as string
-  );
+
+  const userPhotos = await database
+    .select()
+    .from(photoLocations)
+    .where(
+      and(
+        eq(photoLocations.userId, session.user.id),
+        eq(photoLocations.userId, session.user.id)
+      )
+    );
 
   if (photos.length === 0) {
-    const publicURL = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_URL!;
-    const bucketName = process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_BUCKET!;
-    const url = `${publicURL}/${bucketName}/${session.user.id}/`;
-    const mappedURLS = response.map<Photo_Location_Select_With_URL>((file) => ({
-      ...file,
-      url: `${url}${file.photoId}`,
-    }));
+    const mappedURLS = userPhotos.map<Photo_Location_Select_With_URL>(
+      (file) => ({
+        ...file,
+        url: urlBuilder(file.photoId, session.user.id),
+        distance: 0,
+        dateTakenAt:formatDateWithTimezone(file.dateTakenAt!)
+      })
+    );
     photos = mappedURLS;
   }
 

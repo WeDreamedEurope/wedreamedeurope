@@ -16,7 +16,7 @@ export default function MapSidebar() {
   };
   return (
     <div className="w-full  flex-col  flex relative sm:bg-eu-primary bg-transparent  ">
-      <header className="w-full    pointer-events-auto bg-eu-primary sticky top-0 z-50 ">
+      <header className="w-full    pointer-events-auto bg-eu-primary sticky top-0 z-10 ">
         <DateAndTimeForm />
       </header>
 

@@ -3,13 +3,14 @@ import { photoLocations } from "@/drizzle/schema";
 import { addMinutes, subMinutes } from "date-fns";
 import { sql } from "drizzle-orm";
 
-export type Photo_Location_Client = typeof photoLocations.$inferSelect & {
-  distance: number;
-};
+// export type Photo_Location_Client = typeof photoLocations.$inferSelect & {
+//   distance: number;
+// };
 export type Photo_Location_Select = typeof photoLocations.$inferSelect;
 export type Photo_Location_Insert = typeof photoLocations.$inferInsert;
 export type Photo_Location_Select_With_URL = Photo_Location_Select & {
   url: string;
+  distance:number
 };
 export type Photo_Query = Pick<
   Photo_Location_Select,
@@ -106,14 +107,14 @@ export async function getAllPhotos() {
   return await database.select().from(photoLocations);
 }
 
-export async function getAllPhotosClient(): Promise<Photo_Location_Client[]> {
+export async function getAllPhotosClient(): Promise<Photo_Location_Select_With_URL[]> {
   const photos = await fetch("/api/photolibrary", { method: "GET" });
   return photos.json();
 }
 
 export async function getPhotosInRadiusAndTimeRangeClient(
   arg: Photo_Query
-): Promise<Photo_Location_Client[]> {
+): Promise<Photo_Location_Select_With_URL[]> {
   const photos = await fetch("/api/photolibrary", {
     method: "POST",
     body: JSON.stringify(arg),
