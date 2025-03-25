@@ -169,7 +169,7 @@ export const getServerSideProps = (async (
     .where(
       and(
         eq(photoLocations.userId, session.user.id),
-        eq(photoLocations.userId, session.user.id)
+        eq(photoLocations.isDeleted, false)
       )
     );
 
